@@ -542,6 +542,18 @@ async function api(path, method = 'GET', body = null) {
   return r.json();
 }
 
+async function apiAll(path) {
+  let results = [], cursor = null;
+  do {
+    const url = cursor ? `${path}?cursor=${encodeURIComponent(cursor)}` : path;
+    const res = await api(url);
+    if (Array.isArray(res)) return res;
+    results = results.concat(res.results || []);
+    cursor = res.next_cursor || null;
+  } while (cursor);
+  return results;
+}
+
 // ──────────────────────────────────────────────
 // TOKEN SCREEN
 // ──────────────────────────────────────────────
@@ -585,7 +597,7 @@ const DEFAULT_STAGES = [
 
 async function loadLabels() {
   try {
-    S.labels = await api('/labels');
+    S.labels = await apiAll('/labels');
   } catch(e) { S.labels = []; }
 }
 
@@ -660,8 +672,8 @@ async function loadData(manual = false) {
   if (btn) { btn.classList.add('spin'); btn.disabled = true; }
   try {
     const [projects, tasks] = await Promise.all([
-      api('/projects'),
-      api('/tasks'),
+      apiAll('/projects'),
+      apiAll('/tasks'),
     ]);
     S.projects = projects;
     S.tasks = tasks;
