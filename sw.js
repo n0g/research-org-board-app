@@ -1,5 +1,5 @@
-const CACHE = 'rb-v22';
-const ASSETS = ['./', './index.html', './manifest.json',
+const CACHE = 'rb-v23';
+const ASSETS = ['./', './index.html', './app.js', './manifest.json',
   './icons/icon-32.png', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-180.png',
   './fonts/ibm-plex-mono-300.woff2', './fonts/ibm-plex-mono-300-italic.woff2',
   './fonts/ibm-plex-mono-400.woff2', './fonts/ibm-plex-mono-500.woff2',
