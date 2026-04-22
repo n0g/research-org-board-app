@@ -49,14 +49,24 @@ Labels follow the `stage::` prefix pattern:
 - **Board** — one column per stage; projects without a matching stage label appear in an "Unassigned" column
 - **Drag and drop** — cards can be dragged between columns using Pointer Events (works on desktop and iOS touch); updates the stage label in Todoist immediately
 - **Task list** — tasks in `📌 Current Status` and `📌 Deadlines` sections are excluded; only real todos are shown
+- **Pull-to-refresh** — swipe down on the board to reload data; implemented with Touch Events (separate from the Pointer Events used for card drag); `#ptr-indicator` is a small circle that follows the finger and spins on release; threshold is 80px
+- **Initial load spinner** — `#board-loading` overlays the board with a centered spinner until the first data fetch completes; there is no manual reload button in the topbar
+
+## Topbar
+
+Contains: title, last-updated timestamp, theme toggle, settings button. There is **no reload button** — refreshing is done via pull-to-refresh or the `R` keyboard shortcut.
 
 ## Theme
 
 Three modes: **auto** (follows OS), **light**, **dark**. Stored in `localStorage` as `rb_theme`. A no-FOUC inline script in `<head>` applies the theme before first render. Toggle cycles auto → light → dark → auto.
 
+## CSS Notes
+
+- The global `.spin` keyframe only does `rotate(360deg)`, which overrides any `transform` already on the element (e.g. `translateX(-50%)`). For elements that need both, define a dedicated keyframe that combines both transforms (see `@keyframes ptr-spin`).
+
 ## Service Worker
 
-Cache name must be bumped (e.g. `rb-v11` → `rb-v12`) with every deployment to force Safari to pick up the new version. The network-first fetch strategy means a plain reload is sufficient once the new SW is active.
+Cache name must be bumped (e.g. `rb-v20` → `rb-v21`) with every deployment to force Safari to pick up the new version. The network-first fetch strategy means a plain reload is sufficient once the new SW is active.
 
 ## Key localStorage Keys
 
