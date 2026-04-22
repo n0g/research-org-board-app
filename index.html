@@ -570,6 +570,7 @@ const S = {
   tasks: [],
   labels: [],
   excludedSectionIds: new Set(),
+  deadlineSectionIds: new Set(),
   lastUpdated: null,
 };
 
@@ -742,6 +743,7 @@ async function loadData(manual = false) {
     S.tasks = tasks;
     const EXCLUDED = new Set(['📌 Current Status', '📌 Deadlines']);
     S.excludedSectionIds = new Set(sections.filter(s => EXCLUDED.has(s.name)).map(s => s.id));
+    S.deadlineSectionIds = new Set(sections.filter(s => s.name === '📌 Deadlines').map(s => s.id));
     S.lastUpdated = new Date();
     renderBoard();
     scrollToStageParam();
@@ -807,6 +809,18 @@ function getProjectTasks(projectId) {
   }).sort((a, b) => (a.priority || 4) - (b.priority || 4));
 }
 
+function getProjectDeadline(projectId) {
+  const tasks = S.tasks.filter(t =>
+    t.project_id === projectId &&
+    S.deadlineSectionIds.has(t.section_id) &&
+    !t.is_completed && t.due
+  );
+  if (!tasks.length) return null;
+  const dates = tasks.map(t => new Date(t.due.date)).sort((a, b) => a - b);
+  const future = dates.filter(d => d > Date.now());
+  return future.length ? future[0] : dates[dates.length - 1];
+}
+
 function nearestDue(tasks) {
   const now = Date.now();
   let nearest = null;
@@ -859,6 +873,12 @@ function renderBoard() {
     const projects = displayProjects.filter(p => {
       const s = getProjectStage(p.id);
       return s && s.label === stage.label;
+    }).sort((a, b) => {
+      const da = getProjectDeadline(a.id), db = getProjectDeadline(b.id);
+      if (!da && !db) return 0;
+      if (!da) return 1;
+      if (!db) return -1;
+      return da - db;
     });
 
     const col = document.createElement('div');
@@ -1050,9 +1070,14 @@ function renderCard(project, stage) {
     card.appendChild(statusEl);
   }
 
+  const deadline = getProjectDeadline(project.id);
+  const deadlineStr = deadline
+    ? deadline.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    : null;
+
   let tags = '';
   personLabels.forEach(l => { tags += `<span class="tag person">${escHtml(l)}</span>`; });
-  if (meta.venue) tags += `<span class="tag venue">${escHtml(meta.venue)}</span>`;
+  if (meta.venue) tags += `<span class="tag venue">${escHtml(meta.venue)}${deadlineStr ? ' · ' + escHtml(deadlineStr) : ''}</span>`;
   if (nearest) {
     const label = formatDate(new Date(nearest).toISOString().split('T')[0]);
     tags += `<span class="tag ${dueSt}">${dueSt === 'overdue' ? '⚠ ' : ''}${label}</span>`;
