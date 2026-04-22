@@ -196,7 +196,45 @@
     .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
 
     /* ── BOARD SCREEN ── */
-    #screen-board { overflow: hidden; }
+    #screen-board { overflow: hidden; position: relative; }
+
+    #ptr-indicator {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      color: var(--text2);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 50;
+      top: 44px;
+      transition: border-color 0.1s, color 0.1s;
+    }
+    #ptr-indicator.ready { color: var(--accent); border-color: var(--accent-d); }
+    #ptr-indicator.spinning { animation: spin 0.8s linear infinite; color: var(--accent); border-color: var(--accent-d); }
+
+    #board-loading {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      z-index: 5;
+      pointer-events: none;
+    }
+    .board-spinner {
+      width: 20px; height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
     .topbar {
       display: flex;
       align-items: center;
@@ -525,10 +563,11 @@
   <div class="topbar">
     <h1>Research Board</h1>
     <span class="sub" id="last-updated"></span>
-    <button class="btn icon" id="refresh-btn" onclick="loadData(true)" title="Refresh">⟳</button>
     <button class="btn icon" id="theme-btn" onclick="cycleTheme()" title="Toggle theme"></button>
     <button class="btn icon" onclick="openSettings()" title="Settings">⚙</button>
   </div>
+  <div id="ptr-indicator"></div>
+  <div id="board-loading"><div class="board-spinner"></div></div>
   <div class="board" id="board"></div>
 </div>
 
@@ -739,8 +778,9 @@ function saveSetup() {
 // DATA LOADING
 // ──────────────────────────────────────────────
 async function loadData(manual = false) {
-  const btn = document.getElementById('refresh-btn');
-  if (btn) { btn.classList.add('spin'); btn.disabled = true; }
+  const boardEl = document.getElementById('board');
+  const loadingEl = document.getElementById('board-loading');
+  if (!boardEl.children.length && loadingEl) loadingEl.style.display = 'flex';
   try {
     const [projects, tasks, sections] = await Promise.all([
       apiAll('/projects'),
@@ -761,7 +801,7 @@ async function loadData(manual = false) {
     console.error(e);
     if (manual) alert('Failed to load: ' + e.message);
   } finally {
-    if (btn) { btn.classList.remove('spin'); btn.disabled = false; }
+    if (loadingEl) loadingEl.style.display = 'none';
   }
 }
 
@@ -1313,6 +1353,55 @@ function escHtml(str) {
     .replace(/'/g,'&#39;');
 }
 
+// ──────────────────────────────────────────────
+// PULL TO REFRESH
+// ──────────────────────────────────────────────
+function initPullToRefresh() {
+  const screen = document.getElementById('screen-board');
+  const ind = document.getElementById('ptr-indicator');
+  const THRESHOLD = 80;
+  let startY = 0, active = false, refreshing = false;
+
+  screen.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1 || refreshing) return;
+    const col = e.target.closest('.col-body');
+    if (col && col.scrollTop > 0) return;
+    startY = e.touches[0].clientY;
+    active = true;
+  }, { passive: true });
+
+  screen.addEventListener('touchmove', e => {
+    if (!active) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy <= 4) return;
+    const pull = Math.min(dy * 0.5, THRESHOLD);
+    const progress = pull / THRESHOLD;
+    ind.style.top = (44 + pull * 0.6) + 'px';
+    ind.style.opacity = Math.min(progress * 2, 1);
+    ind.textContent = progress >= 1 ? '↑' : '↓';
+    ind.className = progress >= 1 ? 'ready' : '';
+  }, { passive: true });
+
+  screen.addEventListener('touchend', e => {
+    if (!active) return;
+    active = false;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (dy >= THRESHOLD && !refreshing) {
+      refreshing = true;
+      ind.textContent = '';
+      ind.className = 'spinning';
+      loadData(true).finally(() => {
+        refreshing = false;
+        ind.className = '';
+        ind.style.opacity = '0';
+      });
+    } else {
+      ind.className = '';
+      ind.style.opacity = '0';
+    }
+  });
+}
+
 // Service worker registration — auto-reload when a new SW takes control
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
@@ -1330,6 +1419,7 @@ document.addEventListener('keydown', e => {
   }
 });
 
+initPullToRefresh();
 init();
 </script>
 </body>
