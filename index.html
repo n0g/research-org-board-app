@@ -585,6 +585,14 @@ async function init() {
   if (!S.stages) {
     S.stages = DEFAULT_STAGES;
     localStorage.setItem('rb_stages', JSON.stringify(DEFAULT_STAGES));
+  } else {
+    // Migrate: move Revision before Awaiting Reviews if still in old order
+    const ri = S.stages.findIndex(s => s.label === 'stage::revision');
+    const ai = S.stages.findIndex(s => s.label === 'stage::under-submission');
+    if (ri !== -1 && ai !== -1 && ri > ai) {
+      S.stages.splice(ai, 0, S.stages.splice(ri, 1)[0]);
+      localStorage.setItem('rb_stages', JSON.stringify(S.stages));
+    }
   }
   showScreen('screen-board');
   await loadData();
@@ -653,8 +661,8 @@ const DEFAULT_STAGES = [
   { name: 'Planning',          label: 'stage::planning' },
   { name: 'Data Collection',   label: 'stage::data-collection' },
   { name: 'Preparing',         label: 'stage::preparing-to-submit' },
-  { name: 'Awaiting Reviews',  label: 'stage::under-submission' },
   { name: 'Revision',          label: 'stage::revision' },
+  { name: 'Awaiting Reviews',  label: 'stage::under-submission' },
   { name: 'On Ice',            label: 'stage::on-ice' },
 ];
 

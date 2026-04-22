@@ -38,8 +38,8 @@ Labels follow the `stage::` prefix pattern:
 | Planning         | `stage::planning`              |
 | Data Collection  | `stage::data-collection`       |
 | Preparing        | `stage::preparing-to-submit`   |
-| Awaiting Reviews | `stage::under-submission`      |
 | Revision         | `stage::revision`              |
+| Awaiting Reviews | `stage::under-submission`      |
 | On Ice           | `stage::on-ice`                |
 
 ## App Behaviour
