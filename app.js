@@ -532,7 +532,10 @@ function renderCard(project, stage) {
 // ──────────────────────────────────────────────
 // PROJECT MODAL
 // ──────────────────────────────────────────────
+let _modalOpener = null;
+
 function openModal(project) {
+  _modalOpener = document.activeElement;
   const overlay = document.getElementById('modal-overlay');
   const title = document.getElementById('modal-title');
   const body = document.getElementById('modal-body');
@@ -540,6 +543,7 @@ function openModal(project) {
   title.textContent = project.name;
   body.innerHTML = renderModalBody(project);
   overlay.classList.add('open');
+  document.getElementById('modal-close-btn').focus();
 }
 
 function renderModalBody(project) {
@@ -555,6 +559,7 @@ function renderModalBody(project) {
     <div class="stage-selector">
       ${S.stages.map(s => `
         <button class="stage-opt ${stageInfo && stageInfo.label === s.label ? 'active' : ''}"
+          aria-pressed="${stageInfo && stageInfo.label === s.label ? 'true' : 'false'}"
           data-action="move-stage"
           data-project-id="${escHtml(project.id)}"
           data-old-task-id="${escHtml(stageInfo ? stageInfo.task.id : '')}"
@@ -588,6 +593,7 @@ function renderModalBody(project) {
       html += `
         <div class="task-item ${pClass}" id="task-${escHtml(t.id)}">
           <div class="task-check"
+            role="button" tabindex="0" aria-label="Complete task"
             data-action="complete-task"
             data-task-id="${escHtml(t.id)}"
             data-project-id="${escHtml(project.id)}"></div>
@@ -688,6 +694,7 @@ async function saveDue(taskId, dateVal, projectId) {
 
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
+  if (_modalOpener) { _modalOpener.focus(); _modalOpener = null; }
 }
 
 // ──────────────────────────────────────────────
@@ -826,6 +833,11 @@ document.getElementById('settings-btn').addEventListener('click', openSettings);
 // Modal — event delegation for dynamically rendered content
 document.getElementById('modal-overlay').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeModal();
+});
+document.getElementById('modal-body').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const check = e.target.closest('[data-action="complete-task"]');
+  if (check) { e.preventDefault(); completeTask(check.dataset.taskId, check.dataset.projectId); }
 });
 document.getElementById('modal-close-btn').addEventListener('click', closeModal);
 document.getElementById('modal-body').addEventListener('click', e => {
