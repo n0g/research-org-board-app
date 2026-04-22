@@ -525,6 +525,10 @@ function renderCard(project, stage) {
     card.appendChild(metaEl);
   }
 
+  card.tabIndex = 0;
+  card.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(project); }
+  });
   initCardDrag(card, project);
   return card;
 }
@@ -533,6 +537,21 @@ function renderCard(project, stage) {
 // PROJECT MODAL
 // ──────────────────────────────────────────────
 let _modalOpener = null;
+
+function trapFocus(e) {
+  if (e.key !== 'Tab') return;
+  const focusable = Array.from(document.getElementById('modal').querySelectorAll(
+    'button, [href], input, [tabindex="0"]'
+  )).filter(el => !el.disabled && el.offsetParent !== null);
+  if (focusable.length < 2) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (e.shiftKey) {
+    if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+  } else {
+    if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+}
 
 function openModal(project) {
   _modalOpener = document.activeElement;
@@ -543,6 +562,7 @@ function openModal(project) {
   title.textContent = project.name;
   body.innerHTML = renderModalBody(project);
   overlay.classList.add('open');
+  overlay.addEventListener('keydown', trapFocus);
   document.getElementById('modal-close-btn').focus();
 }
 
@@ -693,7 +713,9 @@ async function saveDue(taskId, dateVal, projectId) {
 }
 
 function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.remove('open');
+  overlay.removeEventListener('keydown', trapFocus);
   if (_modalOpener) { _modalOpener.focus(); _modalOpener = null; }
 }
 
