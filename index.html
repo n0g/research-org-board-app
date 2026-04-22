@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Research Board</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0c0c0c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Research">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0c0c0c;
+      --bg1:       #141414;
+      --bg2:       #1c1c1c;
+      --bg3:       #242424;
+      --border:    #2e2e2e;
+      --border2:   #3a3a3a;
+      --text:      #ddd8cc;
+      --text2:     #8a8480;
+      --text3:     #555250;
+      --accent:    #c9a96e;
+      --accent-d:  #8a6e40;
+      --red:       #d06060;
+      --green:     #6aa870;
+      --blue:      #6090c8;
+      --mono:      'IBM Plex Mono', monospace;
+      --serif:     'Playfair Display', serif;
+      --radius:    3px;
+      --col-w:     300px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    /* ── SCREENS ── */
+    .screen { display: none; height: 100dvh; flex-direction: column; }
+    .screen.active { display: flex; }
+
+    /* ── TOKEN SCREEN ── */
+    #screen-token {
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      padding: 32px;
+    }
+    .token-box {
+      width: 100%;
+      max-width: 420px;
+      border: 1px solid var(--border2);
+      padding: 32px;
+      background: var(--bg1);
+    }
+    .token-box h1 {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 400;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .token-box p { color: var(--text2); font-size: 12px; margin-bottom: 24px; line-height: 1.6; }
+    .token-box a { color: var(--accent); text-decoration: none; }
+    .token-box a:hover { text-decoration: underline; }
+    input[type="text"], input[type="password"], input[type="date"] {
+      width: 100%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus { border-color: var(--accent-d); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+      white-space: nowrap;
+    }
+    .btn:hover { background: var(--border); border-color: var(--border2); }
+    .btn.primary { background: var(--accent-d); border-color: var(--accent); color: #fff; }
+    .btn.primary:hover { background: var(--accent); }
+    .btn.danger { color: var(--red); border-color: #5a2828; }
+    .btn.danger:hover { background: #2a1515; }
+    .btn.sm { padding: 5px 10px; font-size: 11px; }
+    .btn.icon { padding: 6px 8px; }
+    .mt { margin-top: 12px; }
+
+    /* ── SETUP SCREEN ── */
+    #screen-setup {
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .setup-box {
+      width: 100%;
+      max-width: 560px;
+      border: 1px solid var(--border2);
+      background: var(--bg1);
+      padding: 32px;
+    }
+    .setup-box h1 { font-family: var(--serif); font-size: 20px; font-weight: 400; margin-bottom: 4px; }
+    .setup-box .sub { color: var(--text2); font-size: 12px; margin-bottom: 24px; line-height: 1.6; }
+    .stage-row {
+      display: grid;
+      grid-template-columns: 24px 1fr 1fr 32px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .stage-row .handle { color: var(--text3); cursor: ns-resize; text-align: center; user-select: none; }
+    .stage-row input { margin: 0; }
+    .stage-row .del { background: none; border: 1px solid transparent; color: var(--text3); font-size: 14px; padding: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: var(--radius); }
+    .stage-row .del:hover { color: var(--red); border-color: #5a2828; background: #2a1515; }
+    .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 8px; }
+    .label-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .chip {
+      font-size: 11px;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      cursor: pointer;
+      color: var(--text2);
+      transition: all 0.1s;
+      background: var(--bg2);
+    }
+    .chip:hover { border-color: var(--accent-d); color: var(--text); }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+    /* ── BOARD SCREEN ── */
+    #screen-board { overflow: hidden; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg1);
+      flex-shrink: 0;
+    }
+    .topbar h1 { font-family: var(--serif); font-size: 16px; font-weight: 400; flex: 1; }
+    .topbar .sub { font-size: 11px; color: var(--text3); }
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .board {
+      flex: 1;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .board::-webkit-scrollbar { height: 4px; }
+    .board::-webkit-scrollbar-track { background: var(--bg); }
+    .board::-webkit-scrollbar-thumb { background: var(--border2); }
+
+    .col {
+      flex: 0 0 var(--col-w);
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      scroll-snap-align: start;
+      background: var(--bg);
+      min-height: 0;
+    }
+    .col:last-child { border-right: none; }
+    .col-head {
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-shrink: 0;
+      background: var(--bg1);
+    }
+    .col-head .col-name { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; color: var(--text2); }
+    .col-head .col-count { font-size: 11px; color: var(--text3); }
+    .col-body { flex: 1; overflow-y: auto; padding: 10px 10px; display: flex; flex-direction: column; gap: 8px; }
+    .col-body::-webkit-scrollbar { width: 3px; }
+    .col-body::-webkit-scrollbar-thumb { background: var(--border2); }
+
+    /* ── PROJECT CARD ── */
+    .card {
+      background: var(--bg1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+    }
+    .card:hover { border-color: var(--border2); background: var(--bg2); }
+    .card-name { font-family: var(--serif); font-size: 14px; font-weight: 400; margin-bottom: 6px; line-height: 1.3; }
+    .card-meta { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      color: var(--text3);
+      background: var(--bg2);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .tag.venue { color: var(--blue); border-color: #2a3a50; background: #141c28; }
+    .tag.author { color: var(--accent); border-color: #4a3820; background: #1c1408; }
+    .tag.overdue { color: var(--red); border-color: #5a2828; background: #1c0c0c; }
+    .tag.due-soon { color: #c8903a; border-color: #503820; background: #1c1408; }
+    .card-tasks { font-size: 11px; color: var(--text3); margin-top: 8px; }
+    .card-tasks span { color: var(--text2); }
+
+    .empty-col {
+      font-size: 12px;
+      color: var(--text3);
+      text-align: center;
+      padding: 24px 12px;
+      font-style: italic;
+    }
+
+    /* ── PROJECT DETAIL MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
+      align-items: flex-end;
+      justify-content: center;
+      backdrop-filter: blur(2px);
+    }
+    .modal-overlay.open { display: flex; }
+    @media (min-width: 640px) {
+      .modal-overlay { align-items: center; }
+      .modal { max-width: 580px; max-height: 80dvh; border-radius: var(--radius); }
+    }
+    .modal {
+      width: 100%;
+      max-height: 92dvh;
+      background: var(--bg1);
+      border: 1px solid var(--border2);
+      border-bottom: none;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    @media (min-width: 640px) { .modal { border-bottom: 1px solid var(--border2); } }
+    .modal-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .modal-head h2 { font-family: var(--serif); font-size: 18px; font-weight: 400; flex: 1; line-height: 1.3; }
+    .modal-head .close-btn { background: none; border: none; color: var(--text3); font-size: 20px; cursor: pointer; padding: 2px 4px; line-height: 1; flex-shrink: 0; }
+    .modal-head .close-btn:hover { color: var(--text); }
+    .modal-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+    .modal-body::-webkit-scrollbar { width: 4px; }
+    .modal-body::-webkit-scrollbar-thumb { background: var(--border2); }
+
+    .detail-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .detail-row .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); width: 64px; flex-shrink: 0; }
+    .detail-row .value { font-size: 12px; color: var(--text); }
+
+    .stage-selector { display: flex; flex-wrap: wrap; gap: 6px; }
+    .stage-opt {
+      font-size: 11px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      cursor: pointer;
+      color: var(--text2);
+      background: var(--bg2);
+      transition: all 0.1s;
+    }
+    .stage-opt:hover { border-color: var(--border2); color: var(--text); }
+    .stage-opt.active { border-color: var(--accent); color: var(--accent); background: #1c1408; }
+
+    .tasks-section { margin-top: 16px; }
+    .tasks-section .section-label { margin-bottom: 10px; }
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 10px;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      transition: background 0.1s, border-color 0.1s;
+    }
+    .task-item:hover { background: var(--bg2); border-color: var(--border); }
+    .task-check {
+      width: 16px; height: 16px;
+      border: 1px solid var(--border2);
+      border-radius: 50%;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 1px;
+      transition: all 0.15s;
+      background: none;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .task-check:hover { border-color: var(--green); background: #0c1c0c; }
+    .task-check.done { border-color: var(--green); background: var(--green); }
+    .task-content { flex: 1; min-width: 0; }
+    .task-name { font-size: 12px; line-height: 1.4; }
+    .task-name.done { color: var(--text3); text-decoration: line-through; }
+    .task-due {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 3px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .task-due:hover { color: var(--accent); }
+    .task-due.overdue { color: var(--red); }
+    .task-due.due-soon { color: #c8903a; }
+    .task-due-edit {
+      font-size: 11px;
+      background: var(--bg2);
+      border: 1px solid var(--accent-d);
+      color: var(--text);
+      font-family: var(--mono);
+      padding: 2px 6px;
+      border-radius: var(--radius);
+      outline: none;
+      width: 130px;
+    }
+    .p1 { border-left: 2px solid var(--red); }
+    .p2 { border-left: 2px solid #c8903a; }
+    .p3 { border-left: 2px solid var(--blue); }
+
+    .no-tasks { font-size: 12px; color: var(--text3); font-style: italic; padding: 8px 0; }
+    .todo-count { font-size: 11px; color: var(--text3); margin-top: 12px; text-align: right; }
+
+    /* ── SETTINGS PANEL ── */
+    .settings-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 90;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .settings-overlay.open { display: flex; }
+    @media (min-width: 640px) {
+      .settings-overlay { align-items: center; }
+      .settings-panel { max-width: 480px; border-radius: var(--radius); }
+    }
+    .settings-panel {
+      width: 100%;
+      max-height: 80dvh;
+      background: var(--bg1);
+      border: 1px solid var(--border2);
+      border-bottom: none;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    @media (min-width: 640px) { .settings-panel { border-bottom: 1px solid var(--border2); } }
+    .settings-head {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .settings-head h3 { font-family: var(--serif); font-size: 16px; font-weight: 400; flex: 1; }
+    .settings-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+    .settings-body::-webkit-scrollbar { width: 4px; }
+    .settings-body::-webkit-scrollbar-thumb { background: var(--border2); }
+
+    .error-msg { color: var(--red); font-size: 12px; padding: 8px 12px; background: #1c0c0c; border: 1px solid #5a2828; border-radius: var(--radius); margin-bottom: 12px; }
+
+    .kbd { background: var(--bg3); border: 1px solid var(--border2); border-bottom-width: 2px; border-radius: 2px; padding: 1px 5px; font-size: 10px; color: var(--text2); }
+
+    /* ── STAGE COLOR ACCENTS ── */
+    .col[data-stage="0"] .col-head { border-bottom-color: #2a3a50; }
+    .col[data-stage="1"] .col-head { border-bottom-color: #2a4030; }
+    .col[data-stage="2"] .col-head { border-bottom-color: #4a3820; }
+    .col[data-stage="3"] .col-head { border-bottom-color: #402840; }
+    .col[data-stage="4"] .col-head { border-bottom-color: #502828; }
+    .col[data-stage="5"] .col-head { border-bottom-color: #303030; }
+    .col[data-stage="6"] .col-head { border-bottom-color: #1e3030; }
+    .col[data-stage="7"] .col-head { border-bottom-color: #3a2810; }
+  </style>
+</head>
+<body>
+
+<!-- ── TOKEN SCREEN ── -->
+<div id="screen-token" class="screen">
+  <div class="token-box">
+    <h1>Research Board</h1>
+    <p>Enter your Todoist API token to continue. Find it at<br>
+      <a href="https://todoist.com/app/settings/integrations/developer" target="_blank">Settings → Integrations → Developer</a>.
+      Stored locally on this device only.
+    </p>
+    <input type="password" id="token-input" placeholder="API token…" autocomplete="off" spellcheck="false">
+    <div id="token-error" class="error-msg" style="display:none;margin-top:10px"></div>
+    <div style="margin-top:12px; display:flex; gap:8px;">
+      <button class="btn primary" onclick="submitToken()">Connect →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SETUP SCREEN ── -->
+<div id="screen-setup" class="screen">
+  <div class="setup-box">
+    <h1>Configure Stages</h1>
+    <p class="sub">Map your Todoist labels to research pipeline stages. Each row: display name (left) + exact Todoist label name (right). Order determines column order on the board.</p>
+
+    <div class="section-label">Your Todoist labels</div>
+    <div id="label-chips" class="label-chips"></div>
+
+    <hr class="divider">
+
+    <div class="section-label">Stage mapping</div>
+    <div id="stage-rows"></div>
+
+    <button class="btn sm" onclick="addStageRow()" style="margin-top:4px">+ add stage</button>
+    <hr class="divider">
+    <div style="display:flex; gap:8px; justify-content:flex-end">
+      <button class="btn" onclick="resetToken()">← back</button>
+      <button class="btn primary" onclick="saveSetup()">Save & open board →</button>
+    </div>
+    <div id="setup-error" class="error-msg" style="display:none;margin-top:12px"></div>
+  </div>
+</div>
+
+<!-- ── BOARD SCREEN ── -->
+<div id="screen-board" class="screen">
+  <div class="topbar">
+    <h1>Research Board</h1>
+    <span class="sub" id="last-updated"></span>
+    <button class="btn icon" id="refresh-btn" onclick="loadData(true)" title="Refresh">⟳</button>
+    <button class="btn icon" onclick="openSettings()" title="Settings">⚙</button>
+  </div>
+  <div class="board" id="board"></div>
+</div>
+
+<!-- ── PROJECT DETAIL MODAL ── -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <h2 id="modal-title"></h2>
+      <button class="close-btn" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ── SETTINGS PANEL ── -->
+<div class="settings-overlay" id="settings-overlay" onclick="closeSettings(event)">
+  <div class="settings-panel">
+    <div class="settings-head">
+      <h3>Settings</h3>
+      <button class="close-btn" onclick="closeSettings()">×</button>
+    </div>
+    <div class="settings-body">
+      <p style="color:var(--text2);font-size:12px;margin-bottom:16px">Reconfigure stages or switch token.</p>
+      <button class="btn" onclick="closeSettings();showScreen('screen-setup')">Reconfigure stages</button>
+      <br><br>
+      <button class="btn danger" onclick="resetToken()">Disconnect &amp; clear token</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+// STATE
+// ──────────────────────────────────────────────
+const S = {
+  token: localStorage.getItem('rb_token'),
+  stages: JSON.parse(localStorage.getItem('rb_stages') || 'null'),
+  projects: [],
+  tasks: [],
+  labels: [],
+  lastUpdated: null,
+};
+
+// stages format: [{name, label}, ...]
+
+// ──────────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────────
+async function init() {
+  if (!S.token) { showScreen('screen-token'); return; }
+  if (!S.stages) { await loadLabels(); showScreen('screen-setup'); return; }
+  showScreen('screen-board');
+  await loadData();
+}
+
+// ──────────────────────────────────────────────
+// API
+// ──────────────────────────────────────────────
+async function api(path, method = 'GET', body = null) {
+  const opts = {
+    method,
+    headers: { 'Authorization': `Bearer ${S.token}`, 'Content-Type': 'application/json' },
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(`https://api.todoist.com/rest/v2${path}`, opts);
+  if (!r.ok) throw new Error(`Todoist API ${r.status}: ${await r.text()}`);
+  if (r.status === 204) return null;
+  return r.json();
+}
+
+// ──────────────────────────────────────────────
+// TOKEN SCREEN
+// ──────────────────────────────────────────────
+async function submitToken() {
+  const val = document.getElementById('token-input').value.trim();
+  const err = document.getElementById('token-error');
+  err.style.display = 'none';
+  if (!val) return;
+  S.token = val;
+  try {
+    await api('/projects');
+    localStorage.setItem('rb_token', val);
+    await loadLabels();
+    showScreen('screen-setup');
+  } catch(e) {
+    S.token = null;
+    err.textContent = 'Could not connect — check your token.';
+    err.style.display = 'block';
+  }
+}
+
+document.getElementById('token-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitToken();
+});
+
+// ──────────────────────────────────────────────
+// SETUP SCREEN
+// ──────────────────────────────────────────────
+const DEFAULT_STAGES = [
+  { name: 'Planning',     label: 'planning' },
+  { name: 'Data / Analysis', label: 'data-collection' },
+  { name: 'Writing',      label: 'writing' },
+  { name: 'Submitted',    label: 'under-review' },
+  { name: 'Revision',     label: 'revision' },
+  { name: 'On Ice',       label: 'on-ice' },
+];
+
+async function loadLabels() {
+  try {
+    S.labels = await api('/labels');
+  } catch(e) { S.labels = []; }
+}
+
+async function showSetup() {
+  await loadLabels();
+  renderLabelChips();
+  renderStageRows(S.stages || DEFAULT_STAGES);
+  showScreen('screen-setup');
+}
+
+function renderLabelChips() {
+  const el = document.getElementById('label-chips');
+  if (!S.labels.length) { el.innerHTML = '<span style="color:var(--text3);font-size:12px">No labels found</span>'; return; }
+  el.innerHTML = S.labels.map(l =>
+    `<span class="chip" onclick="fillLabel('${escHtml(l.name)}')">${escHtml(l.name)}</span>`
+  ).join('');
+}
+
+function fillLabel(name) {
+  // find first empty label field and fill it
+  const inputs = document.querySelectorAll('.stage-label-input');
+  for (const inp of inputs) {
+    if (!inp.value) { inp.value = name; inp.focus(); return; }
+  }
+  addStageRow(name);
+}
+
+function renderStageRows(stages) {
+  const el = document.getElementById('stage-rows');
+  el.innerHTML = '';
+  stages.forEach((s, i) => addStageRow(s.label, s.name));
+}
+
+function addStageRow(labelVal = '', nameVal = '') {
+  const el = document.getElementById('stage-rows');
+  const row = document.createElement('div');
+  row.className = 'stage-row';
+  row.innerHTML = `
+    <span class="handle" title="drag to reorder">⠿</span>
+    <input type="text" placeholder="Display name" value="${escHtml(nameVal)}" class="stage-name-input">
+    <input type="text" placeholder="Todoist label" value="${escHtml(labelVal)}" class="stage-label-input">
+    <button class="del" onclick="this.closest('.stage-row').remove()">×</button>
+  `;
+  el.appendChild(row);
+}
+
+function saveSetup() {
+  const rows = document.querySelectorAll('.stage-row');
+  const stages = [];
+  for (const row of rows) {
+    const name = row.querySelector('.stage-name-input').value.trim();
+    const label = row.querySelector('.stage-label-input').value.trim();
+    if (name && label) stages.push({ name, label });
+  }
+  if (!stages.length) {
+    const err = document.getElementById('setup-error');
+    err.textContent = 'Add at least one stage.';
+    err.style.display = 'block';
+    return;
+  }
+  S.stages = stages;
+  localStorage.setItem('rb_stages', JSON.stringify(stages));
+  showScreen('screen-board');
+  loadData();
+}
+
+// ──────────────────────────────────────────────
+// DATA LOADING
+// ──────────────────────────────────────────────
+async function loadData(manual = false) {
+  const btn = document.getElementById('refresh-btn');
+  if (btn) { btn.classList.add('spin'); btn.disabled = true; }
+  try {
+    const [projects, tasks] = await Promise.all([
+      api('/projects'),
+      api('/tasks'),
+    ]);
+    S.projects = projects;
+    S.tasks = tasks;
+    S.lastUpdated = new Date();
+    renderBoard();
+    const el = document.getElementById('last-updated');
+    if (el) el.textContent = `updated ${S.lastUpdated.toLocaleTimeString()}`;
+  } catch(e) {
+    console.error(e);
+    if (manual) alert('Failed to load: ' + e.message);
+  } finally {
+    if (btn) { btn.classList.remove('spin'); btn.disabled = false; }
+  }
+}
+
+// ──────────────────────────────────────────────
+// DATA HELPERS
+// ──────────────────────────────────────────────
+const stageLabels = () => S.stages.map(s => s.label);
+
+function getProjectStage(projectId) {
+  const tasks = S.tasks.filter(t => t.project_id === projectId);
+  for (const t of tasks) {
+    const sl = (t.labels || []).find(l => stageLabels().includes(l));
+    if (sl) return { task: t, label: sl };
+  }
+  return null;
+}
+
+function getProjectMeta(projectId) {
+  // look for a task with first_author / venue info
+  // based on convention: task names like "first_author: X" or venue tags
+  const tasks = S.tasks.filter(t => t.project_id === projectId);
+  let venue = null, author = null;
+  for (const t of tasks) {
+    const n = t.content.toLowerCase();
+    // venue tags
+    const VENUES = ['ccs','usenix','ndss','s&p','soups','chi','cscw','pets','popets'];
+    for (const v of VENUES) {
+      if (n.includes(v)) { venue = v.toUpperCase(); break; }
+    }
+    // author pattern: "author: X" or labels
+    if (n.startsWith('author:') || n.startsWith('first author:')) {
+      author = t.content.split(':')[1].trim().split(' ')[0];
+    }
+    // also check labels for venue names
+    for (const l of (t.labels || [])) {
+      const lv = l.toLowerCase();
+      for (const v of VENUES) {
+        if (lv === v) { venue = v.toUpperCase(); break; }
+      }
+    }
+  }
+  return { venue, author };
+}
+
+function getProjectTasks(projectId) {
+  const stageLabelSet = new Set(stageLabels());
+  return S.tasks.filter(t => {
+    if (t.project_id !== projectId) return false;
+    if (t.is_completed) return false;
+    // exclude stage indicator tasks
+    if ((t.labels || []).some(l => stageLabelSet.has(l))) return false;
+    return true;
+  }).sort((a, b) => (a.priority || 4) - (b.priority || 4));
+}
+
+function nearestDue(tasks) {
+  const now = Date.now();
+  let nearest = null;
+  for (const t of tasks) {
+    if (!t.due) continue;
+    const d = new Date(t.due.date).getTime();
+    if (!nearest || d < nearest) nearest = d;
+  }
+  return nearest;
+}
+
+function dueStatus(dateMs) {
+  const now = Date.now();
+  const diff = dateMs - now;
+  if (diff < 0) return 'overdue';
+  if (diff < 7 * 86400000) return 'due-soon';
+  return 'ok';
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// ──────────────────────────────────────────────
+// RENDER BOARD
+// ──────────────────────────────────────────────
+function renderBoard() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+
+  S.stages.forEach((stage, idx) => {
+    const projects = S.projects.filter(p => {
+      const s = getProjectStage(p.id);
+      return s && s.label === stage.label;
+    });
+
+    const col = document.createElement('div');
+    col.className = 'col';
+    col.dataset.stage = idx;
+
+    col.innerHTML = `
+      <div class="col-head">
+        <span class="col-name">${escHtml(stage.name)}</span>
+        <span class="col-count">${projects.length}</span>
+      </div>
+      <div class="col-body" id="col-${idx}"></div>
+    `;
+    board.appendChild(col);
+
+    const body = col.querySelector('.col-body');
+    if (!projects.length) {
+      body.innerHTML = '<div class="empty-col">—</div>';
+    } else {
+      projects.forEach(p => body.appendChild(renderCard(p, stage)));
+    }
+  });
+
+  // Unassigned column
+  const unassigned = S.projects.filter(p => !getProjectStage(p.id));
+  if (unassigned.length) {
+    const col = document.createElement('div');
+    col.className = 'col';
+    col.dataset.stage = '99';
+    col.innerHTML = `
+      <div class="col-head">
+        <span class="col-name" style="color:var(--text3)">Unassigned</span>
+        <span class="col-count">${unassigned.length}</span>
+      </div>
+      <div class="col-body"></div>
+    `;
+    board.appendChild(col);
+    const body = col.querySelector('.col-body');
+    unassigned.forEach(p => body.appendChild(renderCard(p, null)));
+  }
+}
+
+function renderCard(project, stage) {
+  const tasks = getProjectTasks(project.id);
+  const meta = getProjectMeta(project.id);
+  const nearest = nearestDue(tasks);
+  const status = nearest ? dueStatus(nearest) : null;
+  const openCount = tasks.length;
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.onclick = () => openModal(project);
+
+  let tags = '';
+  if (meta.venue) tags += `<span class="tag venue">${escHtml(meta.venue)}</span>`;
+  if (meta.author) tags += `<span class="tag author">${escHtml(meta.author)}</span>`;
+  if (nearest) {
+    const label = formatDate(new Date(nearest).toISOString().split('T')[0]);
+    tags += `<span class="tag ${status}">${status === 'overdue' ? '⚠ ' : ''}${label}</span>`;
+  }
+  if (openCount) tags += `<span class="tag">${openCount} task${openCount !== 1 ? 's' : ''}</span>`;
+
+  card.innerHTML = `
+    <div class="card-name">${escHtml(project.name)}</div>
+    ${tags ? `<div class="card-meta">${tags}</div>` : ''}
+  `;
+  return card;
+}
+
+// ──────────────────────────────────────────────
+// PROJECT MODAL
+// ──────────────────────────────────────────────
+function openModal(project) {
+  const overlay = document.getElementById('modal-overlay');
+  const title = document.getElementById('modal-title');
+  const body = document.getElementById('modal-body');
+
+  title.textContent = project.name;
+  body.innerHTML = renderModalBody(project);
+  overlay.classList.add('open');
+}
+
+function renderModalBody(project) {
+  const stageInfo = getProjectStage(project.id);
+  const tasks = getProjectTasks(project.id);
+  const meta = getProjectMeta(project.id);
+
+  let html = '';
+
+  // Stage selector
+  html += `<div class="detail-row" style="align-items:flex-start">
+    <span class="label">Stage</span>
+    <div class="stage-selector">
+      ${S.stages.map(s => `
+        <button class="stage-opt ${stageInfo && stageInfo.label === s.label ? 'active' : ''}"
+          onclick="moveStage('${project.id}', '${escHtml(stageInfo ? stageInfo.task.id : '')}', '${escHtml(stageInfo ? stageInfo.label : '')}', '${escHtml(s.label)}')">
+          ${escHtml(s.name)}
+        </button>
+      `).join('')}
+    </div>
+  </div>`;
+
+  if (meta.venue) html += `<div class="detail-row"><span class="label">Venue</span><span class="value">${escHtml(meta.venue)}</span></div>`;
+  if (meta.author) html += `<div class="detail-row"><span class="label">Author</span><span class="value">${escHtml(meta.author)}</span></div>`;
+
+  // Todoist link
+  html += `<div class="detail-row">
+    <span class="label">Open</span>
+    <a href="todoist://project?id=${project.id}" style="color:var(--accent);font-size:12px;text-decoration:none" onclick="event.stopPropagation()">in Todoist app ↗</a>
+  </div>`;
+
+  // Tasks
+  html += `<div class="tasks-section">
+    <div class="section-label">Open tasks (${tasks.length})</div>`;
+
+  if (!tasks.length) {
+    html += '<div class="no-tasks">No open tasks</div>';
+  } else {
+    tasks.forEach(t => {
+      const pClass = t.priority === 4 ? 'p1' : t.priority === 3 ? 'p2' : t.priority === 2 ? 'p3' : '';
+      const dueStr = t.due ? t.due.date : '';
+      const status = dueStr ? dueStatus(new Date(dueStr).getTime()) : '';
+      html += `
+        <div class="task-item ${pClass}" id="task-${t.id}">
+          <div class="task-check" onclick="completeTask('${t.id}', '${project.id}')"></div>
+          <div class="task-content">
+            <div class="task-name">${escHtml(t.content)}</div>
+            ${dueStr
+              ? `<div class="task-due ${status}" onclick="editDue('${t.id}', '${dueStr}', '${project.id}')">
+                  ${status === 'overdue' ? '⚠ ' : '📅 '}${formatDate(dueStr)}
+                </div>`
+              : `<div class="task-due" onclick="editDue('${t.id}', '', '${project.id}')">+ due date</div>`
+            }
+          </div>
+        </div>`;
+    });
+  }
+  html += '</div>';
+  return html;
+}
+
+async function moveStage(projectId, oldTaskId, oldLabel, newLabel) {
+  if (oldLabel === newLabel) return;
+  try {
+    if (oldTaskId) {
+      // Get current task to preserve other labels
+      const task = S.tasks.find(t => t.id === oldTaskId);
+      if (task) {
+        const newLabels = (task.labels || []).filter(l => l !== oldLabel).concat(newLabel);
+        await api(`/tasks/${oldTaskId}`, 'POST', { labels: newLabels });
+        task.labels = newLabels;
+      }
+    } else {
+      // No stage task yet - create a minimal one? Or just alert
+      alert('No stage task found for this project. Create a task with a stage label in Todoist first.');
+      return;
+    }
+    // Update local state
+    const stageInfo = getProjectStage(projectId);
+    // Re-render board and modal
+    renderBoard();
+    const project = S.projects.find(p => p.id === projectId);
+    if (project) document.getElementById('modal-body').innerHTML = renderModalBody(project);
+  } catch(e) {
+    alert('Failed to update stage: ' + e.message);
+  }
+}
+
+async function completeTask(taskId, projectId) {
+  try {
+    await api(`/tasks/${taskId}/close`, 'POST');
+    S.tasks = S.tasks.filter(t => t.id !== taskId);
+    renderBoard();
+    const project = S.projects.find(p => p.id === projectId);
+    if (project) document.getElementById('modal-body').innerHTML = renderModalBody(project);
+  } catch(e) {
+    alert('Failed to complete task: ' + e.message);
+  }
+}
+
+function editDue(taskId, currentDue, projectId) {
+  const taskEl = document.getElementById(`task-${taskId}`);
+  if (!taskEl) return;
+  const dueEl = taskEl.querySelector('.task-due');
+  if (!dueEl) return;
+
+  const inp = document.createElement('input');
+  inp.type = 'date';
+  inp.className = 'task-due-edit';
+  inp.value = currentDue || '';
+  inp.onblur = () => saveDue(taskId, inp.value, projectId);
+  inp.onkeydown = e => {
+    if (e.key === 'Enter') inp.blur();
+    if (e.key === 'Escape') { inp.remove(); dueEl.style.display = ''; }
+  };
+  dueEl.style.display = 'none';
+  dueEl.parentNode.insertBefore(inp, dueEl.nextSibling);
+  inp.focus();
+}
+
+async function saveDue(taskId, dateVal, projectId) {
+  try {
+    const body = dateVal ? { due_date: dateVal } : { due_string: 'no due date' };
+    await api(`/tasks/${taskId}`, 'POST', body);
+    const task = S.tasks.find(t => t.id === taskId);
+    if (task) {
+      if (dateVal) task.due = { date: dateVal };
+      else task.due = null;
+    }
+    renderBoard();
+    const project = S.projects.find(p => p.id === projectId);
+    if (project) document.getElementById('modal-body').innerHTML = renderModalBody(project);
+  } catch(e) {
+    alert('Failed to update due date: ' + e.message);
+  }
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// ──────────────────────────────────────────────
+// SETTINGS
+// ──────────────────────────────────────────────
+function openSettings() {
+  document.getElementById('settings-overlay').classList.add('open');
+}
+function closeSettings(e) {
+  if (e && e.target !== document.getElementById('settings-overlay')) return;
+  document.getElementById('settings-overlay').classList.remove('open');
+}
+
+function resetToken() {
+  localStorage.removeItem('rb_token');
+  localStorage.removeItem('rb_stages');
+  S.token = null; S.stages = null;
+  location.reload();
+}
+
+// ──────────────────────────────────────────────
+// UTILS
+// ──────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+// Service worker registration
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+
+// Keyboard shortcut: R to refresh
+document.addEventListener('keydown', e => {
+  if (e.key === 'r' && !e.metaKey && !e.ctrlKey && document.activeElement.tagName !== 'INPUT') {
+    loadData(true);
+  }
+  if (e.key === 'Escape') {
+    closeModal();
+    closeSettings();
+  }
+});
+
+init();
+</script>
+</body>
+</html>
