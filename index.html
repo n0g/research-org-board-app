@@ -554,8 +554,12 @@ async function submitToken() {
   try {
     await api('/projects');
     localStorage.setItem('rb_token', val);
-    await loadLabels();
-    showScreen('screen-setup');
+    if (!S.stages) {
+      S.stages = DEFAULT_STAGES;
+      localStorage.setItem('rb_stages', JSON.stringify(DEFAULT_STAGES));
+    }
+    showScreen('screen-board');
+    loadData();
   } catch(e) {
     S.token = null;
     err.textContent = 'Could not connect — check your token.';
