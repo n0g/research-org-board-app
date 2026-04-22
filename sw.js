@@ -1,4 +1,4 @@
-const CACHE = 'rb-v12';
+const CACHE = 'rb-v13';
 const ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e => {

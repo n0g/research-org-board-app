@@ -1200,9 +1200,10 @@ function escHtml(str) {
     .replace(/'/g,'&#39;');
 }
 
-// Service worker registration
+// Service worker registration — auto-reload when a new SW takes control
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
+  navigator.serviceWorker.addEventListener('controllerchange', () => window.location.reload());
 }
 
 // Keyboard shortcut: R to refresh
