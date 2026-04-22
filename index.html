@@ -17,7 +17,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Research">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
   <style>
@@ -731,6 +731,7 @@ async function loadData(manual = false) {
     S.excludedSectionIds = new Set(sections.filter(s => EXCLUDED.has(s.name)).map(s => s.id));
     S.lastUpdated = new Date();
     renderBoard();
+    scrollToStageParam();
     const el = document.getElementById('last-updated');
     if (el) el.textContent = `updated ${S.lastUpdated.toLocaleTimeString()}`;
   } catch(e) {
@@ -821,6 +822,15 @@ function formatDate(dateStr) {
 // ──────────────────────────────────────────────
 // RENDER BOARD
 // ──────────────────────────────────────────────
+function scrollToStageParam() {
+  const label = new URLSearchParams(location.search).get('stage');
+  if (!label) return;
+  const idx = S.stages.findIndex(s => s.label === label);
+  if (idx === -1) return;
+  const col = document.querySelector(`.col[data-stage="${idx}"]`);
+  if (col) col.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+}
+
 function getDisplayProjects() {
   const root = S.projects.find(p => !p.parent_id && p.name === 'Research');
   if (root) return S.projects.filter(p => p.parent_id === root.id);

@@ -4,8 +4,8 @@
   "description": "Research project pipeline tracker",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#0c0c0c",
-  "theme_color": "#0c0c0c",
+  "background_color": "#141414",
+  "theme_color": "#141414",
   "orientation": "any",
   "icons": [
     {
@@ -19,6 +19,28 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Planning",
+      "url": "./?stage=stage%3A%3Aplanning",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Preparing",
+      "url": "./?stage=stage%3A%3Apreparing-to-submit",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Awaiting Reviews",
+      "url": "./?stage=stage%3A%3Aunder-submission",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Revision",
+      "url": "./?stage=stage%3A%3Arevision",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

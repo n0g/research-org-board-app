@@ -1,5 +1,6 @@
-const CACHE = 'rb-v13';
-const ASSETS = ['./', './index.html', './manifest.json'];
+const CACHE = 'rb-v14';
+const ASSETS = ['./', './index.html', './manifest.json',
+  './icons/icon-192.png', './icons/icon-512.png', './icons/icon-180.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
