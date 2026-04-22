@@ -233,8 +233,10 @@
     }
     .tag.venue { color: var(--blue); border-color: #2a3a50; background: #141c28; }
     .tag.author { color: var(--accent); border-color: #4a3820; background: #1c1408; }
+    .tag.person { color: var(--green); border-color: #2a4028; background: #0c180c; }
     .tag.overdue { color: var(--red); border-color: #5a2828; background: #1c0c0c; }
     .tag.due-soon { color: #c8903a; border-color: #503820; background: #1c1408; }
+    .card-status { font-size: 11px; color: var(--text2); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .card-tasks { font-size: 11px; color: var(--text3); margin-top: 8px; }
     .card-tasks span { color: var(--text2); }
 
@@ -830,24 +832,31 @@ function renderCard(project, stage) {
   const tasks = getProjectTasks(project.id);
   const meta = getProjectMeta(project.id);
   const nearest = nearestDue(tasks);
-  const status = nearest ? dueStatus(nearest) : null;
+  const dueSt = nearest ? dueStatus(nearest) : null;
   const openCount = tasks.length;
+  const stageInfo = getProjectStage(project.id);
+  const stageLabelSet = new Set(stageLabels());
+  const statusText = stageInfo ? stageInfo.task.content : '';
+  const personLabels = stageInfo
+    ? (stageInfo.task.labels || []).filter(l => !stageLabelSet.has(l))
+    : [];
 
   const card = document.createElement('div');
   card.className = 'card';
   card.onclick = () => openModal(project);
 
   let tags = '';
+  personLabels.forEach(l => { tags += `<span class="tag person">${escHtml(l)}</span>`; });
   if (meta.venue) tags += `<span class="tag venue">${escHtml(meta.venue)}</span>`;
-  if (meta.author) tags += `<span class="tag author">${escHtml(meta.author)}</span>`;
   if (nearest) {
     const label = formatDate(new Date(nearest).toISOString().split('T')[0]);
-    tags += `<span class="tag ${status}">${status === 'overdue' ? '⚠ ' : ''}${label}</span>`;
+    tags += `<span class="tag ${dueSt}">${dueSt === 'overdue' ? '⚠ ' : ''}${label}</span>`;
   }
   if (openCount) tags += `<span class="tag">${openCount} task${openCount !== 1 ? 's' : ''}</span>`;
 
   card.innerHTML = `
     <div class="card-name">${escHtml(project.name)}</div>
+    ${statusText ? `<div class="card-status">${escHtml(statusText)}</div>` : ''}
     ${tags ? `<div class="card-meta">${tags}</div>` : ''}
   `;
   return card;
