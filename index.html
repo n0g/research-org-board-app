@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Research Board</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0c0c0c" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f4f1ec" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f0f4f8" media="(prefers-color-scheme: light)">
   <script>
     (function(){
       var t = localStorage.getItem('rb_theme') || 'auto';
@@ -31,57 +31,59 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root, [data-theme="dark"] {
-      --bg:        #0c0c0c;
-      --bg1:       #141414;
-      --bg2:       #1c1c1c;
-      --bg3:       #242424;
-      --border:    #2e2e2e;
-      --border2:   #3a3a3a;
-      --text:      #ddd8cc;
-      --text2:     #8a8480;
-      --text3:     #555250;
-      --accent:    #c9a96e;
-      --accent-d:  #8a6e40;
-      --red:       #d06060;
-      --green:     #6aa870;
-      --blue:      #6090c8;
+      --bg:        #0d1117;
+      --bg1:       #161c24;
+      --bg2:       #1e2530;
+      --bg3:       #262f3c;
+      --border:    #2a3344;
+      --border2:   #374356;
+      --text:      #d4dae6;
+      --text2:     #8a96a8;
+      --text3:     #6e7a8a;
+      --accent:    #d4a040;
+      --accent-d:  #9a7028;
+      --accent-bg: #1e1808;
+      --red:       #d06868;
+      --green:     #5aaa72;
+      --blue:      #5a90d8;
       --mono:      'IBM Plex Mono', monospace;
       --serif:     'Playfair Display', serif;
       --radius:    3px;
       --col-w:     300px;
-      --tag-venue-c: #6090c8; --tag-venue-b: #2a3a50;  --tag-venue-bg:  #141c28;
-      --tag-author-c:#c9a96e; --tag-author-b:#4a3820;  --tag-author-bg: #1c1408;
-      --tag-person-c:#6aa870; --tag-person-b:#2a4028;  --tag-person-bg: #0c180c;
-      --tag-over-c:  #d06060; --tag-over-b:  #5a2828;  --tag-over-bg:   #1c0c0c;
-      --tag-soon-c:  #c8903a; --tag-soon-b:  #503820;  --tag-soon-bg:   #1c1408;
-      --err-bg: #1c0c0c; --err-b: #5a2828;
-      --stage-0: #2a3a50; --stage-1: #2a4030; --stage-2: #4a3820;
-      --stage-3: #402840; --stage-4: #502828; --stage-5: #303030;
+      --tag-venue-c: #5a90d8; --tag-venue-b: #2a3a58;  --tag-venue-bg:  #111e30;
+      --tag-author-c:#d4a040; --tag-author-b:#4a3818;  --tag-author-bg: #1a140a;
+      --tag-person-c:#5aaa72; --tag-person-b:#284038;  --tag-person-bg: #0c1a10;
+      --tag-over-c:  #d06868; --tag-over-b:  #5a2a2a;  --tag-over-bg:   #1a0e0e;
+      --tag-soon-c:  #c89040; --tag-soon-b:  #503818;  --tag-soon-bg:   #1a1208;
+      --err-bg: #1a0e0e; --err-b: #5a2a2a;
+      --stage-0: #2a3a58; --stage-1: #284038; --stage-2: #4a3818;
+      --stage-3: #3a2848; --stage-4: #502828; --stage-5: #283040;
     }
 
     [data-theme="light"] {
-      --bg:        #f4f1ec;
+      --bg:        #f0f4f8;
       --bg1:       #ffffff;
-      --bg2:       #ebe7e0;
-      --bg3:       #e2ddd6;
-      --border:    #d0cbc3;
-      --border2:   #b8b2aa;
-      --text:      #1c1916;
-      --text2:     #6b6560;
-      --text3:     #9a9590;
-      --accent:    #9a7035;
-      --accent-d:  #7a5428;
+      --bg2:       #e4eaf2;
+      --bg3:       #d8e0ea;
+      --border:    #c0cad8;
+      --border2:   #a8b4c4;
+      --text:      #1a1e26;
+      --text2:     #5a6678;
+      --text3:     #687080;
+      --accent:    #9a7828;
+      --accent-d:  #7a5c1c;
+      --accent-bg: #f8f0dc;
       --red:       #b83030;
       --green:     #3a7840;
-      --blue:      #3868a8;
-      --tag-venue-c: #3868a8; --tag-venue-b: #a8bcd8;  --tag-venue-bg:  #e8f0fa;
-      --tag-author-c:#9a7035; --tag-author-b:#d4b87a;  --tag-author-bg: #faf3e4;
-      --tag-person-c:#3a7840; --tag-person-b:#9ac8a0;  --tag-person-bg: #e8f5ea;
-      --tag-over-c:  #b83030; --tag-over-b:  #e0a0a0;  --tag-over-bg:   #fde8e8;
-      --tag-soon-c:  #9a6020; --tag-soon-b:  #d8b880;  --tag-soon-bg:   #fdf3e4;
-      --err-bg: #fde8e8; --err-b: #e0a0a0;
-      --stage-0: #a8bcd8; --stage-1: #9ac8a0; --stage-2: #d4b87a;
-      --stage-3: #c8a0c8; --stage-4: #e0a0a0; --stage-5: #c0bab4;
+      --blue:      #3468a8;
+      --tag-venue-c: #3468a8; --tag-venue-b: #9ab4d4;  --tag-venue-bg:  #e4eef8;
+      --tag-author-c:#9a7828; --tag-author-b:#c8a050;  --tag-author-bg: #f8f0dc;
+      --tag-person-c:#3a7840; --tag-person-b:#88b890;  --tag-person-bg: #e0f0e4;
+      --tag-over-c:  #b83030; --tag-over-b:  #d89898;  --tag-over-bg:   #fce4e4;
+      --tag-soon-c:  #9a6020; --tag-soon-b:  #d0a868;  --tag-soon-bg:   #faf0e0;
+      --err-bg: #fce4e4; --err-b: #d89898;
+      --stage-0: #9ab4d4; --stage-1: #88b890; --stage-2: #c8a050;
+      --stage-3: #b890c8; --stage-4: #d89898; --stage-5: #a0aab8;
     }
 
     html, body {
@@ -415,7 +417,7 @@
       transition: all 0.1s;
     }
     .stage-opt:hover { border-color: var(--border2); color: var(--text); }
-    .stage-opt.active { border-color: var(--accent); color: var(--accent); background: #1c1408; }
+    .stage-opt.active { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
 
     .tasks-section { margin-top: 16px; }
     .tasks-section .section-label { margin-bottom: 10px; }
