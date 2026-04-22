@@ -519,7 +519,10 @@ const S = {
 // ──────────────────────────────────────────────
 async function init() {
   if (!S.token) { showScreen('screen-token'); return; }
-  if (!S.stages) { await loadLabels(); showScreen('screen-setup'); return; }
+  if (!S.stages) {
+    S.stages = DEFAULT_STAGES;
+    localStorage.setItem('rb_stages', JSON.stringify(DEFAULT_STAGES));
+  }
   showScreen('screen-board');
   await loadData();
 }
@@ -568,12 +571,12 @@ document.getElementById('token-input').addEventListener('keydown', e => {
 // SETUP SCREEN
 // ──────────────────────────────────────────────
 const DEFAULT_STAGES = [
-  { name: 'Planning',     label: 'planning' },
-  { name: 'Data / Analysis', label: 'data-collection' },
-  { name: 'Writing',      label: 'writing' },
-  { name: 'Submitted',    label: 'under-review' },
-  { name: 'Revision',     label: 'revision' },
-  { name: 'On Ice',       label: 'on-ice' },
+  { name: 'Planning',          label: 'stage::planning' },
+  { name: 'Data Collection',   label: 'stage::data-collection' },
+  { name: 'Preparing',         label: 'stage::preparing-to-submit' },
+  { name: 'Awaiting Reviews',  label: 'stage::under-submission' },
+  { name: 'Revision',          label: 'stage::revision' },
+  { name: 'On Ice',            label: 'stage::on-ice' },
 ];
 
 async function loadLabels() {
@@ -750,12 +753,19 @@ function formatDate(dateStr) {
 // ──────────────────────────────────────────────
 // RENDER BOARD
 // ──────────────────────────────────────────────
+function getDisplayProjects() {
+  const root = S.projects.find(p => !p.parent_id && p.name === 'Research');
+  if (root) return S.projects.filter(p => p.parent_id === root.id);
+  return S.projects;
+}
+
 function renderBoard() {
   const board = document.getElementById('board');
   board.innerHTML = '';
+  const displayProjects = getDisplayProjects();
 
   S.stages.forEach((stage, idx) => {
-    const projects = S.projects.filter(p => {
+    const projects = displayProjects.filter(p => {
       const s = getProjectStage(p.id);
       return s && s.label === stage.label;
     });
@@ -782,7 +792,7 @@ function renderBoard() {
   });
 
   // Unassigned column
-  const unassigned = S.projects.filter(p => !getProjectStage(p.id));
+  const unassigned = displayProjects.filter(p => !getProjectStage(p.id));
   if (unassigned.length) {
     const col = document.createElement('div');
     col.className = 'col';
