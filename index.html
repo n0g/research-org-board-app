@@ -536,7 +536,7 @@ async function api(path, method = 'GET', body = null) {
     headers: { 'Authorization': `Bearer ${S.token}`, 'Content-Type': 'application/json' },
   };
   if (body) opts.body = JSON.stringify(body);
-  const r = await fetch(`https://api.todoist.com/rest/v2${path}`, opts);
+  const r = await fetch(`https://api.todoist.com/api/v1${path}`, opts);
   if (!r.ok) throw new Error(`Todoist API ${r.status}: ${await r.text()}`);
   if (r.status === 204) return null;
   return r.json();
