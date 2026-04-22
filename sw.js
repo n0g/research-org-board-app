@@ -1,6 +1,9 @@
-const CACHE = 'rb-v21';
+const CACHE = 'rb-v22';
 const ASSETS = ['./', './index.html', './manifest.json',
-  './icons/icon-32.png', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-180.png'];
+  './icons/icon-32.png', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-180.png',
+  './fonts/ibm-plex-mono-300.woff2', './fonts/ibm-plex-mono-300-italic.woff2',
+  './fonts/ibm-plex-mono-400.woff2', './fonts/ibm-plex-mono-500.woff2',
+  './fonts/playfair-display.woff2'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
@@ -21,16 +24,6 @@ self.addEventListener('fetch', e => {
   if (e.request.url.includes('todoist.com')) {
     // Always go to network for API; fall through on failure
     e.respondWith(fetch(e.request).catch(() => new Response('{}', { headers: {'Content-Type':'application/json'} })));
-    return;
-  }
-  if (e.request.url.includes('fonts.googleapis.com') || e.request.url.includes('fonts.gstatic.com')) {
-    e.respondWith(
-      caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
-        return res;
-      }))
-    );
     return;
   }
   // App shell: cache-first, fall back to network
