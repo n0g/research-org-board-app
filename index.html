@@ -5,7 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Research Board</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0c0c0c">
+  <meta name="theme-color" content="#0c0c0c" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f4f1ec" media="(prefers-color-scheme: light)">
+  <script>
+    (function(){
+      var t = localStorage.getItem('rb_theme') || 'auto';
+      var dark = t === 'dark' || (t === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    })();
+  </script>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Research">
@@ -15,7 +23,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
+    :root, [data-theme="dark"] {
       --bg:        #0c0c0c;
       --bg1:       #141414;
       --bg2:       #1c1c1c;
@@ -34,6 +42,39 @@
       --serif:     'Playfair Display', serif;
       --radius:    3px;
       --col-w:     300px;
+      --tag-venue-c: #6090c8; --tag-venue-b: #2a3a50;  --tag-venue-bg:  #141c28;
+      --tag-author-c:#c9a96e; --tag-author-b:#4a3820;  --tag-author-bg: #1c1408;
+      --tag-person-c:#6aa870; --tag-person-b:#2a4028;  --tag-person-bg: #0c180c;
+      --tag-over-c:  #d06060; --tag-over-b:  #5a2828;  --tag-over-bg:   #1c0c0c;
+      --tag-soon-c:  #c8903a; --tag-soon-b:  #503820;  --tag-soon-bg:   #1c1408;
+      --err-bg: #1c0c0c; --err-b: #5a2828;
+      --stage-0: #2a3a50; --stage-1: #2a4030; --stage-2: #4a3820;
+      --stage-3: #402840; --stage-4: #502828; --stage-5: #303030;
+    }
+
+    [data-theme="light"] {
+      --bg:        #f4f1ec;
+      --bg1:       #ffffff;
+      --bg2:       #ebe7e0;
+      --bg3:       #e2ddd6;
+      --border:    #d0cbc3;
+      --border2:   #b8b2aa;
+      --text:      #1c1916;
+      --text2:     #6b6560;
+      --text3:     #9a9590;
+      --accent:    #9a7035;
+      --accent-d:  #7a5428;
+      --red:       #b83030;
+      --green:     #3a7840;
+      --blue:      #3868a8;
+      --tag-venue-c: #3868a8; --tag-venue-b: #a8bcd8;  --tag-venue-bg:  #e8f0fa;
+      --tag-author-c:#9a7035; --tag-author-b:#d4b87a;  --tag-author-bg: #faf3e4;
+      --tag-person-c:#3a7840; --tag-person-b:#9ac8a0;  --tag-person-bg: #e8f5ea;
+      --tag-over-c:  #b83030; --tag-over-b:  #e0a0a0;  --tag-over-bg:   #fde8e8;
+      --tag-soon-c:  #9a6020; --tag-soon-b:  #d8b880;  --tag-soon-bg:   #fdf3e4;
+      --err-bg: #fde8e8; --err-b: #e0a0a0;
+      --stage-0: #a8bcd8; --stage-1: #9ac8a0; --stage-2: #d4b87a;
+      --stage-3: #c8a0c8; --stage-4: #e0a0a0; --stage-5: #c0bab4;
     }
 
     html, body {
@@ -236,11 +277,11 @@
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
-    .tag.venue { color: var(--blue); border-color: #2a3a50; background: #141c28; }
-    .tag.author { color: var(--accent); border-color: #4a3820; background: #1c1408; }
-    .tag.person { color: var(--green); border-color: #2a4028; background: #0c180c; }
-    .tag.overdue { color: var(--red); border-color: #5a2828; background: #1c0c0c; }
-    .tag.due-soon { color: #c8903a; border-color: #503820; background: #1c1408; }
+    .tag.venue    { color: var(--tag-venue-c);  border-color: var(--tag-venue-b);  background: var(--tag-venue-bg); }
+    .tag.author   { color: var(--tag-author-c); border-color: var(--tag-author-b); background: var(--tag-author-bg); }
+    .tag.person   { color: var(--tag-person-c); border-color: var(--tag-person-b); background: var(--tag-person-bg); }
+    .tag.overdue  { color: var(--tag-over-c);   border-color: var(--tag-over-b);   background: var(--tag-over-bg); }
+    .tag.due-soon { color: var(--tag-soon-c);   border-color: var(--tag-soon-b);   background: var(--tag-soon-bg); }
     .card-status { font-size: 11px; color: var(--text2); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .card-tasks { font-size: 11px; color: var(--text3); margin-top: 8px; }
     .card-tasks span { color: var(--text2); }
@@ -411,19 +452,17 @@
     .settings-body::-webkit-scrollbar { width: 4px; }
     .settings-body::-webkit-scrollbar-thumb { background: var(--border2); }
 
-    .error-msg { color: var(--red); font-size: 12px; padding: 8px 12px; background: #1c0c0c; border: 1px solid #5a2828; border-radius: var(--radius); margin-bottom: 12px; }
+    .error-msg { color: var(--red); font-size: 12px; padding: 8px 12px; background: var(--err-bg); border: 1px solid var(--err-b); border-radius: var(--radius); margin-bottom: 12px; }
 
     .kbd { background: var(--bg3); border: 1px solid var(--border2); border-bottom-width: 2px; border-radius: 2px; padding: 1px 5px; font-size: 10px; color: var(--text2); }
 
     /* ── STAGE COLOR ACCENTS ── */
-    .col[data-stage="0"] .col-head { border-bottom-color: #2a3a50; }
-    .col[data-stage="1"] .col-head { border-bottom-color: #2a4030; }
-    .col[data-stage="2"] .col-head { border-bottom-color: #4a3820; }
-    .col[data-stage="3"] .col-head { border-bottom-color: #402840; }
-    .col[data-stage="4"] .col-head { border-bottom-color: #502828; }
-    .col[data-stage="5"] .col-head { border-bottom-color: #303030; }
-    .col[data-stage="6"] .col-head { border-bottom-color: #1e3030; }
-    .col[data-stage="7"] .col-head { border-bottom-color: #3a2810; }
+    .col[data-stage="0"] .col-head { border-bottom-color: var(--stage-0); }
+    .col[data-stage="1"] .col-head { border-bottom-color: var(--stage-1); }
+    .col[data-stage="2"] .col-head { border-bottom-color: var(--stage-2); }
+    .col[data-stage="3"] .col-head { border-bottom-color: var(--stage-3); }
+    .col[data-stage="4"] .col-head { border-bottom-color: var(--stage-4); }
+    .col[data-stage="5"] .col-head { border-bottom-color: var(--stage-5); }
   </style>
 </head>
 <body>
@@ -474,6 +513,7 @@
     <h1>Research Board</h1>
     <span class="sub" id="last-updated"></span>
     <button class="btn icon" id="refresh-btn" onclick="loadData(true)" title="Refresh">⟳</button>
+    <button class="btn icon" id="theme-btn" onclick="cycleTheme()" title="Toggle theme"></button>
     <button class="btn icon" onclick="openSettings()" title="Settings">⚙</button>
   </div>
   <div class="board" id="board"></div>
@@ -526,6 +566,7 @@ const S = {
 // INIT
 // ──────────────────────────────────────────────
 async function init() {
+  applyTheme(localStorage.getItem('rb_theme') || 'auto');
   if (!S.token) { showScreen('screen-token'); return; }
   if (!S.stages) {
     S.stages = DEFAULT_STAGES;
@@ -1100,6 +1141,30 @@ function closeModal(e) {
   if (e && e.target !== document.getElementById('modal-overlay')) return;
   document.getElementById('modal-overlay').classList.remove('open');
 }
+
+// ──────────────────────────────────────────────
+// THEME
+// ──────────────────────────────────────────────
+const THEME_ICONS = { auto: '◑', light: '☀', dark: '☾' };
+const THEME_CYCLE = { auto: 'light', light: 'dark', dark: 'auto' };
+
+function applyTheme(pref) {
+  const dark = pref === 'dark' || (pref === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = THEME_ICONS[pref];
+}
+
+function cycleTheme() {
+  const cur = localStorage.getItem('rb_theme') || 'auto';
+  const next = THEME_CYCLE[cur];
+  localStorage.setItem('rb_theme', next);
+  applyTheme(next);
+}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if ((localStorage.getItem('rb_theme') || 'auto') === 'auto') applyTheme('auto');
+});
 
 // ──────────────────────────────────────────────
 // SETTINGS
