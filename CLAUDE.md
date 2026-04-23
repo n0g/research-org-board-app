@@ -94,6 +94,32 @@ Three modes: **auto** (follows OS), **light**, **dark**. Stored in `localStorage
 
 Cache name must be bumped (e.g. `rb-v28` → `rb-v29`) with every deployment to force Safari to pick up the new version. The **cache-first** fetch strategy means the SW must be replaced before a reload picks up new assets. Todoist API calls always bypass the cache (network-only with empty-object fallback).
 
+## Intended Workflow
+
+The app is used as a **pipeline overview** across MacBook and tablet — not a day-to-day task manager. Key use cases:
+
+- **Passive overview** — keep all research projects in sight at a glance
+- **Status meetings** — walk through project states, quickly capture tasks that come up mid-conversation
+- **Sprint planning** — decide which projects are in focus for the week
+
+Task scheduling and calendar management stay outside this app (handled via Claude + Google Calendar).
+
+## Planned Features
+
+These were discussed and deferred pending real usage. Implement when the user asks.
+
+### Sprint focus (medium effort)
+Mark projects as "in focus" for the current sprint via a `sprint::focus` Todoist label (must use a label so state syncs across MacBook and tablet). Toggle from the card modal. Visual treatment: focused cards render normally; unfocused cards slightly dimmed (exact style TBD — user wants to use the app before deciding). Clear all focus labels at sprint start.
+
+### Ideas column (zero effort — config only)
+Add a `stage::idea` entry to the stage configuration via Settings → Reconfigure stages. Ideas get their own column; drag to Planning when a project becomes active. No code change needed — just document this for the user.
+
+### Quick-add project (medium effort)
+A "+" action on the board that creates a new Todoist sub-project under the "Research" parent project, with the `stage::idea` label applied automatically. Requires `POST /projects` with `name` and `parent_id`. The Research root project ID needs to be looked up at load time (already done in `getDisplayProjects()`).
+
+### Global quick-add task (small effort)
+Add a task to any project from anywhere on the board without opening the modal first. UI sketch: a small input that appears at the top of the board (or triggered by a keyboard shortcut), with a project picker. Useful during meetings when tasks come up across multiple projects in quick succession.
+
 ## Key localStorage Keys
 
 | Key         | Value                        |
