@@ -115,7 +115,7 @@ function renderLabelChips() {
   const el = document.getElementById('label-chips');
   if (!S.labels.length) { el.innerHTML = '<span style="color:var(--text3);font-size:12px">No labels found</span>'; return; }
   el.innerHTML = S.labels.map(l =>
-    `<span class="chip" data-label="${escHtml(l.name)}">${escHtml(l.name)}</span>`
+    `<span class="chip" tabindex="0" role="button" data-label="${escHtml(l.name)}">${escHtml(l.name)}</span>`
   ).join('');
 }
 
@@ -138,10 +138,10 @@ function addStageRow(labelVal = '', nameVal = '') {
   const row = document.createElement('div');
   row.className = 'stage-row';
   row.innerHTML = `
-    <span class="handle" title="drag to reorder">⠿</span>
-    <input type="text" placeholder="Display name" value="${escHtml(nameVal)}" class="stage-name-input">
-    <input type="text" placeholder="Todoist label" value="${escHtml(labelVal)}" class="stage-label-input">
-    <button class="del">×</button>
+    <span class="handle" aria-hidden="true" title="drag to reorder">⠿</span>
+    <input type="text" placeholder="Display name" aria-label="Stage display name" value="${escHtml(nameVal)}" class="stage-name-input">
+    <input type="text" placeholder="Todoist label" aria-label="Todoist label name" value="${escHtml(labelVal)}" class="stage-label-input">
+    <button class="del" aria-label="Remove stage">×</button>
   `;
   el.appendChild(row);
 }
@@ -173,6 +173,7 @@ async function loadData(manual = false) {
   const boardEl = document.getElementById('board');
   const loadingEl = document.getElementById('board-loading');
   if (!boardEl.children.length && loadingEl) loadingEl.style.display = 'flex';
+  boardEl.setAttribute('aria-busy', 'true');
   try {
     const [projects, tasks, sections] = await Promise.all([
       apiAll('/projects'),
@@ -194,6 +195,7 @@ async function loadData(manual = false) {
     if (manual) alert('Failed to load: ' + e.message);
   } finally {
     if (loadingEl) loadingEl.style.display = 'none';
+    boardEl.setAttribute('aria-busy', 'false');
   }
 }
 
@@ -326,7 +328,7 @@ function renderBoard() {
         <span class="col-name">${escHtml(stage.name)}</span>
         <span class="col-count">${projects.length}</span>
       </div>
-      <div class="col-body" id="col-${idx}"></div>
+      <div class="col-body" id="col-${idx}" role="list"></div>
     `;
     board.appendChild(col);
 
@@ -349,7 +351,7 @@ function renderBoard() {
         <span class="col-name" style="color:var(--text3)">Unassigned</span>
         <span class="col-count">${unassigned.length}</span>
       </div>
-      <div class="col-body"></div>
+      <div class="col-body" role="list"></div>
     `;
     board.appendChild(col);
     const body = col.querySelector('.col-body');
@@ -487,6 +489,7 @@ function renderCard(project, stage) {
 
   const card = document.createElement('div');
   card.className = 'card';
+  card.setAttribute('role', 'listitem');
   if (isStale && !isOnIce) card.classList.add('stale');
   if (isOnIce) card.classList.add('on-ice');
 
@@ -500,8 +503,14 @@ function renderCard(project, stage) {
     statusEl.className = 'card-status editable';
     statusEl.textContent = statusText;
     statusEl.title = 'Click to edit';
+    statusEl.tabIndex = 0;
+    statusEl.setAttribute('role', 'button');
+    statusEl.setAttribute('aria-label', 'Edit status: ' + statusText);
     statusEl.addEventListener('pointerdown', e => e.stopPropagation());
     statusEl.addEventListener('click', e => startStatusEdit(e, statusEl, stageInfo.task.id));
+    statusEl.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); startStatusEdit(e, statusEl, stageInfo.task.id); }
+    });
     card.appendChild(statusEl);
   }
 
@@ -612,6 +621,7 @@ function renderModalBody(project) {
   } else {
     tasks.forEach(t => {
       const pClass = t.priority === 4 ? 'p1' : t.priority === 3 ? 'p2' : t.priority === 2 ? 'p3' : '';
+      const pText = t.priority === 4 ? 'Priority 1' : t.priority === 3 ? 'Priority 2' : t.priority === 2 ? 'Priority 3' : '';
       const dueStr = t.due ? t.due.date : '';
       const status = dueStr ? dueStatus(new Date(dueStr).getTime()) : '';
       html += `
@@ -622,16 +632,16 @@ function renderModalBody(project) {
             data-task-id="${escHtml(t.id)}"
             data-project-id="${escHtml(project.id)}"></div>
           <div class="task-content">
-            <div class="task-name">${escHtml(t.content)}</div>
+            <div class="task-name">${pText ? `<span class="sr-only">${pText}: </span>` : ''}${escHtml(t.content)}</div>
             ${dueStr
-              ? `<div class="task-due ${status}"
+              ? `<div class="task-due ${status}" role="button" tabindex="0"
                   data-action="edit-due"
                   data-task-id="${escHtml(t.id)}"
                   data-due="${escHtml(dueStr)}"
                   data-project-id="${escHtml(project.id)}">
                   ${status === 'overdue' ? '⚠ ' : '📅 '}${formatDate(dueStr)}
                 </div>`
-              : `<div class="task-due"
+              : `<div class="task-due" role="button" tabindex="0"
                   data-action="edit-due"
                   data-task-id="${escHtml(t.id)}"
                   data-due=""
@@ -750,12 +760,36 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () 
 // ──────────────────────────────────────────────
 // SETTINGS
 // ──────────────────────────────────────────────
+let _settingsOpener = null;
+
+function trapFocusSettings(e) {
+  if (e.key !== 'Tab') return;
+  const focusable = Array.from(document.querySelector('.settings-panel').querySelectorAll(
+    'button, [href], input, [tabindex="0"]'
+  )).filter(el => !el.disabled && el.offsetParent !== null);
+  if (focusable.length < 2) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (e.shiftKey) {
+    if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+  } else {
+    if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+}
+
 function openSettings() {
-  document.getElementById('settings-overlay').classList.add('open');
+  _settingsOpener = document.activeElement;
+  const overlay = document.getElementById('settings-overlay');
+  overlay.classList.add('open');
+  overlay.addEventListener('keydown', trapFocusSettings);
+  document.getElementById('settings-close-btn').focus();
 }
 
 function closeSettings() {
-  document.getElementById('settings-overlay').classList.remove('open');
+  const overlay = document.getElementById('settings-overlay');
+  overlay.classList.remove('open');
+  overlay.removeEventListener('keydown', trapFocusSettings);
+  if (_settingsOpener) { _settingsOpener.focus(); _settingsOpener = null; }
 }
 
 function resetToken() {
@@ -851,6 +885,11 @@ document.getElementById('label-chips').addEventListener('click', e => {
   const chip = e.target.closest('.chip');
   if (chip) fillLabel(chip.dataset.label);
 });
+document.getElementById('label-chips').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const chip = e.target.closest('.chip');
+  if (chip) { e.preventDefault(); fillLabel(chip.dataset.label); }
+});
 
 // Board topbar
 document.getElementById('theme-btn').addEventListener('click', cycleTheme);
@@ -863,7 +902,9 @@ document.getElementById('modal-overlay').addEventListener('click', e => {
 document.getElementById('modal-body').addEventListener('keydown', e => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
   const check = e.target.closest('[data-action="complete-task"]');
-  if (check) { e.preventDefault(); completeTask(check.dataset.taskId, check.dataset.projectId); }
+  if (check) { e.preventDefault(); completeTask(check.dataset.taskId, check.dataset.projectId); return; }
+  const due = e.target.closest('[data-action="edit-due"]');
+  if (due) { e.preventDefault(); editDue(due.dataset.taskId, due.dataset.due, due.dataset.projectId); }
 });
 document.getElementById('modal-close-btn').addEventListener('click', closeModal);
 document.getElementById('modal-body').addEventListener('click', e => {
