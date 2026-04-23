@@ -518,6 +518,10 @@ function renderCard(project, stage) {
     tags += `<span class="tag ${dueSt}">${dueSt === 'overdue' ? '⚠ ' : ''}${label}</span>`;
   }
   if (openCount) tags += `<span class="tag">${openCount} task${openCount !== 1 ? 's' : ''}</span>`;
+  if (isStale && !isOnIce) {
+    const weeks = Math.floor(staleDays / 7);
+    tags += `<span class="tag stale-tag" role="img" aria-label="Stale — last updated ${weeks} week${weeks !== 1 ? 's' : ''} ago">⏱ ${weeks}w</span>`;
+  }
   if (tags) {
     const metaEl = document.createElement('div');
     metaEl.className = 'card-meta';
