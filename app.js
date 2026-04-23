@@ -651,8 +651,29 @@ function renderModalBody(project) {
         </div>`;
     });
   }
+  html += `<input type="text" class="quick-add-input"
+    placeholder="+ add a task…"
+    data-action="quick-add-task"
+    data-project-id="${escHtml(project.id)}"
+    aria-label="Add a task to this project">`;
   html += '</div>';
   return html;
+}
+
+async function quickAddTask(content, projectId) {
+  try {
+    const task = await api('/tasks', 'POST', { content, project_id: projectId });
+    S.tasks.push(task);
+    renderBoard();
+    const project = S.projects.find(p => p.id === projectId);
+    if (project) {
+      document.getElementById('modal-body').innerHTML = renderModalBody(project);
+      const inp = document.querySelector('[data-action="quick-add-task"]');
+      if (inp) inp.focus();
+    }
+  } catch(e) {
+    alert('Failed to add task: ' + e.message);
+  }
 }
 
 async function moveStage(projectId, oldTaskId, oldLabel, newLabel) {
@@ -900,6 +921,14 @@ document.getElementById('modal-overlay').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeModal();
 });
 document.getElementById('modal-body').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const quickAdd = e.target.closest('[data-action="quick-add-task"]');
+    if (quickAdd) {
+      const val = quickAdd.value.trim();
+      if (val) { e.preventDefault(); quickAddTask(val, quickAdd.dataset.projectId); }
+      return;
+    }
+  }
   if (e.key !== 'Enter' && e.key !== ' ') return;
   const check = e.target.closest('[data-action="complete-task"]');
   if (check) { e.preventDefault(); completeTask(check.dataset.taskId, check.dataset.projectId); return; }
