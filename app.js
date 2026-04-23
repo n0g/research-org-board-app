@@ -397,9 +397,12 @@ function startStatusEdit(e, statusEl, taskId) {
 // ──────────────────────────────────────────────
 // DRAG & DROP
 // ──────────────────────────────────────────────
+let _cardDragging = false;
+
 function initCardDrag(card, project) {
   card.addEventListener('pointerdown', e => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
+    _cardDragging = true;
 
     const startX = e.clientX;
     const startY = e.clientY;
@@ -448,6 +451,7 @@ function initCardDrag(card, project) {
 
     function onUp() {
       document.removeEventListener('pointermove', onMove);
+      _cardDragging = false;
       if (!dragging) { openModal(project); return; }
 
       ghost.remove();
@@ -854,7 +858,7 @@ function initPullToRefresh() {
   }, { passive: true });
 
   screen.addEventListener('touchmove', e => {
-    if (!active) return;
+    if (!active || _cardDragging) { active = false; return; }
     const dy = e.touches[0].clientY - startY;
     if (dy <= 4) return;
     const pull = Math.min(dy * 0.5, THRESHOLD);
@@ -868,6 +872,7 @@ function initPullToRefresh() {
   screen.addEventListener('touchend', e => {
     if (!active) return;
     active = false;
+    if (_cardDragging) return;
     const dy = e.changedTouches[0].clientY - startY;
     if (dy >= THRESHOLD && !refreshing) {
       refreshing = true;
