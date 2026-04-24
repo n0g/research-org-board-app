@@ -128,8 +128,13 @@ Three modes: **auto** (CSS media query), **light**, **dark**. Stored in `localSt
 
 - F7 CSS variables are overridden in `app.css` using `html[data-theme="dark/light"]` and `:root` selectors
 - `@keyframes ptr-spin` combines both `translateX(-50%)` and `rotate(360deg)` — do not split into two transforms (the global `.spin` only rotates, which would break the centering)
-- `.board-page .page-content` has `overflow: hidden; padding: 0 !important` so the horizontal board fills the full page height without vertical scroll
+- `.board-page .page-content` zeroes only left/right/bottom padding (not top) so F7's navbar offset padding-top is preserved; columns fill the remaining height
 - `input.quick-add-input` overrides base input styles with transparent background/border
+- Typography: `--ui` = system font stack (`-apple-system, BlinkMacSystemFont, …`); `--serif` = Playfair Display (card/modal titles); `--code` = IBM Plex Mono (only used for `.kbd`)
+- Color tokens follow iOS system color names: `--bg` = systemGroupedBackground, `--bg1` = secondarySystemGroupedBackground, etc.
+- `.board-navbar .btn.icon` uses Liquid Glass style: 32px circle, `backdrop-filter: blur`, semi-transparent border
+- Glass sheet: `.project-sheet` / `.settings-sheet` use `backdrop-filter: blur(48px) saturate(200%)` with semi-transparent `--f7-sheet-bg-color`; `.page-content` inside is `background: transparent` to let the blur show through
+- F7 dark mode: `<html>` gets both `data-theme="dark"` and `.dark` class — `useTheme.js` and `main.js` both toggle the class
 
 ## Service Worker
 
