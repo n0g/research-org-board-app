@@ -13,17 +13,16 @@
           <a class="setup-link" href="https://developers.cloudflare.com/workers/" target="_blank" rel="noopener">your own Cloudflare Worker</a>
           for full control.
         </p>
-        <div class="proxy-row">
-          <input
-            type="text"
-            v-model="proxyDraft"
-            placeholder="https://corsproxy.io/?url="
-            aria-label="Proxy URL"
-            class="proxy-input"
-            @keydown.enter.prevent="saveProxy"
-          >
-          <button class="proxy-btn" @click="saveProxy">Save</button>
-          <button v-if="store.proxyUrl" class="proxy-btn danger" @click="clearProxy">Clear</button>
+        <input
+          type="text"
+          v-model="proxyDraft"
+          placeholder="https://corsproxy.io/?url="
+          aria-label="Proxy URL"
+          @keydown.enter.prevent="saveProxy"
+        >
+        <div class="setup-actions" style="margin-top:8px">
+          <button v-if="store.proxyUrl" class="btn" @click="clearProxy">Clear</button>
+          <button class="btn primary" @click="saveProxy">Save</button>
         </div>
         <p v-if="store.proxyUrl" class="proxy-active">
           Active: <code class="inline-code">{{ store.proxyUrl }}</code>
@@ -91,7 +90,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useReviewsStore } from '../stores/reviews.js'
 
@@ -100,6 +99,7 @@ const tokenInputEl = ref(null)
 const nameInputEl = ref(null)
 
 const proxyDraft = ref(store.proxyUrl)
+watch(() => store.proxyUrl, val => { proxyDraft.value = val })
 const newUrl = ref('')
 const newToken = ref('')
 const newName = ref('')

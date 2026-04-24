@@ -237,14 +237,20 @@ a, button, .card, .chip, .stage-opt, .task-check, .task-due {
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
-  padding: 0 0 0 10px;
-  border-left: 0.5px solid var(--border2);
+  padding: 0;
   line-height: 1;
   -webkit-tap-highlight-color: transparent;
   transition: color 0.12s;
   white-space: nowrap;
 }
 .nav-sibling-link:hover { color: var(--accent); }
+
+/* Separator between nav items — works for both orderings */
+.board-title + .nav-sibling-link,
+.nav-sibling-link + .board-title {
+  border-left: 0.5px solid var(--border2);
+  padding-left: 10px;
+}
 
 .last-updated {
   font-size: 11px;
@@ -1069,35 +1075,6 @@ html[data-theme="light"] .review-status-badge.status-submitted {
 }
 
 /* ── HOTCRP PROXY SETUP ── */
-.proxy-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.proxy-input {
-  flex: 1;
-  min-width: 0;
-  width: auto !important; /* override input[type=text] { width: 100% } */
-}
-
-.proxy-btn {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-family: var(--ui);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 4px 0;
-  white-space: nowrap;
-  flex-shrink: 0;
-  -webkit-tap-highlight-color: transparent;
-  transition: opacity 0.1s;
-}
-.proxy-btn:hover { opacity: 0.65; }
-.proxy-btn.danger { color: var(--red); }
 
 .proxy-active {
   font-size: 12px;

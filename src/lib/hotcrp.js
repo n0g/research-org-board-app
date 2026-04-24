@@ -2,11 +2,11 @@ export async function fetchReviewPapers(siteUrl, token, proxyUrl = '') {
   const base = siteUrl.replace(/\/+$/, '')
   const hotcrpPath = `${base}/api/papers?q=re:me`
 
-  // When using a proxy: pass token separately so the Worker can send it as
-  // Authorization: Bearer (more reliable across HotCRP versions than ?api_key=).
-  // When direct: fall back to ?api_key= in the URL.
+  // Embed api_key in the target URL so generic proxies (corsproxy.io, etc.) forward auth
+  // correctly without needing to understand the &token= parameter. Custom Cloudflare Workers
+  // can still read &token= and send Authorization: Bearer instead.
   const url = proxyUrl
-    ? `${proxyUrl.replace(/\/+$/, '')}?url=${encodeURIComponent(hotcrpPath)}&token=${encodeURIComponent(token)}`
+    ? `${proxyUrl.replace(/\/+$/, '')}?url=${encodeURIComponent(hotcrpPath + '&api_key=' + encodeURIComponent(token))}&token=${encodeURIComponent(token)}`
     : `${hotcrpPath}&api_key=${encodeURIComponent(token)}`
 
   let r
