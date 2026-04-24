@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 
@@ -38,6 +38,12 @@ const store = useBoardStore()
 const tokenInput = ref('')
 const error = ref('')
 const busy = ref(false)
+
+onMounted(() => {
+  if (store.token) {
+    f7.views.main.router.navigate('/board/', { clearPreviousHistory: true })
+  }
+})
 
 async function submit() {
   const val = tokenInput.value.trim()
