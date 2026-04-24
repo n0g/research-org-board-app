@@ -1,0 +1,62 @@
+<template>
+  <div
+    class="col"
+    :class="{ 'drag-over': dragOver }"
+    :data-stage="stageIndex"
+    :data-stage-label="stage.label"
+    @dragover.prevent
+  >
+    <div class="col-head">
+      <span class="col-name">{{ stage.name }}</span>
+      <span class="col-count">{{ projects.length }}</span>
+    </div>
+    <div class="col-body" :id="'col-' + stageIndex" role="list">
+      <div v-if="!projects.length" class="empty-col">—</div>
+      <ProjectCard
+        v-for="project in projects"
+        :key="project.id"
+        :project="project"
+        :stage="stage"
+        @click="$emit('card-click', project)"
+      />
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { computed, ref } from 'vue'
+import { useBoardStore } from '../stores/board.js'
+import { getProjectDeadline } from '../lib/helpers.js'
+import ProjectCard from './ProjectCard.vue'
+
+const props = defineProps({
+  stage: { type: Object, required: true },
+  stageIndex: { type: Number, required: true },
+  overrideProjects: { type: Array, default: null },
+})
+
+defineEmits(['card-click'])
+
+const store = useBoardStore()
+const dragOver = ref(false)
+
+const projects = computed(() => {
+  if (props.overrideProjects) return props.overrideProjects
+  return store.displayProjects
+    .filter(p => {
+      const s = store.projectStage(p.id)
+      return s && s.label === props.stage.label
+    })
+    .sort((a, b) => {
+      const da = getProjectDeadline(store.tasks, store.deadlineSectionIds, a.id)
+      const db = getProjectDeadline(store.tasks, store.deadlineSectionIds, b.id)
+      if (!da && !db) return 0
+      if (!da) return 1
+      if (!db) return -1
+      return da - db
+    })
+})
+
+// Expose dragOver so ProjectCard can update it
+defineExpose({ dragOver })
+</script>
