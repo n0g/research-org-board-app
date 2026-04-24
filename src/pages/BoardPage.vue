@@ -17,7 +17,7 @@
           title="Settings"
           aria-label="Settings"
           @click="settingsOpen = true"
-        >⚙</button>
+        >⚙&#xFE0E;</button>
       </f7-nav-right>
     </f7-navbar>
 

@@ -1,6 +1,6 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const ICONS = { auto: '◑', light: '☀', dark: '☾' }
+const ICONS = { auto: '◑', light: '☀︎', dark: '☾︎' }
 const CYCLE = { auto: 'light', light: 'dark', dark: 'auto' }
 
 export function useTheme() {

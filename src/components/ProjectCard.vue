@@ -108,14 +108,14 @@ const tags = computed(() => {
   if (nearest.value) {
     const st = dueStatus(nearest.value)
     const label = formatDate(new Date(nearest.value).toISOString().split('T')[0])
-    list.push({ key: key++, cls: st, text: (st === 'overdue' ? '⚠ ' : '') + esc(label) })
+    list.push({ key: key++, cls: st, text: (st === 'overdue' ? '⚠︎ ' : '') + esc(label) })
   }
   if (tasks.value.length) {
     list.push({ key: key++, cls: '', text: tasks.value.length + ' task' + (tasks.value.length !== 1 ? 's' : '') })
   }
   if (isStale.value && !isOnIce.value) {
     const weeks = Math.floor(staleDays.value / 7)
-    list.push({ key: key++, cls: 'stale-tag', text: `⏱ ${weeks}w` })
+    list.push({ key: key++, cls: 'stale-tag', text: `⏱︎ ${weeks}w` })
   }
   return list
 })

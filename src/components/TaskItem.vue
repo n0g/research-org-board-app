@@ -25,7 +25,7 @@
         @keydown.enter.prevent="startDueEdit"
         @keydown.space.prevent="startDueEdit"
       >
-        <template v-if="task.due">{{ dueClass === 'overdue' ? '⚠ ' : '📅 ' }}{{ formattedDue }}</template>
+        <template v-if="task.due">{{ dueClass === 'overdue' ? '⚠︎ ' : '· ' }}{{ formattedDue }}</template>
         <template v-else>+ due date</template>
       </div>
       <input

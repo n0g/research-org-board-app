@@ -165,6 +165,13 @@ a, button, .card, .chip, .stage-opt, .task-check, .task-due {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Force text/monochrome emoji presentation (Chromium fallback; VS15 handles Safari) */
+.board-navbar .btn.icon,
+.tag,
+.task-due {
+  font-variant-emoji: text;
+}
+
 /* ── BOARD PAGE LAYOUT ── */
 .board-page,
 .board-page .page {
