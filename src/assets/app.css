@@ -211,6 +211,12 @@ a, button, .card, .chip, .stage-opt, .task-check, .task-due {
   margin-left: 14px;
 }
 
+.nav-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
 .board-title {
   font-family: var(--ui);
   font-size: 17px;
@@ -218,7 +224,25 @@ a, button, .card, .chip, .stage-opt, .task-check, .task-due {
   color: var(--text);
   margin: 0;
   letter-spacing: -0.02em;
+  white-space: nowrap;
 }
+
+.nav-sibling-link {
+  background: none;
+  border: none;
+  color: var(--text3);
+  font-family: var(--ui);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0 0 0 10px;
+  border-left: 0.5px solid var(--border2);
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.12s;
+  white-space: nowrap;
+}
+.nav-sibling-link:hover { color: var(--accent); }
 
 .last-updated {
   font-size: 11px;

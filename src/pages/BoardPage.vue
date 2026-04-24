@@ -2,7 +2,10 @@
   <f7-page name="board" class="board-page" no-swipeback>
     <f7-navbar class="board-navbar">
       <f7-nav-left>
-        <h1 class="board-title">Research Board</h1>
+        <div class="nav-title-group">
+          <h1 class="board-title">Research Board</h1>
+          <button class="nav-sibling-link" @click="goReviews">Reviews</button>
+        </div>
       </f7-nav-left>
       <f7-nav-right>
         <span class="last-updated" aria-live="polite">{{ lastUpdatedText }}</span>
