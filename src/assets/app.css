@@ -199,7 +199,7 @@ a, button, .card, .chip, .stage-opt, .task-check, .task-due {
 }
 
 .board-navbar .navbar-right {
-  gap: 8px;
+  gap: 20px;
 }
 
 .board-title {
@@ -214,7 +214,6 @@ a, button, .card, .chip, .stage-opt, .task-check, .task-due {
 .last-updated {
   font-size: 11px;
   color: var(--text3);
-  margin-right: 12px;
 }
 
 /* ── LIQUID GLASS NAVBAR BUTTONS ── */
@@ -363,7 +362,7 @@ html[data-theme="light"] .board-navbar .btn.icon:hover {
   padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 3px;
 }
 .col-body::-webkit-scrollbar { width: 3px; }
 .col-body::-webkit-scrollbar-thumb { background: var(--border2); }
