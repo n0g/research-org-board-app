@@ -203,11 +203,13 @@ a, button, .card, .chip, .stage-opt, .task-check, .task-due {
   align-items: center;
 }
 
-.board-navbar .last-updated {
+.board-navbar .last-updated,
+.reviews-navbar .last-updated {
   margin-right: 14px;
 }
 
-.board-navbar .btn.icon + .btn.icon {
+.board-navbar .btn.icon + .btn.icon,
+.reviews-navbar .btn.icon + .btn.icon {
   margin-left: 14px;
 }
 
@@ -250,7 +252,8 @@ a, button, .card, .chip, .stage-opt, .task-check, .task-due {
 }
 
 /* ── LIQUID GLASS NAVBAR BUTTONS ── */
-.board-navbar .btn.icon {
+.board-navbar .btn.icon,
+.reviews-navbar .btn.icon {
   width: 32px;
   height: 32px;
   padding: 0;
@@ -267,15 +270,18 @@ a, button, .card, .chip, .stage-opt, .task-check, .task-due {
   color: var(--text);
   transition: background 0.15s, box-shadow 0.15s;
 }
-.board-navbar .btn.icon:hover {
+.board-navbar .btn.icon:hover,
+.reviews-navbar .btn.icon:hover {
   background: rgba(255,255,255,0.22);
 }
-html[data-theme="light"] .board-navbar .btn.icon {
+html[data-theme="light"] .board-navbar .btn.icon,
+html[data-theme="light"] .reviews-navbar .btn.icon {
   background: rgba(0,0,0,0.06);
   border-color: rgba(0,0,0,0.12);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.80), 0 1px 4px rgba(0,0,0,0.08);
 }
-html[data-theme="light"] .board-navbar .btn.icon:hover {
+html[data-theme="light"] .board-navbar .btn.icon:hover,
+html[data-theme="light"] .reviews-navbar .btn.icon:hover {
   background: rgba(0,0,0,0.10);
 }
 
