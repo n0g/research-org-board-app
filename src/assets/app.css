@@ -399,6 +399,7 @@ html[data-theme="light"] .board-navbar .btn.icon:hover {
 
 /* ── PROJECT CARD ── */
 .card {
+  margin: 0;
   background: var(--bg1);
   border: 0.5px solid var(--border);
   border-radius: 14px;
