@@ -167,15 +167,18 @@ onMounted(() => {
         if (Math.hypot(e.clientX - startX, e.clientY - startY) < 8) return
         isDragging = true
         dragging.value = true
+        document.body.style.cursor = 'grabbing'
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
         ghost = card.cloneNode(true)
         Object.assign(ghost.style, {
           position: 'fixed',
           width: rect.width + 'px',
+          borderRadius: '14px',
           pointerEvents: 'none',
           zIndex: '1000',
-          opacity: '0.9',
-          transform: 'rotate(2deg) scale(1.03)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+          opacity: '1',
+          transform: 'rotate(2.5deg) scale(1.06)',
+          boxShadow: `0 28px 60px rgba(0,0,0,0.55), 0 0 0 1.5px ${accentColor}`,
           margin: '0',
           transition: 'none',
         })
@@ -196,6 +199,7 @@ onMounted(() => {
 
     function onUp() {
       document.removeEventListener('pointermove', onMove)
+      document.body.style.cursor = ''
       store.cardDragging = false
       if (!isDragging) { emit('click'); return }
       ghost?.remove()
