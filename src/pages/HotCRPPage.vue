@@ -22,8 +22,8 @@
             class="proxy-input"
             @keydown.enter.prevent="saveProxy"
           >
-          <button class="btn sm" @click="saveProxy">Save</button>
-          <button v-if="store.proxyUrl" class="btn sm danger" @click="clearProxy">Clear</button>
+          <button class="proxy-btn" @click="saveProxy">Save</button>
+          <button v-if="store.proxyUrl" class="proxy-btn danger" @click="clearProxy">Clear</button>
         </div>
         <p v-if="store.proxyUrl" class="proxy-active">
           Active: <code class="inline-code">{{ store.proxyUrl }}</code>

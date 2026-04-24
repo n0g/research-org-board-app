@@ -1072,9 +1072,26 @@ html[data-theme="light"] .review-status-badge.status-submitted {
 
 .proxy-input {
   flex: 1;
-  font-size: 13px;
-  padding: 8px 12px;
+  min-width: 0;
+  width: auto !important; /* override input[type=text] { width: 100% } */
 }
+
+.proxy-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+  white-space: nowrap;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.1s;
+}
+.proxy-btn:hover { opacity: 0.65; }
+.proxy-btn.danger { color: var(--red); }
 
 .proxy-active {
   font-size: 12px;
