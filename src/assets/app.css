@@ -199,7 +199,16 @@ a, button, .card, .chip, .stage-opt, .task-check, .task-due {
 }
 
 .board-navbar .navbar-right {
-  gap: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.board-navbar .last-updated {
+  margin-right: 14px;
+}
+
+.board-navbar .btn.icon + .btn.icon {
+  margin-left: 14px;
 }
 
 .board-title {
