@@ -32,8 +32,9 @@
       @pointerdown.stop
       @click.stop
       @blur="saveStatusEdit"
+      @keydown.stop
       @keydown.enter.prevent="statusInputEl?.blur()"
-      @keydown.escape.stop="cancelStatusEdit"
+      @keydown.escape.prevent="cancelStatusEdit"
     >
 
     <div v-if="tags.length" class="card-meta">
