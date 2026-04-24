@@ -1,19 +1,21 @@
-export async function fetchReviewPapers(siteUrl, token) {
+export async function fetchReviewPapers(siteUrl, token, proxyUrl = '') {
   const base = siteUrl.replace(/\/+$/, '')
-  const url = `${base}/api/papers?q=re:me&api_key=${encodeURIComponent(token)}`
+  const direct = `${base}/api/papers?q=re:me&api_key=${encodeURIComponent(token)}`
+  const url = proxyUrl ? `${proxyUrl.replace(/\/+$/, '')}?url=${encodeURIComponent(direct)}` : direct
+
   let r
   try {
     r = await fetch(url)
   } catch {
     throw new Error(
-      'Network error — the HotCRP server must send Access-Control-Allow-Origin headers ' +
-      'to allow browser requests. Add this to Apache: ' +
-      '"Header always set Access-Control-Allow-Origin *" or ask the conference organizers.'
+      proxyUrl
+        ? 'Network error — check your proxy URL is correct and the service is running'
+        : 'Network error — configure a proxy URL in Review Sites settings to bypass CORS'
     )
   }
   if (!r.ok) {
     const text = await r.text().catch(() => '')
-    if (text.trim().startsWith('<')) throw new Error('Got HTML — wrong URL or session required (check the URL ends before /api/...)')
+    if (text.trim().startsWith('<')) throw new Error('Got HTML — wrong URL or authentication required')
     throw new Error(`HTTP ${r.status}`)
   }
   const data = await r.json()

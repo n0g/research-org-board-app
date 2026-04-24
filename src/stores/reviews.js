@@ -3,15 +3,26 @@ import { ref } from 'vue'
 import { fetchReviewPapers } from '../lib/hotcrp.js'
 
 const SITES_KEY = 'rb_hotcrp_sites'
+const PROXY_KEY = 'rb_hotcrp_proxy'
 
 export const useReviewsStore = defineStore('reviews', () => {
   const sites = ref(JSON.parse(localStorage.getItem(SITES_KEY) || '[]'))
-  const results = ref([]) // [{ site, papers, error }]
+  const proxyUrl = ref(localStorage.getItem(PROXY_KEY) || '')
+  const results = ref([])
   const loading = ref(false)
   const lastUpdated = ref(null)
 
   function saveSites() {
     localStorage.setItem(SITES_KEY, JSON.stringify(sites.value))
+  }
+
+  function saveProxy(url) {
+    proxyUrl.value = url.trim()
+    if (proxyUrl.value) {
+      localStorage.setItem(PROXY_KEY, proxyUrl.value)
+    } else {
+      localStorage.removeItem(PROXY_KEY)
+    }
   }
 
   function addSite(url, token, name) {
@@ -36,7 +47,7 @@ export const useReviewsStore = defineStore('reviews', () => {
     loading.value = true
     try {
       const settled = await Promise.allSettled(
-        sites.value.map(site => fetchReviewPapers(site.url, site.token))
+        sites.value.map(site => fetchReviewPapers(site.url, site.token, proxyUrl.value))
       )
       results.value = settled.map((r, i) => ({
         site: sites.value[i],
@@ -49,5 +60,5 @@ export const useReviewsStore = defineStore('reviews', () => {
     }
   }
 
-  return { sites, results, loading, lastUpdated, addSite, removeSite, loadAll }
+  return { sites, proxyUrl, results, loading, lastUpdated, addSite, removeSite, saveProxy, loadAll }
 })

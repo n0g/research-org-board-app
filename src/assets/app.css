@@ -1062,6 +1062,46 @@ html[data-theme="light"] .review-status-badge.status-submitted {
   color: var(--text2);
 }
 
+/* ── HOTCRP PROXY SETUP ── */
+.proxy-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.proxy-input {
+  flex: 1;
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+.proxy-active {
+  font-size: 12px;
+  color: var(--green);
+}
+
+.proxy-inactive {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.inline-code {
+  font-family: var(--code);
+  font-size: 11px;
+  background: var(--bg3);
+  border: 0.5px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--text2);
+}
+
+.setup-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+.setup-link:hover { text-decoration: underline; }
+
 /* ── HOTCRP SETTINGS (reuses .setup-page styles) ── */
 .site-rows {
   display: flex;

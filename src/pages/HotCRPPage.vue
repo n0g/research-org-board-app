@@ -4,9 +4,35 @@
 
     <div class="setup-content">
       <div class="setup-box">
-        <p class="sub">Add HotCRP instances where you are assigned as a reviewer. Each entry needs the site URL and your API key (found in HotCRP under Profile → API tokens).</p>
-        <p class="sub" style="margin-top:-16px">Note: the HotCRP server must have CORS enabled (<code style="font-size:11px">Access-Control-Allow-Origin: *</code>) or requests will fail with a network error. This is a server-side setting — ask the organizers or add it to Apache/nginx yourself.</p>
 
+        <!-- Proxy URL -->
+        <div class="section-label">CORS proxy</div>
+        <p class="sub" style="margin-bottom:12px">
+          Browsers block direct HotCRP requests (CORS). Route them through a proxy that adds the required headers.
+          Use <code class="inline-code">https://corsproxy.io/?url=</code> for zero-setup, or
+          <a class="setup-link" href="https://developers.cloudflare.com/workers/" target="_blank" rel="noopener">your own Cloudflare Worker</a>
+          for full control.
+        </p>
+        <div class="proxy-row">
+          <input
+            type="text"
+            v-model="proxyDraft"
+            placeholder="https://corsproxy.io/?url="
+            aria-label="Proxy URL"
+            class="proxy-input"
+            @keydown.enter.prevent="saveProxy"
+          >
+          <button class="btn sm" @click="saveProxy">Save</button>
+          <button v-if="store.proxyUrl" class="btn sm danger" @click="clearProxy">Clear</button>
+        </div>
+        <p v-if="store.proxyUrl" class="proxy-active">
+          Active: <code class="inline-code">{{ store.proxyUrl }}</code>
+        </p>
+        <p v-else class="proxy-inactive">No proxy set — fetches will fail due to CORS.</p>
+
+        <hr class="divider">
+
+        <!-- Sites -->
         <div class="section-label">Configured sites</div>
         <div v-if="!store.sites.length" class="no-labels" style="margin-bottom:16px">No sites configured yet</div>
         <div v-else class="site-rows">
@@ -25,6 +51,7 @@
 
         <hr class="divider">
 
+        <!-- Add site -->
         <div class="section-label">Add site</div>
         <input
           type="text"
@@ -37,7 +64,7 @@
           ref="tokenInputEl"
           type="text"
           v-model="newToken"
-          placeholder="API key"
+          placeholder="API key (Profile → API tokens in HotCRP)"
           aria-label="API key"
           style="margin-top:8px"
           @keydown.enter.prevent="focusName"
@@ -64,7 +91,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useReviewsStore } from '../stores/reviews.js'
 
@@ -72,10 +99,20 @@ const store = useReviewsStore()
 const tokenInputEl = ref(null)
 const nameInputEl = ref(null)
 
+const proxyDraft = ref(store.proxyUrl)
 const newUrl = ref('')
 const newToken = ref('')
 const newName = ref('')
 const addError = ref('')
+
+function saveProxy() {
+  store.saveProxy(proxyDraft.value)
+}
+
+function clearProxy() {
+  proxyDraft.value = ''
+  store.saveProxy('')
+}
 
 function focusToken() { tokenInputEl.value?.focus() }
 function focusName() { nameInputEl.value?.focus() }
@@ -96,4 +133,6 @@ function addSite() {
   newToken.value = ''
   newName.value = ''
 }
+
+onMounted(() => { proxyDraft.value = store.proxyUrl })
 </script>
