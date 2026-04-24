@@ -10,6 +10,7 @@ import App from './App.vue'
 const savedTheme = localStorage.getItem('rb_theme') || 'auto'
 const prefersDark = savedTheme === 'dark' || (savedTheme === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches)
 document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light'
+document.documentElement.classList.toggle('dark', prefersDark)
 
 Framework7.use(Framework7Vue)
 
