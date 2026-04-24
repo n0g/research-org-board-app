@@ -5,6 +5,7 @@
     <div class="setup-content">
       <div class="setup-box">
         <p class="sub">Add HotCRP instances where you are assigned as a reviewer. Each entry needs the site URL and your API key (found in HotCRP under Profile → API tokens).</p>
+        <p class="sub" style="margin-top:-16px">Note: the HotCRP server must have CORS enabled (<code style="font-size:11px">Access-Control-Allow-Origin: *</code>) or requests will fail with a network error. This is a server-side setting — ask the organizers or add it to Apache/nginx yourself.</p>
 
         <div class="section-label">Configured sites</div>
         <div v-if="!store.sites.length" class="no-labels" style="margin-bottom:16px">No sites configured yet</div>
