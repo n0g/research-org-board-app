@@ -57,11 +57,17 @@
       :open="settingsOpen"
       @close="settingsOpen = false"
     />
+
+    <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
+      <button class="tab-btn tab-btn-active" aria-current="page">Board</button>
+      <button class="tab-btn" @click="goReviews">Reviews</button>
+    </f7-toolbar>
   </f7-page>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useTheme } from '../composables/useTheme.js'
 import { usePullToRefresh } from '../composables/usePullToRefresh.js'
@@ -92,6 +98,10 @@ function openProject(project) {
 
 function closeProject() {
   activeProject.value = null
+}
+
+function goReviews() {
+  f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true })
 }
 
 usePullToRefresh(

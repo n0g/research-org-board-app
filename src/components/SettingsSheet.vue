@@ -18,8 +18,10 @@
         aria-modal="true"
         aria-labelledby="settings-heading"
       >
-        <p class="settings-hint">Reconfigure stages or switch token.</p>
+        <p class="settings-hint">Reconfigure stages, manage review sites, or switch token.</p>
         <button class="btn" @click="reconfigure">Reconfigure stages</button>
+        <br><br>
+        <button class="btn" @click="goReviewSites">Review sites</button>
         <br><br>
         <button class="btn danger" @click="disconnect">Disconnect &amp; clear token</button>
       </div>
@@ -44,5 +46,10 @@ function reconfigure() {
 function disconnect() {
   store.resetToken()
   f7.views.main.router.navigate('/token/', { clearPreviousHistory: true })
+}
+
+function goReviewSites() {
+  emit('close')
+  setTimeout(() => f7.views.main.router.navigate('/hotcrp/'), 300)
 }
 </script>

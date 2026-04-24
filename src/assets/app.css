@@ -167,6 +167,7 @@ a, button, .card, .chip, .stage-opt, .task-check, .task-due {
 
 /* Force text/monochrome emoji presentation (Chromium fallback; VS15 handles Safari) */
 .board-navbar .btn.icon,
+.reviews-navbar .btn.icon,
 .tag,
 .task-due {
   font-variant-emoji: text;
@@ -186,7 +187,6 @@ a, button, .card, .chip, .stage-opt, .task-check, .task-due {
   overflow: hidden;
   padding-left: 0 !important;
   padding-right: 0 !important;
-  padding-bottom: 0 !important;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -856,6 +856,223 @@ input.quick-add-input:focus { background: var(--bg2); }
   padding: 1px 5px;
   font-size: 10px;
   color: var(--text2);
+}
+
+/* ── BOTTOM TABBAR ── */
+.bottom-tabbar.toolbar {
+  background: var(--bg1) !important;
+  border-top: 0.5px solid var(--border) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  display: flex;
+  height: auto !important;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+html[data-theme="dark"] .bottom-tabbar.toolbar {
+  background: rgba(28,28,30,0.88) !important;
+}
+
+.tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 0 8px;
+  font-family: var(--ui);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text3);
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.1s;
+}
+
+.tab-btn:hover { color: var(--text2); }
+
+.tab-btn-active {
+  color: var(--accent);
+  font-weight: 600;
+  cursor: default;
+}
+
+/* ── REVIEWS PAGE ── */
+.reviews-page,
+.reviews-page .page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.reviews-screen {
+  padding: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.reviews-loading {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}
+
+.reviews-empty {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--text2);
+  font-size: 15px;
+}
+.reviews-empty p { margin-bottom: 20px; }
+
+.review-site-section { margin-bottom: 28px; }
+
+.review-site-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.review-site-name {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text3);
+}
+
+.review-site-count {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.review-error {
+  font-size: 13px;
+  color: var(--red);
+  padding: 8px 12px;
+  background: var(--err-bg);
+  border: 0.5px solid var(--err-b);
+  border-radius: var(--radius);
+}
+
+.review-empty-site {
+  font-size: 13px;
+  color: var(--text3);
+  font-style: italic;
+}
+
+.review-papers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.review-paper {
+  background: var(--bg1);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+html[data-theme="light"] .review-paper {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  border-color: transparent;
+}
+
+.review-paper-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.review-paper-id {
+  font-size: 12px;
+  color: var(--text3);
+  font-variant-numeric: tabular-nums;
+}
+
+.review-status-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+  letter-spacing: 0.03em;
+  border: 1px solid var(--border);
+}
+
+.review-status-badge.status-submitted {
+  color: var(--green);
+  background: rgba(50,215,75,0.10);
+  border-color: rgba(50,215,75,0.35);
+}
+html[data-theme="light"] .review-status-badge.status-submitted {
+  background: rgba(52,199,89,0.10);
+  border-color: rgba(52,199,89,0.35);
+  color: var(--green);
+}
+
+.review-status-badge.status-in-progress {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: rgba(255,159,10,0.35);
+}
+
+.review-status-badge.status-not-started {
+  color: var(--text3);
+  background: var(--bg2);
+  border-color: var(--border);
+}
+
+.review-paper-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.review-paper-authors {
+  font-size: 12px;
+  color: var(--text2);
+}
+
+/* ── HOTCRP SETTINGS (reuses .setup-page styles) ── */
+.site-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.site-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+}
+
+.site-info { flex: 1; min-width: 0; }
+
+.site-name-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.site-url-text {
+  font-size: 12px;
+  color: var(--text3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (prefers-reduced-motion: reduce) {
