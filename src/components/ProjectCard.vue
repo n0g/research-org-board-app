@@ -167,6 +167,7 @@ onMounted(() => {
     const offsetX = startX - rect.left
     const offsetY = startY - rect.top
     const isTouch = e.pointerType === 'touch'
+    const pointerId = e.pointerId
 
     let isDragging = false
     let wasCancelled = false
@@ -181,8 +182,12 @@ onMounted(() => {
       isDragging = true
       dragging.value = true
       store.cardDragging = true
-      if (isTouch) navigator.vibrate?.(10)
+      if (isTouch) {
+        navigator.vibrate?.(10)
+        card.setPointerCapture(pointerId)
+      }
       document.body.style.cursor = 'grabbing'
+      document.documentElement.style.setProperty('--placeholder-h', rect.height + 'px')
       const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
       ghost = card.cloneNode(true)
       Object.assign(ghost.style, {
@@ -252,6 +257,7 @@ onMounted(() => {
       ghost?.remove()
       dragging.value = false
       currentCol?.classList.remove('drag-over')
+      document.documentElement.style.removeProperty('--placeholder-h')
       const newLabel  = currentCol?.dataset.stageLabel ?? null
       const oldLabel  = stageInfo.value?.label ?? ''
       const oldTaskId = stageInfo.value?.task.id ?? ''
