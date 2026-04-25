@@ -4,6 +4,7 @@ import BoardPage from './pages/BoardPage.vue'
 import ReviewsPage from './pages/ReviewsPage.vue'
 import HotCRPPage from './pages/HotCRPPage.vue'
 import ProjectDetailPage from './pages/ProjectDetailPage.vue'
+import SettingsPage from './pages/SettingsPage.vue'
 
 export default [
   { path: '/', component: TokenPage },
@@ -13,4 +14,5 @@ export default [
   { path: '/reviews/', component: ReviewsPage },
   { path: '/hotcrp/', component: HotCRPPage },
   { path: '/project/:id/', component: ProjectDetailPage },
+  { path: '/settings/', component: SettingsPage },
 ]

@@ -109,8 +109,9 @@
     <div class="sidebar-footer">
       <button
         class="sidebar-nav-item"
+        :class="currentPage === 'settings' ? 'sidebar-nav-active' : ''"
         title="Settings"
-        @click="$emit('settings')"
+        @click="currentPage !== 'settings' && goSettings()"
       >
         <span class="material-symbols-outlined" aria-hidden="true">settings</span>
         <span class="sidebar-label">Settings</span>
@@ -129,7 +130,7 @@ import { useSidebar } from '../composables/useSidebar.js'
 const props = defineProps({
   currentPage: { type: String, default: 'board' },
 })
-defineEmits(['settings'])
+defineEmits([])
 
 const store = useBoardStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
@@ -147,5 +148,9 @@ function goBoard() {
 
 function goReviews() {
   f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true })
+}
+
+function goSettings() {
+  f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true })
 }
 </script>

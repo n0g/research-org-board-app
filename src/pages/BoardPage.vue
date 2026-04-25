@@ -1,7 +1,7 @@
 <template>
   <f7-page name="board" class="board-page" no-swipeback>
     <div class="board-screen">
-      <AppSidebar current-page="board" @settings="settingsOpen = true" />
+      <AppSidebar current-page="board" />
 
       <!-- Board main area -->
       <div ref="screenEl" class="board-main">
@@ -40,15 +40,10 @@
       </div>
     </div>
 
-    <SettingsSheet
-      :open="settingsOpen"
-      @close="settingsOpen = false"
-    />
-
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
       <button class="tab-btn tab-btn-active" aria-current="page">Board</button>
       <button class="tab-btn" @click="goReviews">Reviews</button>
-      <button class="tab-btn" @click="settingsOpen = true">Settings</button>
+      <button class="tab-btn" @click="goSettings">Settings</button>
     </f7-toolbar>
   </f7-page>
 </template>
@@ -61,13 +56,11 @@ import { usePullToRefresh } from '../composables/usePullToRefresh.js'
 import { useSidebar } from '../composables/useSidebar.js'
 import BoardColumn from '../components/BoardColumn.vue'
 import AppSidebar from '../components/AppSidebar.vue'
-import SettingsSheet from '../components/SettingsSheet.vue'
 
 const store = useBoardStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
 const screenEl = ref(null)
 const ptrIndicator = ref(null)
-const settingsOpen = ref(false)
 const boardReady = ref(false)
 
 const unassignedProjects = computed(() =>
@@ -82,6 +75,10 @@ function goReviews() {
   f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true })
 }
 
+function goSettings() {
+  f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true })
+}
+
 usePullToRefresh(
   () => screenEl.value,
   () => ptrIndicator.value,
@@ -92,9 +89,6 @@ usePullToRefresh(
 function onKeyDown(e) {
   if (e.key === 'r' && !e.metaKey && !e.ctrlKey && document.activeElement.tagName !== 'INPUT') {
     store.loadData()
-  }
-  if (e.key === 'Escape') {
-    settingsOpen.value = false
   }
 }
 

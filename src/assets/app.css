@@ -782,6 +782,71 @@ html[data-theme="dark"] .settings-sheet {
 .settings-row-label { font-size: 14px; color: var(--text); }
 .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 
+/* ── SETTINGS PAGE ── */
+.settings-page,
+.settings-page .page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+.settings-page .page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 !important;
+}
+.settings-screen {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.settings-main {
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
+  padding: calc(32px + env(safe-area-inset-top)) 48px 32px;
+  background: var(--bg);
+}
+.settings-content {
+  max-width: 560px;
+}
+.settings-page-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0 0 28px;
+}
+.settings-group {
+  margin-bottom: 8px;
+}
+.settings-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.settings-row:last-child {
+  border-bottom: none;
+}
+.settings-row-label {
+  font-size: 14px;
+  color: var(--text);
+}
+
 /* ── PROJECT DETAIL PAGE ── */
 .project-page,
 .project-page .page {

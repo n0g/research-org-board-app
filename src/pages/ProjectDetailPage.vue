@@ -1,7 +1,7 @@
 <template>
   <f7-page name="project-detail" class="project-page" no-swipeback>
     <div class="project-screen">
-      <AppSidebar current-page="board" @settings="settingsOpen = true" />
+      <AppSidebar current-page="board" />
 
       <div class="project-main">
         <button
@@ -119,12 +119,10 @@
       </div>
     </div>
 
-    <SettingsSheet :open="settingsOpen" @close="settingsOpen = false" />
-
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
       <button class="tab-btn tab-btn-active" aria-current="page" @click="goBoard">Board</button>
       <button class="tab-btn" @click="goReviews">Reviews</button>
-      <button class="tab-btn" @click="settingsOpen = true">Settings</button>
+      <button class="tab-btn" @click="goSettings">Settings</button>
     </f7-toolbar>
   </f7-page>
 </template>
@@ -136,7 +134,6 @@ import { useBoardStore } from '../stores/board.js'
 import { useSidebar } from '../composables/useSidebar.js'
 
 import AppSidebar from '../components/AppSidebar.vue'
-import SettingsSheet from '../components/SettingsSheet.vue'
 import TaskItem from '../components/TaskItem.vue'
 
 const props = defineProps({
@@ -145,7 +142,6 @@ const props = defineProps({
 
 const store = useBoardStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
-const settingsOpen = ref(false)
 const newTaskContent = ref('')
 
 const projectId = computed(() => props.f7route.params.id)
@@ -216,6 +212,10 @@ function goBoard() {
 
 function goReviews() {
   f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true })
+}
+
+function goSettings() {
+  f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true })
 }
 
 onMounted(async () => {

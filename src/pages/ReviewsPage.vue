@@ -26,7 +26,7 @@
           class="btn icon"
           title="Settings"
           aria-label="Settings"
-          @click="settingsOpen = true"
+          @click="goSettings"
         >⚙&#xFE0E;</button>
       </f7-nav-right>
     </f7-navbar>
@@ -79,24 +79,21 @@
       </template>
     </div>
 
-    <SettingsSheet :open="settingsOpen" @close="settingsOpen = false" />
-
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
       <button class="tab-btn" @click="goBoard">Board</button>
       <button class="tab-btn tab-btn-active" aria-current="page">Reviews</button>
+      <button class="tab-btn" @click="goSettings">Settings</button>
     </f7-toolbar>
   </f7-page>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useReviewsStore } from '../stores/reviews.js'
 import { useTheme } from '../composables/useTheme.js'
-import SettingsSheet from '../components/SettingsSheet.vue'
 
 const store = useReviewsStore()
-const settingsOpen = ref(false)
 const { themeIcon, cycleTheme } = useTheme()
 
 const lastUpdatedText = computed(() =>
@@ -109,6 +106,10 @@ function goBoard() {
 
 function goManageSites() {
   f7.views.main.router.navigate('/hotcrp/')
+}
+
+function goSettings() {
+  f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true })
 }
 
 function reviewStatusClass(paper) {
