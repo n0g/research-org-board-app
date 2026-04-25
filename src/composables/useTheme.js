@@ -33,5 +33,5 @@ export function useTheme() {
     matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', onOsChange)
   })
 
-  return { themeIcon: icon, cycleTheme: cycle }
+  return { themeIcon: icon, cycleTheme: cycle, themePref: pref }
 }

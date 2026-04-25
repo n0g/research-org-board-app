@@ -7,8 +7,10 @@
     @dragover.prevent
   >
     <div class="col-head">
-      <span class="col-name">{{ stage.name }}</span>
-      <span class="col-count">{{ projects.length }}</span>
+      <div class="col-head-left">
+        <span class="col-name">{{ stage.name }}</span>
+        <span class="col-count">{{ projects.length }}</span>
+      </div>
     </div>
     <div class="col-body" :id="'col-' + stageIndex" role="list">
       <div v-if="!projects.length" class="empty-col">—</div>
@@ -42,19 +44,33 @@ const dragOver = ref(false)
 
 const projects = computed(() => {
   if (props.overrideProjects) return props.overrideProjects
-  return store.displayProjects
-    .filter(p => {
-      const s = store.projectStage(p.id)
-      return s && s.label === props.stage.label
+  const stageSet = new Set(store.stageLabels)
+  let list = store.displayProjects.filter(p => {
+    const s = store.projectStage(p.id)
+    return s && s.label === props.stage.label
+  })
+  if (store.activeFilter) {
+    const { type, value } = store.activeFilter
+    list = list.filter(p => {
+      if (type === 'person') {
+        const stage = store.projectStage(p.id)
+        return stage && (stage.task.labels || []).filter(l => !stageSet.has(l)).includes(value)
+      }
+      if (type === 'venue') {
+        const meta = store.projectMeta(p.id)
+        return meta.venue === value
+      }
+      return true
     })
-    .sort((a, b) => {
-      const da = getProjectDeadline(store.tasks, store.deadlineSectionIds, a.id)
-      const db = getProjectDeadline(store.tasks, store.deadlineSectionIds, b.id)
-      if (!da && !db) return 0
-      if (!da) return 1
-      if (!db) return -1
-      return da - db
-    })
+  }
+  return list.sort((a, b) => {
+    const da = getProjectDeadline(store.tasks, store.deadlineSectionIds, a.id)
+    const db = getProjectDeadline(store.tasks, store.deadlineSectionIds, b.id)
+    if (!da && !db) return 0
+    if (!da) return 1
+    if (!db) return -1
+    return da - db
+  })
 })
 
 // Expose dragOver so ProjectCard can update it

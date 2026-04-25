@@ -20,6 +20,7 @@ export const useBoardStore = defineStore('board', () => {
   const loading = ref(false)
   const cardDragging = ref(false)
   const labels = ref([])
+  const activeFilter = ref(null) // { type: 'person'|'venue', value: string } | null
 
   const stageLabels = computed(() => (stages.value || []).map(s => s.label))
 
@@ -27,6 +28,33 @@ export const useBoardStore = defineStore('board', () => {
     const root = projects.value.find(p => !p.parent_id && p.name === 'Research')
     return root ? projects.value.filter(p => p.parent_id === root.id) : projects.value
   })
+
+  const allCollaborators = computed(() => {
+    const stageSet = new Set(stageLabels.value)
+    const people = new Set()
+    displayProjects.value.forEach(p => {
+      const stage = getProjectStage(tasks.value, stageLabels.value, p.id)
+      if (stage) (stage.task.labels || []).filter(l => !stageSet.has(l)).forEach(l => people.add(l))
+    })
+    return [...people].sort()
+  })
+
+  const allVenues = computed(() => {
+    const venues = new Set()
+    displayProjects.value.forEach(p => {
+      const meta = getProjectMeta(tasks.value, p.id)
+      if (meta.venue) venues.add(meta.venue)
+    })
+    return [...venues].sort()
+  })
+
+  function setFilter(type, value) {
+    if (activeFilter.value?.type === type && activeFilter.value?.value === value) {
+      activeFilter.value = null
+    } else {
+      activeFilter.value = { type, value }
+    }
+  }
 
   function initStages() {
     if (!stages.value) {
@@ -136,9 +164,10 @@ export const useBoardStore = defineStore('board', () => {
 
   return {
     token, stages, projects, tasks, loading, lastUpdated, cardDragging, labels,
-    stageLabels, displayProjects, excludedSectionIds, deadlineSectionIds,
+    activeFilter, stageLabels, displayProjects, excludedSectionIds, deadlineSectionIds,
+    allCollaborators, allVenues,
     initStages, saveToken, saveStages, resetToken, loadData,
     projectStage, projectMeta, projectTasks, projectDeadline,
-    moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText,
+    moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText, setFilter,
   }
 })

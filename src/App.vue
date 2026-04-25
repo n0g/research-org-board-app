@@ -7,6 +7,9 @@
 <script setup>
 import routes from './routes.js'
 import { useBoardStore } from './stores/board.js'
+import { useTheme } from './composables/useTheme.js'
+
+useTheme() // keeps OS dark-mode listener alive for the app lifetime
 
 const store = useBoardStore()
 const initialUrl = store.token ? '/board/' : '/'
