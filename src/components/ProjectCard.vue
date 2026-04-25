@@ -16,7 +16,7 @@
     <div v-if="isStale && !isOnIce" class="card-stale-indicator" :aria-label="`Stale: ${staleWeeks}w`">!</div>
 
     <!-- Venue badge -->
-    <div v-if="meta.venue" class="card-venue-badge" :class="venueColorClass">
+    <div v-if="meta.venue" class="card-venue-badge">
       <span class="card-venue-dot"></span>
       <span class="card-venue-name">{{ meta.venue }}</span>
     </div>
@@ -98,14 +98,6 @@ const deadlineDateClass = computed(() => {
   if (diff < 0) return 'overdue'
   if (diff < 7 * 86400000) return 'due-soon'
   return ''
-})
-
-// Venue color
-const venueColorClass = computed(() => {
-  const v = (meta.value.venue ?? '').toUpperCase()
-  if (['PETS', 'POPETS', 'CCS', 'CHI', 'CSCW'].some(k => v.includes(k))) return 'venue-blue'
-  if (['USENIX', 'NDSS'].some(k => v.includes(k))) return 'venue-green'
-  return 'venue-orange'
 })
 
 
