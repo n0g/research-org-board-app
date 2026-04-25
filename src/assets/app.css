@@ -1132,7 +1132,36 @@ html[data-theme="dark"] .popup-dropdown {
 .popup-option.selected { font-weight: 600; color: var(--accent); }
 
 /* Collaborator chips in detail */
-.collab-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.collab-chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.collab-add-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1.5px dashed var(--border2);
+  background: transparent;
+  color: var(--text3);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: border-color 0.1s, color 0.1s;
+}
+.collab-add-btn:hover { border-color: var(--text2); color: var(--text2); }
+.collab-combo-wrapper { position: relative; }
+.collab-combo-input {
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1.5px solid var(--border2);
+  background: var(--bg);
+  font-size: 12px;
+  font-family: var(--font);
+  color: var(--text);
+  outline: none;
+  width: 130px;
+}
+.collab-combo-input:focus { border-color: var(--accent); }
+.collab-combo-wrapper .popup-dropdown { min-width: 130px; }
 .collab-chip {
   display: flex;
   align-items: center;

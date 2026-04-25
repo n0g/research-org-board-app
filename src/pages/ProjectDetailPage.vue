@@ -133,13 +133,36 @@
           </div>
 
           <!-- Collaborators -->
-          <div v-if="personLabels.length" class="meta-section">
+          <div class="meta-section">
             <div class="meta-label">Collaborators</div>
             <div class="collab-chips">
               <span v-for="person in personLabels" :key="person" class="collab-chip">
                 <span class="material-symbols-outlined">person</span>
                 {{ person }}
               </span>
+
+              <!-- Add collaborator combo -->
+              <button v-if="!addingCollab" class="collab-add-btn" @click="startAddCollab">+ Add</button>
+              <div v-else ref="collabWrapperEl" class="collab-combo-wrapper">
+                <input
+                  ref="collabInputEl"
+                  v-model="collabQuery"
+                  class="collab-combo-input"
+                  placeholder="Name…"
+                  autocomplete="off"
+                  @keydown.enter.prevent="commitCollab(collabQuery)"
+                  @keydown.escape.prevent="cancelAddCollab"
+                >
+                <div v-if="filteredCollabs.length" class="popup-dropdown">
+                  <button
+                    v-for="c in filteredCollabs"
+                    :key="c"
+                    class="popup-option"
+                    @mousedown.prevent
+                    @click="commitCollab(c)"
+                  >{{ c }}</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -336,10 +359,45 @@ async function selectVenue(venue) {
   await store.updateVenue(projectId.value, venue).catch(console.error)
 }
 
+// ── Collaborator combo ──
+const addingCollab = ref(false)
+const collabQuery = ref('')
+const collabInputEl = ref(null)
+const collabWrapperEl = ref(null)
+
+const filteredCollabs = computed(() => {
+  const q = collabQuery.value.toLowerCase()
+  const existing = new Set(personLabels.value)
+  return store.allCollaborators
+    .filter(c => !existing.has(c) && (!q || c.toLowerCase().includes(q)))
+    .slice(0, 8)
+})
+
+async function startAddCollab() {
+  addingCollab.value = true
+  collabQuery.value = ''
+  await nextTick()
+  collabInputEl.value?.focus()
+}
+
+async function commitCollab(name) {
+  const trimmed = name.trim()
+  if (trimmed && !personLabels.value.includes(trimmed)) {
+    await store.addCollaborator(projectId.value, trimmed).catch(console.error)
+  }
+  cancelAddCollab()
+}
+
+function cancelAddCollab() {
+  addingCollab.value = false
+  collabQuery.value = ''
+}
+
 // Close popups on outside click
 function onDocClick(e) {
   if (!stageWrapperEl.value?.contains(e.target)) stagePopupOpen.value = false
   if (!venueWrapperEl.value?.contains(e.target)) venuePopupOpen.value = false
+  if (!collabWrapperEl.value?.contains(e.target)) cancelAddCollab()
 }
 
 // ── Tasks ──

@@ -163,6 +163,15 @@ export const useBoardStore = defineStore('board', () => {
     if (task) task.content = content
   }
 
+  async function addCollaborator(projectId, name) {
+    const stageInfo = getProjectStage(tasks.value, stageLabels.value, projectId)
+    if (!stageInfo) return
+    const task = stageInfo.task
+    const newLabels = [...(task.labels || []), name]
+    await api(token.value, `/tasks/${task.id}`, 'POST', { labels: newLabels })
+    task.labels = newLabels
+  }
+
   async function updateVenue(projectId, newVenue) {
     const stageInfo = getProjectStage(tasks.value, stageLabels.value, projectId)
     if (!stageInfo) return
@@ -192,6 +201,6 @@ export const useBoardStore = defineStore('board', () => {
     initStages, saveToken, saveStages, resetToken, loadData,
     projectStage, projectMeta, projectTasks, projectDeadline,
     moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText,
-    updateVenue, projectDeadlineTaskObj, setFilter,
+    updateVenue, addCollaborator, projectDeadlineTaskObj, setFilter,
   }
 })
