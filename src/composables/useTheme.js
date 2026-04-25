@@ -20,6 +20,12 @@ export function useTheme() {
     apply(pref.value)
   }
 
+  function setTheme(p) {
+    pref.value = p
+    localStorage.setItem('rb_theme', p)
+    apply(p)
+  }
+
   function onOsChange() {
     if (pref.value === 'auto') apply('auto')
   }
@@ -33,5 +39,5 @@ export function useTheme() {
     matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', onOsChange)
   })
 
-  return { themeIcon: icon, cycleTheme: cycle, themePref: pref }
+  return { themeIcon: icon, cycleTheme: cycle, setTheme, themePref: pref }
 }
