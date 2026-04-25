@@ -248,6 +248,7 @@ const project = computed(() => store.displayProjects.find(p => p.id === projectI
 const stageInfo = computed(() => store.projectStage(projectId.value))
 const meta = computed(() => store.projectMeta(projectId.value))
 const tasks = computed(() => store.projectTasks(projectId.value))
+const deadlineTask = computed(() => store.projectDeadlineTaskBase(projectId.value))
 const deadline = computed(() => store.projectDeadline(projectId.value))
 
 const stageLabelSet = computed(() => new Set(store.stageLabels))
