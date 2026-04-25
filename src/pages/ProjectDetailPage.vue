@@ -178,14 +178,18 @@
             ></textarea>
           </div>
 
-          <!-- Todoist link -->
-          <a
-            v-if="project"
-            class="todoist-link"
-            :href="`https://todoist.com/app/project/${project.id}`"
-            target="_blank"
-            rel="noopener noreferrer"
-          >Open in Todoist ↗</a>
+          <!-- Todoist link + delete -->
+          <div v-if="project" class="project-meta-footer">
+            <a
+              class="todoist-link"
+              :href="`https://todoist.com/app/project/${project.id}`"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Open in Todoist ↗</a>
+            <button class="project-delete-btn" title="Delete project" aria-label="Delete project" @click="confirmDelete">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
         </section>
 
         <!-- Right tasks pane -->
@@ -436,6 +440,14 @@ async function addTask() {
   if (!content || !project.value) return
   newTaskContent.value = ''
   await store.quickAddTask(content, project.value.id).catch(console.error)
+}
+
+// ── Delete project ──
+async function confirmDelete() {
+  if (!project.value) return
+  if (!window.confirm(`Delete "${project.value.name}"? This cannot be undone.`)) return
+  await store.deleteProject(projectId.value).catch(console.error)
+  f7.views.main.router.navigate('/board/', { clearPreviousHistory: true })
 }
 
 // ── Navigation ──

@@ -37,6 +37,10 @@
             @card-click="openProject"
           />
         </div>
+
+        <button class="fab-new-project" title="New project" aria-label="New project" @click="openNewProject">
+          <span class="material-symbols-outlined">add</span>
+        </button>
       </div>
     </div>
 
@@ -69,6 +73,10 @@ const unassignedProjects = computed(() =>
 
 function openProject(project) {
   f7.views.main.router.navigate('/project/' + project.id + '/')
+}
+
+function openNewProject() {
+  f7.views.main.router.navigate('/project/new/')
 }
 
 function goReviews() {

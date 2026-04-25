@@ -229,6 +229,43 @@ export const useBoardStore = defineStore('board', () => {
     }
   }
 
+  async function deleteProject(projectId) {
+    await api(token.value, `/projects/${projectId}`, 'DELETE')
+    projects.value = projects.value.filter(p => p.id !== projectId)
+    tasks.value = tasks.value.filter(t => t.project_id !== projectId)
+  }
+
+  async function createProject(name) {
+    const root = projects.value.find(p => !p.parent_id && p.name === 'Research')
+    if (!root) throw new Error('Research project not found')
+
+    const project = await api(token.value, '/projects', 'POST', { name, parent_id: root.id })
+
+    const [statusSection, deadlinesSection, summarySection] = await Promise.all([
+      api(token.value, '/sections', 'POST', { name: '📌 Current Status', project_id: project.id }),
+      api(token.value, '/sections', 'POST', { name: '📌 Deadlines', project_id: project.id }),
+      api(token.value, '/sections', 'POST', { name: '📌 Summary', project_id: project.id }),
+    ])
+
+    const defaultLabel = stages.value?.[0]?.label || 'stage::planning'
+    const statusTask = await api(token.value, '/tasks', 'POST', {
+      content: name,
+      project_id: project.id,
+      section_id: statusSection.id,
+      labels: [defaultLabel],
+    })
+
+    projects.value.push(project)
+    tasks.value.push(statusTask)
+    excludedSectionIds.value = new Set([...excludedSectionIds.value, statusSection.id, deadlinesSection.id, summarySection.id])
+    deadlineSectionIds.value = new Set([...deadlineSectionIds.value, deadlinesSection.id])
+    const m = new Map(summarySectionByProject.value)
+    m.set(project.id, summarySection.id)
+    summarySectionByProject.value = m
+
+    return project
+  }
+
   function projectDeadlineTaskObj(projectId) {
     const candidates = tasks.value.filter(
       t => t.project_id === projectId && deadlineSectionIds.value.has(t.section_id) && !t.is_completed && t.due
@@ -248,6 +285,6 @@ export const useBoardStore = defineStore('board', () => {
     projectStage, projectMeta, projectTasks, projectDeadline,
     moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText,
     updateVenue, addCollaborator, renameProject, projectDeadlineTaskObj,
-    projectSummaryTask, updateSummary, setFilter,
+    projectSummaryTask, updateSummary, createProject, deleteProject, setFilter,
   }
 })
