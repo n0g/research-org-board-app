@@ -486,7 +486,7 @@ html[data-theme="light"] .board { background: #ffffff; }
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   padding-bottom: 24px;
 }
 .col-body::-webkit-scrollbar { width: 3px; }
