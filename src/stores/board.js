@@ -8,6 +8,7 @@ import {
   getProjectMeta,
   getProjectTasks,
   getProjectDeadline,
+  parseLocalDate,
   stripPersonPrefix,
   isPersonLabel,
 } from '../lib/helpers.js'
@@ -310,7 +311,7 @@ export const useBoardStore = defineStore('board', () => {
       t => t.project_id === projectId && deadlineSectionIds.value.has(t.section_id) && !t.is_completed && t.due
     )
     if (!candidates.length) return null
-    const future = candidates.filter(t => new Date(t.due.date) > new Date())
+    const future = candidates.filter(t => parseLocalDate(t.due.date) > new Date())
     return future.length
       ? future.sort((a, b) => new Date(a.due.date) - new Date(b.due.date))[0]
       : candidates.sort((a, b) => new Date(b.due.date) - new Date(a.due.date))[0]

@@ -9,6 +9,11 @@ export const DEFAULT_STAGES = [
 
 export const VENUES = ['ccs', 'usenix', 'ndss', 's&p', 'soups', 'chi', 'cscw', 'pets', 'popets']
 
+export function parseLocalDate(str) {
+  const [y, m, d] = str.split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
+
 export function stripPersonPrefix(l) {
   if (l.startsWith('person::')) return l.slice(8)
   if (l.startsWith('@person::')) return l.slice(9)
@@ -67,7 +72,7 @@ export function getProjectDeadline(tasks, deadlineSectionIds, projectId) {
     t => t.project_id === projectId && deadlineSectionIds.has(t.section_id) && !t.is_completed && t.due
   )
   if (!deadlineTasks.length) return null
-  const dates = deadlineTasks.map(t => new Date(t.due.date)).sort((a, b) => a - b)
+  const dates = deadlineTasks.map(t => parseLocalDate(t.due.date)).sort((a, b) => a - b)
   const future = dates.filter(d => d > Date.now())
   return future.length ? future[0] : dates[dates.length - 1]
 }
@@ -76,7 +81,7 @@ export function nearestDue(tasks) {
   let nearest = null
   for (const t of tasks) {
     if (!t.due) continue
-    const d = new Date(t.due.date).getTime()
+    const d = parseLocalDate(t.due.date).getTime()
     if (!nearest || d < nearest) nearest = d
   }
   return nearest
@@ -91,5 +96,5 @@ export function dueStatus(dateMs) {
 
 export function formatDate(dateStr) {
   if (!dateStr) return ''
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return parseLocalDate(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
