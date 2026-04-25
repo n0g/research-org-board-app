@@ -2,27 +2,42 @@
   <div
     ref="cardEl"
     class="card"
-    :class="{ dragging: dragging, stale: isStale && !isOnIce, 'on-ice': isOnIce }"
+    :class="{
+      dragging: dragging,
+      stale: isStale && !isOnIce,
+      'on-ice': isOnIce
+    }"
     role="listitem"
     tabindex="0"
     @keydown.enter.prevent="$emit('click')"
     @keydown.space.prevent="$emit('click')"
   >
+    <!-- Stale indicator -->
+    <div v-if="isStale && !isOnIce" class="card-stale-indicator" :aria-label="`Stale: ${staleWeeks}w`">!</div>
+
+    <!-- Venue badge -->
+    <div v-if="meta.venue" class="card-venue-badge" :class="venueColorClass">
+      <span class="card-venue-dot"></span>
+      <span class="card-venue-name">{{ meta.venue }}</span>
+    </div>
+
+    <!-- Title -->
     <div class="card-name">{{ project.name }}</div>
 
+    <!-- Status (editable) -->
     <div
-      v-if="statusText"
+      v-if="statusText && !editingStatus"
       ref="statusEl"
       class="card-status editable"
       role="button"
       tabindex="0"
-      :title="'Click to edit'"
+      title="Click to edit"
       :aria-label="'Edit status: ' + statusText"
       @pointerdown.stop
       @click.stop="startStatusEdit"
       @keydown.enter.prevent.stop="startStatusEdit"
       @keydown.space.prevent.stop="startStatusEdit"
-    >{{ editingStatus ? '' : statusText }}</div>
+    >{{ statusText }}</div>
 
     <input
       v-if="editingStatus"
@@ -37,14 +52,20 @@
       @keydown.escape.prevent="cancelStatusEdit"
     >
 
-    <div v-if="tags.length" class="card-meta">
-      <span
-        v-for="tag in tags"
-        :key="tag.key"
-        class="tag"
-        :class="tag.cls"
-        v-html="tag.text"
-      ></span>
+    <!-- Bottom row: people + date -->
+    <div class="card-bottom">
+      <div class="card-people">
+        <span
+          v-for="person in personLabels"
+          :key="person"
+          class="card-person-chip"
+        >{{ person }}</span>
+      </div>
+
+      <div v-if="deadlineDate" class="card-date" :class="deadlineDateClass">
+        <span class="material-symbols-outlined">calendar_today</span>
+        {{ deadlineFormatted }}
+      </div>
     </div>
   </div>
 </template>
@@ -74,7 +95,6 @@ const stageLabelSet = computed(() => new Set(store.stageLabels))
 const tasks = computed(() => store.projectTasks(props.project.id))
 const meta = computed(() => store.projectMeta(props.project.id))
 const deadline = computed(() => store.projectDeadline(props.project.id))
-const nearest = computed(() => nearestDue(tasks.value))
 
 const statusText = computed(() => stageInfo.value?.task.content ?? '')
 const personLabels = computed(() =>
@@ -92,39 +112,29 @@ const staleDays = computed(() =>
 )
 const isStale = computed(() => staleDays.value !== null && staleDays.value > 14)
 const isOnIce = computed(() => props.stage?.label === 'stage::on-ice')
+const staleWeeks = computed(() => staleDays.value ? Math.floor(staleDays.value / 7) : 0)
 
-const tags = computed(() => {
-  const list = []
-  let key = 0
-  personLabels.value.forEach(l => {
-    list.push({ key: key++, cls: 'person', text: esc(l) })
-  })
-  if (meta.value.venue) {
-    const dl = deadline.value
-      ? deadline.value.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-      : null
-    list.push({ key: key++, cls: 'venue', text: esc(meta.value.venue) + (dl ? ' · ' + esc(dl) : '') })
-  }
-  if (nearest.value) {
-    const st = dueStatus(nearest.value)
-    const label = formatDate(new Date(nearest.value).toISOString().split('T')[0])
-    list.push({ key: key++, cls: st, text: (st === 'overdue' ? '⚠︎ ' : '') + esc(label) })
-  }
-  if (tasks.value.length) {
-    list.push({ key: key++, cls: '', text: tasks.value.length + ' task' + (tasks.value.length !== 1 ? 's' : '') })
-  }
-  if (isStale.value && !isOnIce.value) {
-    const weeks = Math.floor(staleDays.value / 7)
-    list.push({ key: key++, cls: 'stale-tag', text: `⏱︎ ${weeks}w` })
-  }
-  return list
+// Deadline display
+const deadlineDate = computed(() => deadline.value)
+const deadlineFormatted = computed(() => {
+  if (!deadline.value) return ''
+  return deadline.value.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+})
+const deadlineDateClass = computed(() => {
+  if (!deadline.value) return ''
+  const diff = deadline.value.getTime() - Date.now()
+  if (diff < 0) return 'overdue'
+  if (diff < 7 * 86400000) return 'due-soon'
+  return ''
 })
 
-function esc(str) {
-  return String(str ?? '')
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-}
+// Venue color
+const venueColorClass = computed(() => {
+  const v = (meta.value.venue ?? '').toUpperCase()
+  if (['PETS', 'POPETS', 'CCS', 'CHI', 'CSCW'].some(k => v.includes(k))) return 'venue-blue'
+  if (['USENIX', 'NDSS'].some(k => v.includes(k))) return 'venue-green'
+  return 'venue-orange'
+})
 
 function startStatusEdit() {
   statusDraft.value = statusText.value
@@ -173,12 +183,12 @@ onMounted(() => {
         Object.assign(ghost.style, {
           position: 'fixed',
           width: rect.width + 'px',
-          borderRadius: '14px',
+          borderRadius: '12px',
           pointerEvents: 'none',
           zIndex: '1000',
           opacity: '1',
           transform: 'rotate(2.5deg) scale(1.06)',
-          boxShadow: `0 28px 60px rgba(0,0,0,0.55), 0 0 0 1.5px ${accentColor}`,
+          boxShadow: `0 28px 60px rgba(0,0,0,0.25), 0 0 0 1.5px ${accentColor}`,
           margin: '0',
           transition: 'none',
         })

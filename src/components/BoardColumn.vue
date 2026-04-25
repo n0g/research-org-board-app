@@ -7,10 +7,8 @@
     @dragover.prevent
   >
     <div class="col-head">
-      <div class="col-head-left">
-        <span class="col-name">{{ stage.name }}</span>
-        <span class="col-count">{{ projects.length }}</span>
-      </div>
+      <span class="col-name">{{ stage.name }}</span>
+      <span class="col-count">{{ projects.length }}</span>
     </div>
     <div class="col-body" :id="'col-' + stageIndex" role="list">
       <div v-if="!projects.length" class="empty-col">—</div>
@@ -73,6 +71,5 @@ const projects = computed(() => {
   })
 })
 
-// Expose dragOver so ProjectCard can update it
 defineExpose({ dragOver })
 </script>
