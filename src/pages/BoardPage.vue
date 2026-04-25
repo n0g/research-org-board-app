@@ -94,7 +94,7 @@ function onKeyDown(e) {
 
 onMounted(async () => {
   store.initStages()
-  await store.loadData()
+  await store.loadIfStale()
   boardReady.value = true
   const label = new URLSearchParams(location.search).get('stage')
   if (label && store.stages) {

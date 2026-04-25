@@ -24,33 +24,8 @@
     <!-- Title -->
     <div class="card-name">{{ project.name }}</div>
 
-    <!-- Status (editable) -->
-    <div
-      v-if="statusText && !editingStatus"
-      ref="statusEl"
-      class="card-status editable"
-      role="button"
-      tabindex="0"
-      title="Click to edit"
-      :aria-label="'Edit status: ' + statusText"
-      @pointerdown.stop
-      @click.stop="startStatusEdit"
-      @keydown.enter.prevent.stop="startStatusEdit"
-      @keydown.space.prevent.stop="startStatusEdit"
-    >{{ statusText }}</div>
-
-    <input
-      v-if="editingStatus"
-      ref="statusInputEl"
-      v-model="statusDraft"
-      class="card-status-input"
-      @pointerdown.stop
-      @click.stop
-      @blur="saveStatusEdit"
-      @keydown.stop
-      @keydown.enter.prevent="statusInputEl?.blur()"
-      @keydown.escape.prevent="cancelStatusEdit"
-    >
+    <!-- Status -->
+    <div v-if="statusText" class="card-status">{{ statusText }}</div>
 
     <!-- Bottom row: people + date -->
     <div class="card-bottom">
@@ -84,11 +59,7 @@ const emit = defineEmits(['click'])
 
 const store = useBoardStore()
 const cardEl = ref(null)
-const statusEl = ref(null)
-const statusInputEl = ref(null)
 const dragging = ref(false)
-const editingStatus = ref(false)
-const statusDraft = ref('')
 
 const stageInfo = computed(() => store.projectStage(props.project.id))
 const stageLabelSet = computed(() => new Set(store.stageLabels))
@@ -136,23 +107,6 @@ const venueColorClass = computed(() => {
   return 'venue-orange'
 })
 
-function startStatusEdit() {
-  statusDraft.value = statusText.value
-  editingStatus.value = true
-  setTimeout(() => { statusInputEl.value?.focus(); statusInputEl.value?.select() }, 0)
-}
-
-async function saveStatusEdit() {
-  editingStatus.value = false
-  const val = statusDraft.value.trim() || statusText.value
-  if (val !== statusText.value && stageInfo.value) {
-    await store.updateStatusText(stageInfo.value.task.id, val).catch(console.error)
-  }
-}
-
-function cancelStatusEdit() {
-  editingStatus.value = false
-}
 
 onMounted(() => {
   const card = cardEl.value

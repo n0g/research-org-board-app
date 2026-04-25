@@ -416,10 +416,8 @@ function goSettings() { f7.views.main.router.navigate('/settings/', { clearPrevi
 
 onMounted(async () => {
   document.addEventListener('click', onDocClick)
-  if (!store.tasks.length) {
-    store.initStages()
-    await store.loadData()
-  }
+  store.initStages()
+  await store.loadIfStale()
 })
 
 onUnmounted(() => {

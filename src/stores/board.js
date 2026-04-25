@@ -94,6 +94,13 @@ export const useBoardStore = defineStore('board', () => {
     stages.value = null
   }
 
+  async function loadIfStale() {
+    const TEN_MIN = 10 * 60 * 1000
+    if (!lastUpdated.value || Date.now() - lastUpdated.value.getTime() > TEN_MIN) {
+      await loadData()
+    }
+  }
+
   async function loadData() {
     loading.value = true
     try {
@@ -198,7 +205,7 @@ export const useBoardStore = defineStore('board', () => {
     token, stages, projects, tasks, loading, lastUpdated, cardDragging, labels,
     activeFilter, stageLabels, displayProjects, excludedSectionIds, deadlineSectionIds,
     allCollaborators, allVenues,
-    initStages, saveToken, saveStages, resetToken, loadData,
+    initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,
     projectStage, projectMeta, projectTasks, projectDeadline,
     moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText,
     updateVenue, addCollaborator, projectDeadlineTaskObj, setFilter,
