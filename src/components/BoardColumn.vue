@@ -19,6 +19,7 @@
         :stage="stage"
         @click="$emit('card-click', project)"
       />
+      <div class="drop-placeholder" aria-hidden="true"></div>
     </div>
   </div>
 </template>

@@ -160,40 +160,73 @@ onMounted(() => {
 
   card.addEventListener('pointerdown', e => {
     if (e.pointerType === 'mouse' && e.button !== 0) return
-    store.cardDragging = true
 
     const startX = e.clientX
     const startY = e.clientY
     const rect = card.getBoundingClientRect()
     const offsetX = startX - rect.left
     const offsetY = startY - rect.top
+    const isTouch = e.pointerType === 'touch'
 
     let isDragging = false
+    let wasCancelled = false
     let ghost = null
     let currentCol = null
+    let longPressTimer = null
+    let lastX = startX
+    let lastY = startY
+
+    function activateDrag() {
+      if (isDragging) return
+      isDragging = true
+      dragging.value = true
+      store.cardDragging = true
+      if (isTouch) navigator.vibrate?.(10)
+      document.body.style.cursor = 'grabbing'
+      const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
+      ghost = card.cloneNode(true)
+      Object.assign(ghost.style, {
+        position: 'fixed',
+        width: rect.width + 'px',
+        borderRadius: '12px',
+        pointerEvents: 'none',
+        zIndex: '1000',
+        opacity: '0.9',
+        transform: 'rotate(2deg) scale(1.04)',
+        boxShadow: `0 28px 60px rgba(0,0,0,0.25), 0 0 0 1.5px ${accentColor}`,
+        margin: '0',
+        transition: 'none',
+      })
+      ghost.style.left = (lastX - offsetX) + 'px'
+      ghost.style.top  = (lastY - offsetY) + 'px'
+      document.body.appendChild(ghost)
+    }
+
+    if (isTouch) {
+      longPressTimer = setTimeout(activateDrag, 350)
+    }
 
     function onMove(e) {
+      lastX = e.clientX
+      lastY = e.clientY
+
       if (!isDragging) {
-        if (Math.hypot(e.clientX - startX, e.clientY - startY) < 8) return
-        isDragging = true
-        dragging.value = true
-        document.body.style.cursor = 'grabbing'
-        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
-        ghost = card.cloneNode(true)
-        Object.assign(ghost.style, {
-          position: 'fixed',
-          width: rect.width + 'px',
-          borderRadius: '12px',
-          pointerEvents: 'none',
-          zIndex: '1000',
-          opacity: '1',
-          transform: 'rotate(2.5deg) scale(1.06)',
-          boxShadow: `0 28px 60px rgba(0,0,0,0.25), 0 0 0 1.5px ${accentColor}`,
-          margin: '0',
-          transition: 'none',
-        })
-        document.body.appendChild(ghost)
+        if (isTouch) {
+          if (Math.hypot(e.clientX - startX, e.clientY - startY) > 8) {
+            wasCancelled = true
+            clearTimeout(longPressTimer)
+            document.removeEventListener('pointermove', onMove)
+          }
+        } else {
+          if (Math.hypot(e.clientX - startX, e.clientY - startY) >= 8) {
+            store.cardDragging = true
+            activateDrag()
+          }
+        }
+        return
       }
+
+      e.preventDefault()
       ghost.style.left = (e.clientX - offsetX) + 'px'
       ghost.style.top  = (e.clientY - offsetY) + 'px'
       ghost.style.visibility = 'hidden'
@@ -208,10 +241,14 @@ onMounted(() => {
     }
 
     function onUp() {
+      clearTimeout(longPressTimer)
       document.removeEventListener('pointermove', onMove)
       document.body.style.cursor = ''
       store.cardDragging = false
-      if (!isDragging) { emit('click'); return }
+      if (!isDragging) {
+        if (!wasCancelled) emit('click')
+        return
+      }
       ghost?.remove()
       dragging.value = false
       currentCol?.classList.remove('drag-over')
@@ -223,7 +260,7 @@ onMounted(() => {
       }
     }
 
-    document.addEventListener('pointermove', onMove)
+    document.addEventListener('pointermove', onMove, { passive: false })
     document.addEventListener('pointerup', onUp, { once: true })
   })
 })

@@ -466,6 +466,16 @@ html[data-theme="light"] .board { background: #ffffff; }
 }
 .col.drag-over .col-body { background: var(--accent-bg); border-radius: 8px; }
 
+.drop-placeholder {
+  display: none;
+  height: 72px;
+  border-radius: 12px;
+  border: 2px dashed var(--border2);
+  flex-shrink: 0;
+  margin-bottom: 8px;
+}
+.col.drag-over .drop-placeholder { display: block; }
+
 .col-head {
   padding: 0 0 12px;
   display: flex;
