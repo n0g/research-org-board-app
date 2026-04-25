@@ -200,6 +200,7 @@ a, button, .card, .stage-opt, .task-check, .task-due {
   .bottom-tabbar { display: none !important; }
   .board-page .page-content { padding-bottom: 0 !important; }
   .project-page .page-content { padding-bottom: 0 !important; }
+  .board { padding-left: 40px; }
 }
 
 /* Sidebar brand header */
@@ -459,7 +460,7 @@ html[data-theme="light"] .board { background: #ffffff; }
 .col.drag-over .col-body { background: var(--accent-bg); border-radius: 8px; }
 
 .col-head {
-  padding: 0 4px 12px;
+  padding: 0 0 12px;
   display: flex;
   align-items: center;
   gap: 8px;
