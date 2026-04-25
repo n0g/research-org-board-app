@@ -209,6 +209,12 @@ a, button, .card, .stage-opt, .task-check, .task-due {
   justify-content: space-between;
   padding: calc(20px + env(safe-area-inset-top)) 16px 16px;
   gap: 8px;
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+.sidebar-brand button, .sidebar-brand a {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
 }
 .sidebar-brand-name {
   font-size: 15px;

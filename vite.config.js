@@ -28,6 +28,7 @@ export default defineConfig(({ command }) => ({
         start_url: BASE,
         scope: BASE,
         display: 'standalone',
+        display_override: ['window-controls-overlay'],
         background_color: '#F5F5F7',
         theme_color: '#F5F5F7',
         orientation: 'any',

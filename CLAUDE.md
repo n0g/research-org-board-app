@@ -213,6 +213,18 @@ Task scheduling and calendar management stay outside this app (handled via Claud
 
 These were discussed and deferred pending real usage. Implement when the user asks.
 
+### Project card detail review (medium effort)
+Audit what information is shown on `ProjectCard.vue` and how it's presented. Consider: deadline prominence, collaborator display, stale indicator, status text truncation. Goal: make each card scannable at a glance without opening the detail page.
+
+### Drag and drop between columns (medium effort)
+The existing Pointer Events DnD in `ProjectCard.vue` moves projects between stages. Revisit the implementation: check that it works reliably on touch (tablet), handles edge cases (drop on column header vs body), and gives good visual feedback during drag.
+
+### Project detail page usability (medium effort)
+`ProjectDetailPage.vue` is functional but not polished. Improvements to consider: better layout for the metadata pane, richer task list (due dates, priority), faster stage switching, and making the page feel less like a form and more like a workspace.
+
+### Settings page (medium effort)
+Replace or supplement `SettingsSheet.vue` with a dedicated full-page settings screen. Should cover: API token management, theme selection, stage configuration (currently behind "Reconfigure stages"), HotCRP proxy + sites, and any future preferences.
+
 ### HotCRP Reviews (revisit)
 The Reviews page and HotCRP integration exist but are not working as intended. Needs rethinking before further work.
 
