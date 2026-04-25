@@ -115,45 +115,36 @@
             <!-- Venue (left) -->
             <div class="meta-section">
               <div class="meta-label">Venue</div>
-              <div ref="venueWrapperEl" class="popup-wrapper">
-                <button class="popup-btn" @click.stop="venuePopupOpen = !venuePopupOpen">
-                  <span>{{ meta.venue ?? 'None' }}</span>
-                  <span class="material-symbols-outlined popup-chevron">expand_more</span>
-                </button>
-                <div v-if="venuePopupOpen" class="popup-dropdown">
-                  <button class="popup-option" :class="{ selected: !meta.venue }" @click="selectVenue(null)">None</button>
-                  <button
-                    v-for="v in venueOptions"
-                    :key="v"
-                    class="popup-option"
-                    :class="{ selected: meta.venue === v }"
-                    @click="selectVenue(v)"
-                  >{{ v }}</button>
-                </div>
-              </div>
+              <div
+                v-if="!editingVenue"
+                class="meta-editable"
+                :class="{ placeholder: !venueText }"
+                @click="startEditVenue"
+              >{{ venueText || 'Add venue…' }}</div>
+              <input
+                v-else
+                ref="venueInputEl"
+                v-model="venueDraft"
+                class="meta-input"
+                type="text"
+                placeholder="e.g. PETS 2026"
+                @blur="saveVenue"
+                @keydown.enter.prevent="venueInputEl?.blur()"
+                @keydown.escape.prevent="cancelVenue"
+              >
             </div>
 
             <!-- Deadline (right) -->
             <div class="meta-section">
               <div class="meta-label">Deadline</div>
-              <div class="meta-value">
-                <span class="material-symbols-outlined">calendar_today</span>
-                <span
-                  v-if="deadlineTask"
-                  class="meta-date-btn"
-                  :class="deadlineDateClass"
-                  @click="datePickerEl?.showPicker?.() || datePickerEl?.click()"
-                >{{ formattedDeadline }}</span>
-                <span v-else class="meta-value-muted">None</span>
-                <input
-                  v-if="deadlineTask"
-                  ref="datePickerEl"
-                  type="date"
-                  class="meta-date-input"
-                  :value="deadlineDateValue"
-                  @change="onDeadlineChange"
-                >
-              </div>
+              <input
+                class="meta-date-visible"
+                :class="deadlineDateClass"
+                type="date"
+                :value="deadlineDateValue"
+                @change="onDeadlineChange"
+                @keydown.enter.prevent="($event.target).blur()"
+              >
             </div>
           </div>
 
@@ -257,7 +248,6 @@ const project = computed(() => store.displayProjects.find(p => p.id === projectI
 const stageInfo = computed(() => store.projectStage(projectId.value))
 const meta = computed(() => store.projectMeta(projectId.value))
 const tasks = computed(() => store.projectTasks(projectId.value))
-const deadlineTask = computed(() => store.projectDeadlineTaskObj(projectId.value))
 const deadline = computed(() => store.projectDeadline(projectId.value))
 
 const stageLabelSet = computed(() => new Set(store.stageLabels))
@@ -271,24 +261,11 @@ const personLabels = computed(() =>
     : []
 )
 
-const venueOptions = computed(() => {
-  const standard = VENUES.map(v => v.toUpperCase())
-  const extra = store.allVenues.filter(v => !standard.includes(v))
-  return [...standard, ...extra]
-})
-
 // ── Deadline ──
-const datePickerEl = ref(null)
-
 const deadlineDateValue = computed(() => {
   if (!deadline.value) return ''
   const d = deadline.value
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-})
-
-const formattedDeadline = computed(() => {
-  if (!deadline.value) return 'None'
-  return deadline.value.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 })
 
 const deadlineDateClass = computed(() => {
@@ -300,9 +277,32 @@ const deadlineDateClass = computed(() => {
 })
 
 async function onDeadlineChange(e) {
-  if (!deadlineTask.value) return
-  await store.updateTaskDue(deadlineTask.value.id, e.target.value).catch(console.error)
+  await store.setDeadlineDate(projectId.value, e.target.value).catch(console.error)
 }
+
+// ── Venue ──
+const venueText = computed(() => deadlineTask.value?.content ?? '')
+const editingVenue = ref(false)
+const venueDraft = ref('')
+const venueInputEl = ref(null)
+
+async function startEditVenue() {
+  venueDraft.value = venueText.value
+  editingVenue.value = true
+  await nextTick()
+  venueInputEl.value?.focus()
+  venueInputEl.value?.select()
+}
+
+async function saveVenue() {
+  editingVenue.value = false
+  const val = venueDraft.value.trim()
+  if (val !== venueText.value) {
+    await store.updateVenue(projectId.value, val).catch(console.error)
+  }
+}
+
+function cancelVenue() { editingVenue.value = false }
 
 // ── Title ──
 const editingTitle = ref(false)
@@ -384,15 +384,6 @@ async function selectStage(stage) {
   await store.moveStage(projectId.value, stageInfo.value.task.id, stageInfo.value.label, stage.label).catch(console.error)
 }
 
-// ── Venue popup ──
-const venueWrapperEl = ref(null)
-const venuePopupOpen = ref(false)
-
-async function selectVenue(venue) {
-  venuePopupOpen.value = false
-  await store.updateVenue(projectId.value, venue).catch(console.error)
-}
-
 // ── Collaborator combo ──
 const addingCollab = ref(false)
 const collabQuery = ref('')
@@ -430,7 +421,6 @@ function cancelAddCollab() {
 // Close popups on outside click
 function onDocClick(e) {
   if (!stageWrapperEl.value?.contains(e.target)) stagePopupOpen.value = false
-  if (!venueWrapperEl.value?.contains(e.target)) venuePopupOpen.value = false
   if (!collabWrapperEl.value?.contains(e.target)) cancelAddCollab()
 }
 

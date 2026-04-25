@@ -19,6 +19,7 @@ export const useBoardStore = defineStore('board', () => {
   const tasks = ref([])
   const excludedSectionIds = ref(new Set())
   const deadlineSectionIds = ref(new Set())
+  const deadlineSectionByProject = ref(new Map())
   const summarySectionByProject = ref(new Map())
   const lastUpdated = ref(null)
   const loading = ref(false)
@@ -51,8 +52,9 @@ export const useBoardStore = defineStore('board', () => {
   const allVenues = computed(() => {
     const venues = new Set()
     displayProjects.value.forEach(p => {
-      const meta = getProjectMeta(tasks.value, p.id)
-      if (meta.venue) venues.add(meta.venue)
+      const sectionId = deadlineSectionByProject.value.get(p.id)
+      const dt = sectionId ? tasks.value.find(t => t.project_id === p.id && t.section_id === sectionId && !t.is_completed) : null
+      if (dt?.content) venues.add(dt.content)
     })
     return [...venues].sort()
   })
@@ -122,6 +124,9 @@ export const useBoardStore = defineStore('board', () => {
       const EXCLUDED = new Set(['📌 Current Status', '📌 Deadlines', '📌 Summary'])
       excludedSectionIds.value = new Set(sectionsData.filter(s => EXCLUDED.has(s.name)).map(s => s.id))
       deadlineSectionIds.value = new Set(sectionsData.filter(s => s.name === '📌 Deadlines').map(s => s.id))
+      const deadlineMap = new Map()
+      sectionsData.filter(s => s.name === '📌 Deadlines').forEach(s => deadlineMap.set(s.project_id, s.id))
+      deadlineSectionByProject.value = deadlineMap
       const summaryMap = new Map()
       sectionsData.filter(s => s.name === '📌 Summary').forEach(s => summaryMap.set(s.project_id, s.id))
       summarySectionByProject.value = summaryMap
@@ -135,8 +140,17 @@ export const useBoardStore = defineStore('board', () => {
     return getProjectStage(tasks.value, stageLabels.value, projectId)
   }
 
+  function projectDeadlineTaskBase(projectId) {
+    const sectionId = deadlineSectionByProject.value.get(projectId)
+    if (!sectionId) return null
+    return tasks.value.find(t => t.project_id === projectId && t.section_id === sectionId && !t.is_completed) ?? null
+  }
+
   function projectMeta(projectId) {
-    return getProjectMeta(tasks.value, projectId)
+    const meta = getProjectMeta(tasks.value, projectId)
+    const dt = projectDeadlineTaskBase(projectId)
+    if (dt) meta.venue = dt.content
+    return meta
   }
 
   function projectTasks(projectId) {
@@ -197,15 +211,37 @@ export const useBoardStore = defineStore('board', () => {
     task.labels = newLabels
   }
 
-  async function updateVenue(projectId, newVenue) {
-    const stageInfo = getProjectStage(tasks.value, stageLabels.value, projectId)
-    if (!stageInfo) return
-    const task = stageInfo.task
-    const venueSet = new Set(VENUES)
-    const labelsWithoutVenue = (task.labels || []).filter(l => !venueSet.has(l.toLowerCase()))
-    const newLabels = newVenue ? [...labelsWithoutVenue, newVenue.toLowerCase()] : labelsWithoutVenue
-    await api(token.value, `/tasks/${task.id}`, 'POST', { labels: newLabels })
-    task.labels = newLabels
+  async function updateVenue(projectId, name) {
+    const existing = projectDeadlineTaskBase(projectId)
+    if (!name) return
+    if (existing) {
+      if (name === existing.content) return
+      await api(token.value, `/tasks/${existing.id}`, 'POST', { content: name })
+      existing.content = name
+    } else {
+      const sectionId = deadlineSectionByProject.value.get(projectId)
+      if (!sectionId) return
+      const task = await api(token.value, '/tasks', 'POST', { content: name, project_id: projectId, section_id: sectionId })
+      tasks.value.push(task)
+    }
+  }
+
+  async function setDeadlineDate(projectId, dateVal) {
+    let task = projectDeadlineTaskBase(projectId)
+    if (!task) {
+      const sectionId = deadlineSectionByProject.value.get(projectId)
+      if (!sectionId) return
+      const project = projects.value.find(p => p.id === projectId)
+      task = await api(token.value, '/tasks', 'POST', {
+        content: project?.name || 'Deadline',
+        project_id: projectId,
+        section_id: sectionId,
+      })
+      tasks.value.push(task)
+    }
+    const body = dateVal ? { due_date: dateVal } : { due_string: 'no due date' }
+    await api(token.value, `/tasks/${task.id}`, 'POST', body)
+    task.due = dateVal ? { date: dateVal } : null
   }
 
   function projectSummaryTask(projectId) {
@@ -259,9 +295,12 @@ export const useBoardStore = defineStore('board', () => {
     tasks.value.push(statusTask)
     excludedSectionIds.value = new Set([...excludedSectionIds.value, statusSection.id, deadlinesSection.id, summarySection.id])
     deadlineSectionIds.value = new Set([...deadlineSectionIds.value, deadlinesSection.id])
-    const m = new Map(summarySectionByProject.value)
-    m.set(project.id, summarySection.id)
-    summarySectionByProject.value = m
+    const dm = new Map(deadlineSectionByProject.value)
+    dm.set(project.id, deadlinesSection.id)
+    deadlineSectionByProject.value = dm
+    const sm = new Map(summarySectionByProject.value)
+    sm.set(project.id, summarySection.id)
+    summarySectionByProject.value = sm
 
     return project
   }
@@ -284,7 +323,8 @@ export const useBoardStore = defineStore('board', () => {
     initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,
     projectStage, projectMeta, projectTasks, projectDeadline,
     moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText,
-    updateVenue, addCollaborator, renameProject, projectDeadlineTaskObj,
+    updateVenue, setDeadlineDate, addCollaborator, renameProject,
+    projectDeadlineTaskBase, projectDeadlineTaskObj,
     projectSummaryTask, updateSummary, createProject, deleteProject, setFilter,
   }
 })

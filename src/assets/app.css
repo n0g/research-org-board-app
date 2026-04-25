@@ -1096,6 +1096,19 @@ html[data-theme="dark"] .due-soon-text { color: var(--amber); }
   min-height: 80px;
 }
 .meta-textarea:focus { border-color: var(--accent); }
+.meta-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 6px 10px;
+  outline: none;
+}
+.meta-input:focus { border-color: var(--accent); }
 
 /* Side-by-side meta row */
 .meta-row-pair {
@@ -1104,24 +1117,23 @@ html[data-theme="dark"] .due-soon-text { color: var(--amber); }
   gap: 0 24px;
 }
 
-/* Deadline date button + hidden input */
-.meta-date-btn {
+/* Visible deadline date input */
+.meta-date-visible {
+  font-size: 13px;
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 5px 8px;
+  outline: none;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  text-underline-offset: 3px;
+  width: 100%;
+  box-sizing: border-box;
 }
-.meta-date-btn:hover { color: var(--accent); }
-.meta-value-muted { font-size: 14px; color: var(--text3); }
-.meta-date-input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-  width: 0;
-  height: 0;
-}
+.meta-date-visible:focus { border-color: var(--accent); }
+.meta-date-visible.overdue-text { color: var(--overdue); }
+.meta-date-visible.due-soon-text { color: var(--due-soon); }
 
 /* Popup button */
 .popup-wrapper { position: relative; }
