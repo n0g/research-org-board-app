@@ -173,8 +173,8 @@
           <!-- Todoist link + delete -->
           <div v-if="project" class="project-meta-footer">
             <a
-              class="todoist-link"
-              :href="`https://todoist.com/app/project/${project.id}`"
+              class="todoist-link external"
+              :href="`https://app.todoist.com/app/project/${project.id}`"
               target="_blank"
               rel="noopener noreferrer"
             >Open in Todoist ↗</a>
