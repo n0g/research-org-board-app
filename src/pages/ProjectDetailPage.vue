@@ -21,7 +21,21 @@
             Board
           </button>
 
-          <h1 class="project-title">{{ project?.name ?? 'Loading…' }}</h1>
+          <h1
+            v-if="!editingTitle"
+            class="project-title project-title-editable"
+            @click="startEditTitle"
+          >{{ project?.name ?? 'Loading…' }}</h1>
+          <textarea
+            v-else
+            ref="titleInputEl"
+            v-model="titleDraft"
+            class="project-title project-title-input"
+            rows="2"
+            @blur="saveTitle"
+            @keydown.meta.enter.prevent="titleInputEl?.blur()"
+            @keydown.escape.prevent="cancelTitle"
+          ></textarea>
 
           <!-- Collaborators (first after title) -->
           <div class="meta-section">
@@ -285,6 +299,30 @@ async function onDeadlineChange(e) {
   if (!deadlineTask.value) return
   await store.updateTaskDue(deadlineTask.value.id, e.target.value).catch(console.error)
 }
+
+// ── Title ──
+const editingTitle = ref(false)
+const titleDraft = ref('')
+const titleInputEl = ref(null)
+
+async function startEditTitle() {
+  if (!project.value) return
+  titleDraft.value = project.value.name
+  editingTitle.value = true
+  await nextTick()
+  titleInputEl.value?.focus()
+  titleInputEl.value?.select()
+}
+
+async function saveTitle() {
+  editingTitle.value = false
+  const val = titleDraft.value.trim()
+  if (val && val !== project.value?.name) {
+    await store.renameProject(projectId.value, val).catch(console.error)
+  }
+}
+
+function cancelTitle() { editingTitle.value = false }
 
 // ── Status ──
 const statusText = computed(() => stageInfo.value?.task.content ?? '')

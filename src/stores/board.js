@@ -32,10 +32,15 @@ export const useBoardStore = defineStore('board', () => {
 
   const allCollaborators = computed(() => {
     const stageSet = new Set(stageLabels.value)
+    const venueSet = new Set(VENUES)
     const people = new Set()
     displayProjects.value.forEach(p => {
       const stage = getProjectStage(tasks.value, stageLabels.value, p.id)
-      if (stage) (stage.task.labels || []).filter(l => !stageSet.has(l)).forEach(l => people.add(l))
+      if (stage) {
+        (stage.task.labels || [])
+          .filter(l => !stageSet.has(l) && !venueSet.has(l.toLowerCase()))
+          .forEach(l => people.add(l.startsWith('@person::') ? l.slice(9) : l))
+      }
     })
     return [...people].sort()
   })
@@ -170,11 +175,18 @@ export const useBoardStore = defineStore('board', () => {
     if (task) task.content = content
   }
 
+  async function renameProject(projectId, name) {
+    await api(token.value, `/projects/${projectId}`, 'POST', { name })
+    const project = projects.value.find(p => p.id === projectId)
+    if (project) project.name = name
+  }
+
   async function addCollaborator(projectId, name) {
     const stageInfo = getProjectStage(tasks.value, stageLabels.value, projectId)
     if (!stageInfo) return
     const task = stageInfo.task
-    const newLabels = [...(task.labels || []), name]
+    const label = `@person::${name}`
+    const newLabels = [...(task.labels || []), label]
     await api(token.value, `/tasks/${task.id}`, 'POST', { labels: newLabels })
     task.labels = newLabels
   }
@@ -208,6 +220,6 @@ export const useBoardStore = defineStore('board', () => {
     initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,
     projectStage, projectMeta, projectTasks, projectDeadline,
     moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText,
-    updateVenue, addCollaborator, projectDeadlineTaskObj, setFilter,
+    updateVenue, addCollaborator, renameProject, projectDeadlineTaskObj, setFilter,
   }
 })

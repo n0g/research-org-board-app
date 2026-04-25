@@ -992,6 +992,27 @@ html[data-theme="dark"] .project-meta { background: var(--bg2); }
   color: var(--text);
   margin-bottom: 28px;
 }
+.project-title-editable {
+  cursor: text;
+  border-radius: 6px;
+  margin-left: -4px;
+  padding: 2px 4px;
+  transition: background 0.1s;
+}
+.project-title-editable:hover { background: var(--bg-surface); }
+.project-title-input {
+  display: block;
+  width: 100%;
+  resize: none;
+  border: 1.5px solid var(--accent);
+  border-radius: 6px;
+  background: var(--bg);
+  padding: 4px 8px;
+  margin-left: -8px;
+  font-family: var(--font);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
 
 /* Metadata sections */
 .meta-section { margin-bottom: 20px; }
