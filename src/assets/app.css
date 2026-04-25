@@ -964,7 +964,7 @@ html[data-theme="dark"] .project-meta { background: var(--bg2); }
 @media (max-width: 767px) {
   .project-main { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
   .project-meta { width: 100%; border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; flex-shrink: 0; height: auto; }
-  .project-tasks { overflow-y: visible; flex-shrink: 0; min-height: 60vh; }
+  .project-tasks { overflow-y: visible; flex: none; min-height: 60vh; }
 }
 
 .back-btn {
@@ -1133,21 +1133,24 @@ html[data-theme="dark"] .popup-dropdown {
 
 /* Collaborator chips in detail */
 .collab-chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.collab-add-btn {
+.collab-add-pill {
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
   border-radius: 9999px;
   border: 1.5px dashed var(--border2);
   background: transparent;
   color: var(--text3);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 14px;
+  line-height: 1;
   font-family: var(--font);
   cursor: pointer;
   transition: border-color 0.1s, color 0.1s;
+  flex-shrink: 0;
 }
-.collab-add-btn:hover { border-color: var(--text2); color: var(--text2); }
+.collab-add-pill:hover { border-color: var(--text2); color: var(--text2); }
 .collab-combo-wrapper { position: relative; }
 .collab-combo-input {
   padding: 4px 10px;

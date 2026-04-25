@@ -23,6 +23,38 @@
 
           <h1 class="project-title">{{ project?.name ?? 'Loading…' }}</h1>
 
+          <!-- Collaborators (first after title) -->
+          <div class="meta-section">
+            <div class="meta-label">Collaborators</div>
+            <div class="collab-chips">
+              <span v-for="person in personLabels" :key="person" class="collab-chip">
+                <span class="material-symbols-outlined">person</span>
+                {{ person }}
+              </span>
+              <button v-if="!addingCollab" class="collab-add-pill" @click="startAddCollab">+</button>
+              <div v-else ref="collabWrapperEl" class="collab-combo-wrapper">
+                <input
+                  ref="collabInputEl"
+                  v-model="collabQuery"
+                  class="collab-combo-input"
+                  placeholder="Name…"
+                  autocomplete="off"
+                  @keydown.enter.prevent="commitCollab(collabQuery)"
+                  @keydown.escape.prevent="cancelAddCollab"
+                >
+                <div v-if="filteredCollabs.length" class="popup-dropdown">
+                  <button
+                    v-for="c in filteredCollabs"
+                    :key="c"
+                    class="popup-option"
+                    @mousedown.prevent
+                    @click="commitCollab(c)"
+                  >{{ c }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Status -->
           <div class="meta-section">
             <div class="meta-label">Status</div>
@@ -42,74 +74,6 @@
               @keydown.escape.prevent="cancelStatus"
               @keydown.meta.enter.prevent="statusTextareaEl?.blur()"
             ></textarea>
-          </div>
-
-          <!-- Summary -->
-          <div class="meta-section">
-            <div class="meta-label">Summary</div>
-            <div
-              v-if="!editingSummary"
-              class="meta-editable"
-              :class="{ placeholder: !summaryText }"
-              @click="startEdit('summary')"
-            >{{ summaryText || 'Add a summary…' }}</div>
-            <textarea
-              v-else
-              ref="summaryTextareaEl"
-              v-model="summaryDraft"
-              class="meta-textarea"
-              rows="4"
-              @blur="saveSummary"
-              @keydown.escape.prevent="cancelSummary"
-              @keydown.meta.enter.prevent="summaryTextareaEl?.blur()"
-            ></textarea>
-          </div>
-
-          <!-- Deadline + Venue -->
-          <div class="meta-row-pair">
-            <!-- Deadline -->
-            <div class="meta-section">
-              <div class="meta-label">Deadline</div>
-              <div class="meta-value">
-                <span class="material-symbols-outlined">calendar_today</span>
-                <span
-                  v-if="deadlineTask"
-                  class="meta-date-btn"
-                  :class="deadlineDateClass"
-                  @click="datePickerEl?.showPicker?.() || datePickerEl?.click()"
-                >{{ formattedDeadline }}</span>
-                <span v-else class="meta-value-muted">None</span>
-                <input
-                  v-if="deadlineTask"
-                  ref="datePickerEl"
-                  type="date"
-                  class="meta-date-input"
-                  :value="deadlineDateValue"
-                  @change="onDeadlineChange"
-                >
-              </div>
-            </div>
-
-            <!-- Venue -->
-            <div class="meta-section">
-              <div class="meta-label">Venue</div>
-              <div ref="venueWrapperEl" class="popup-wrapper">
-                <button class="popup-btn" @click.stop="venuePopupOpen = !venuePopupOpen">
-                  <span>{{ meta.venue ?? 'None' }}</span>
-                  <span class="material-symbols-outlined popup-chevron">expand_more</span>
-                </button>
-                <div v-if="venuePopupOpen" class="popup-dropdown">
-                  <button class="popup-option" :class="{ selected: !meta.venue }" @click="selectVenue(null)">None</button>
-                  <button
-                    v-for="v in venueOptions"
-                    :key="v"
-                    class="popup-option"
-                    :class="{ selected: meta.venue === v }"
-                    @click="selectVenue(v)"
-                  >{{ v }}</button>
-                </div>
-              </div>
-            </div>
           </div>
 
           <!-- Stage -->
@@ -132,38 +96,72 @@
             </div>
           </div>
 
-          <!-- Collaborators -->
-          <div class="meta-section">
-            <div class="meta-label">Collaborators</div>
-            <div class="collab-chips">
-              <span v-for="person in personLabels" :key="person" class="collab-chip">
-                <span class="material-symbols-outlined">person</span>
-                {{ person }}
-              </span>
-
-              <!-- Add collaborator combo -->
-              <button v-if="!addingCollab" class="collab-add-btn" @click="startAddCollab">+ Add</button>
-              <div v-else ref="collabWrapperEl" class="collab-combo-wrapper">
-                <input
-                  ref="collabInputEl"
-                  v-model="collabQuery"
-                  class="collab-combo-input"
-                  placeholder="Name…"
-                  autocomplete="off"
-                  @keydown.enter.prevent="commitCollab(collabQuery)"
-                  @keydown.escape.prevent="cancelAddCollab"
-                >
-                <div v-if="filteredCollabs.length" class="popup-dropdown">
+          <!-- Venue + Deadline side by side -->
+          <div class="meta-row-pair">
+            <!-- Venue (left) -->
+            <div class="meta-section">
+              <div class="meta-label">Venue</div>
+              <div ref="venueWrapperEl" class="popup-wrapper">
+                <button class="popup-btn" @click.stop="venuePopupOpen = !venuePopupOpen">
+                  <span>{{ meta.venue ?? 'None' }}</span>
+                  <span class="material-symbols-outlined popup-chevron">expand_more</span>
+                </button>
+                <div v-if="venuePopupOpen" class="popup-dropdown">
+                  <button class="popup-option" :class="{ selected: !meta.venue }" @click="selectVenue(null)">None</button>
                   <button
-                    v-for="c in filteredCollabs"
-                    :key="c"
+                    v-for="v in venueOptions"
+                    :key="v"
                     class="popup-option"
-                    @mousedown.prevent
-                    @click="commitCollab(c)"
-                  >{{ c }}</button>
+                    :class="{ selected: meta.venue === v }"
+                    @click="selectVenue(v)"
+                  >{{ v }}</button>
                 </div>
               </div>
             </div>
+
+            <!-- Deadline (right) -->
+            <div class="meta-section">
+              <div class="meta-label">Deadline</div>
+              <div class="meta-value">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span
+                  v-if="deadlineTask"
+                  class="meta-date-btn"
+                  :class="deadlineDateClass"
+                  @click="datePickerEl?.showPicker?.() || datePickerEl?.click()"
+                >{{ formattedDeadline }}</span>
+                <span v-else class="meta-value-muted">None</span>
+                <input
+                  v-if="deadlineTask"
+                  ref="datePickerEl"
+                  type="date"
+                  class="meta-date-input"
+                  :value="deadlineDateValue"
+                  @change="onDeadlineChange"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div class="meta-section">
+            <div class="meta-label">Summary</div>
+            <div
+              v-if="!editingSummary"
+              class="meta-editable"
+              :class="{ placeholder: !summaryText }"
+              @click="startEdit('summary')"
+            >{{ summaryText || 'Add a summary…' }}</div>
+            <textarea
+              v-else
+              ref="summaryTextareaEl"
+              v-model="summaryDraft"
+              class="meta-textarea"
+              rows="4"
+              @blur="saveSummary"
+              @keydown.escape.prevent="cancelSummary"
+              @keydown.meta.enter.prevent="summaryTextareaEl?.blur()"
+            ></textarea>
           </div>
 
           <!-- Todoist link -->
@@ -249,7 +247,9 @@ const stageObj = computed(() => store.stages?.find(s => s.label === stageInfo.va
 
 const personLabels = computed(() =>
   stageInfo.value
-    ? (stageInfo.value.task.labels || []).filter(l => !stageLabelSet.value.has(l) && !VENUES.includes(l.toLowerCase()))
+    ? (stageInfo.value.task.labels || [])
+        .filter(l => !stageLabelSet.value.has(l) && !VENUES.includes(l.toLowerCase()))
+        .map(l => l.startsWith('@person::') ? l.slice(9) : l)
     : []
 )
 
