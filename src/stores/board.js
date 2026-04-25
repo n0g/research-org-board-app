@@ -8,6 +8,8 @@ import {
   getProjectMeta,
   getProjectTasks,
   getProjectDeadline,
+  stripPersonPrefix,
+  isPersonLabel,
 } from '../lib/helpers.js'
 
 export const useBoardStore = defineStore('board', () => {
@@ -39,7 +41,7 @@ export const useBoardStore = defineStore('board', () => {
       if (stage) {
         (stage.task.labels || [])
           .filter(l => !stageSet.has(l) && !venueSet.has(l.toLowerCase()))
-          .forEach(l => people.add(l.startsWith('@person::') ? l.slice(9) : l))
+          .forEach(l => people.add(stripPersonPrefix(l)))
       }
     })
     return [...people].sort()
@@ -185,7 +187,7 @@ export const useBoardStore = defineStore('board', () => {
     const stageInfo = getProjectStage(tasks.value, stageLabels.value, projectId)
     if (!stageInfo) return
     const task = stageInfo.task
-    const label = `@person::${name}`
+    const label = `person::${name}`
     const newLabels = [...(task.labels || []), label]
     await api(token.value, `/tasks/${task.id}`, 'POST', { labels: newLabels })
     task.labels = newLabels

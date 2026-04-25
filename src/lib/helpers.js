@@ -9,6 +9,16 @@ export const DEFAULT_STAGES = [
 
 export const VENUES = ['ccs', 'usenix', 'ndss', 's&p', 'soups', 'chi', 'cscw', 'pets', 'popets']
 
+export function stripPersonPrefix(l) {
+  if (l.startsWith('person::')) return l.slice(8)
+  if (l.startsWith('@person::')) return l.slice(9)
+  return l
+}
+
+export function isPersonLabel(l) {
+  return l.startsWith('person::') || l.startsWith('@person::')
+}
+
 export function getProjectStage(tasks, stageLabels, projectId) {
   const stageLabelSet = new Set(stageLabels)
   for (const t of tasks) {

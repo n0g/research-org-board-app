@@ -27,7 +27,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useBoardStore } from '../stores/board.js'
-import { getProjectDeadline } from '../lib/helpers.js'
+import { getProjectDeadline, stripPersonPrefix } from '../lib/helpers.js'
 import ProjectCard from './ProjectCard.vue'
 
 const props = defineProps({
@@ -53,7 +53,7 @@ const projects = computed(() => {
     list = list.filter(p => {
       if (type === 'person') {
         const stage = store.projectStage(p.id)
-        return stage && (stage.task.labels || []).filter(l => !stageSet.has(l)).includes(value)
+        return stage && (stage.task.labels || []).some(l => stripPersonPrefix(l) === value)
       }
       if (type === 'venue') {
         const meta = store.projectMeta(p.id)

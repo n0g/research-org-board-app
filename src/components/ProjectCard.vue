@@ -48,7 +48,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useBoardStore } from '../stores/board.js'
-import { nearestDue, dueStatus, formatDate } from '../lib/helpers.js'
+import { VENUES, stripPersonPrefix, isPersonLabel, nearestDue, dueStatus, formatDate } from '../lib/helpers.js'
 
 const props = defineProps({
   project: { type: Object, required: true },
@@ -68,11 +68,12 @@ const meta = computed(() => store.projectMeta(props.project.id))
 const deadline = computed(() => store.projectDeadline(props.project.id))
 
 const statusText = computed(() => stageInfo.value?.task.content ?? '')
-const personLabels = computed(() =>
-  stageInfo.value
-    ? (stageInfo.value.task.labels || []).filter(l => !stageLabelSet.value.has(l))
-    : []
-)
+const personLabels = computed(() => {
+  if (!stageInfo.value) return []
+  return (stageInfo.value.task.labels || [])
+    .filter(l => !stageLabelSet.value.has(l) && !VENUES.includes(l.toLowerCase()) && isPersonLabel(l))
+    .map(stripPersonPrefix)
+})
 
 const dateStr = computed(() => {
   const t = stageInfo.value?.task

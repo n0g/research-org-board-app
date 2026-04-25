@@ -235,7 +235,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useSidebar } from '../composables/useSidebar.js'
-import { VENUES } from '../lib/helpers.js'
+import { VENUES, stripPersonPrefix, isPersonLabel } from '../lib/helpers.js'
 
 import AppSidebar from '../components/AppSidebar.vue'
 import TaskItem from '../components/TaskItem.vue'
@@ -262,8 +262,8 @@ const stageObj = computed(() => store.stages?.find(s => s.label === stageInfo.va
 const personLabels = computed(() =>
   stageInfo.value
     ? (stageInfo.value.task.labels || [])
-        .filter(l => !stageLabelSet.value.has(l) && !VENUES.includes(l.toLowerCase()))
-        .map(l => l.startsWith('@person::') ? l.slice(9) : l)
+        .filter(l => !stageLabelSet.value.has(l) && !VENUES.includes(l.toLowerCase()) && isPersonLabel(l))
+        .map(stripPersonPrefix)
     : []
 )
 
