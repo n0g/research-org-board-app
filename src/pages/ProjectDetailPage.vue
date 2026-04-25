@@ -355,26 +355,18 @@ async function saveStatus() {
 }
 function cancelStatus() { editingStatus.value = false }
 
-// ── Summary (localStorage) ──
-const SUMMARIES_KEY = 'rb_summaries'
-function loadSummary(id) {
-  return JSON.parse(localStorage.getItem(SUMMARIES_KEY) || '{}')[id] ?? ''
-}
-function persistSummary(id, text) {
-  const all = JSON.parse(localStorage.getItem(SUMMARIES_KEY) || '{}')
-  all[id] = text
-  localStorage.setItem(SUMMARIES_KEY, JSON.stringify(all))
-}
-
-const summaryText = ref(loadSummary(projectId.value))
+// ── Summary (Todoist 📌 Summary section) ──
+const summaryText = computed(() => store.projectSummaryTask(projectId.value)?.content ?? '')
 const editingSummary = ref(false)
 const summaryDraft = ref('')
 const summaryTextareaEl = ref(null)
 
-function saveSummary() {
+async function saveSummary() {
   editingSummary.value = false
-  persistSummary(projectId.value, summaryDraft.value.trim())
-  summaryText.value = summaryDraft.value.trim()
+  const val = summaryDraft.value.trim()
+  if (val !== summaryText.value) {
+    await store.updateSummary(projectId.value, val).catch(console.error)
+  }
 }
 function cancelSummary() { editingSummary.value = false }
 

@@ -19,6 +19,7 @@ export const useBoardStore = defineStore('board', () => {
   const tasks = ref([])
   const excludedSectionIds = ref(new Set())
   const deadlineSectionIds = ref(new Set())
+  const summarySectionByProject = ref(new Map())
   const lastUpdated = ref(null)
   const loading = ref(false)
   const cardDragging = ref(false)
@@ -118,9 +119,12 @@ export const useBoardStore = defineStore('board', () => {
       ])
       projects.value = projectsData
       tasks.value = tasksData
-      const EXCLUDED = new Set(['📌 Current Status', '📌 Deadlines'])
+      const EXCLUDED = new Set(['📌 Current Status', '📌 Deadlines', '📌 Summary'])
       excludedSectionIds.value = new Set(sectionsData.filter(s => EXCLUDED.has(s.name)).map(s => s.id))
       deadlineSectionIds.value = new Set(sectionsData.filter(s => s.name === '📌 Deadlines').map(s => s.id))
+      const summaryMap = new Map()
+      sectionsData.filter(s => s.name === '📌 Summary').forEach(s => summaryMap.set(s.project_id, s.id))
+      summarySectionByProject.value = summaryMap
       lastUpdated.value = new Date()
     } finally {
       loading.value = false
@@ -204,6 +208,27 @@ export const useBoardStore = defineStore('board', () => {
     task.labels = newLabels
   }
 
+  function projectSummaryTask(projectId) {
+    const sectionId = summarySectionByProject.value.get(projectId)
+    if (!sectionId) return null
+    return tasks.value.find(t => t.project_id === projectId && t.section_id === sectionId && !t.is_completed) ?? null
+  }
+
+  async function updateSummary(projectId, text) {
+    const existing = projectSummaryTask(projectId)
+    if (!text) return
+    if (existing) {
+      if (text === existing.content) return
+      await api(token.value, `/tasks/${existing.id}`, 'POST', { content: text })
+      existing.content = text
+    } else {
+      const sectionId = summarySectionByProject.value.get(projectId)
+      if (!sectionId) return
+      const task = await api(token.value, '/tasks', 'POST', { content: text, project_id: projectId, section_id: sectionId })
+      tasks.value.push(task)
+    }
+  }
+
   function projectDeadlineTaskObj(projectId) {
     const candidates = tasks.value.filter(
       t => t.project_id === projectId && deadlineSectionIds.value.has(t.section_id) && !t.is_completed && t.due
@@ -222,6 +247,7 @@ export const useBoardStore = defineStore('board', () => {
     initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,
     projectStage, projectMeta, projectTasks, projectDeadline,
     moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText,
-    updateVenue, addCollaborator, renameProject, projectDeadlineTaskObj, setFilter,
+    updateVenue, addCollaborator, renameProject, projectDeadlineTaskObj,
+    projectSummaryTask, updateSummary, setFilter,
   }
 })
