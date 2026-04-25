@@ -207,7 +207,7 @@ a, button, .card, .stage-opt, .task-check, .task-due {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: calc(20px + env(safe-area-inset-top) + env(titlebar-area-height, 0px)) 16px 16px;
+  padding: calc(20px + env(safe-area-inset-top)) 16px 16px;
   gap: 8px;
   -webkit-app-region: drag;
   app-region: drag;
@@ -385,7 +385,7 @@ html[data-theme="dark"] .sidebar-filter-active {
   flex: 1;
   min-height: 0;
   background: var(--bg);
-  padding-top: calc(env(safe-area-inset-top) + env(titlebar-area-height, 0px));
+  padding-top: env(safe-area-inset-top);
 }
 
 /* ── PTR INDICATOR ── */
@@ -820,7 +820,7 @@ html[data-theme="dark"] .settings-sheet {
   background: #ffffff;
   border-right: 1px solid var(--border);
   overflow-y: auto;
-  padding: calc(32px + env(safe-area-inset-top) + env(titlebar-area-height, 0px)) 32px 32px;
+  padding: calc(32px + env(safe-area-inset-top)) 32px 32px;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -949,7 +949,7 @@ html[data-theme="dark"] .stage-opt.active { border-color: var(--accent); color: 
   flex: 1;
   background: var(--bg-surface);
   overflow-y: auto;
-  padding: calc(32px + env(safe-area-inset-top) + env(titlebar-area-height, 0px)) 32px 32px;
+  padding: calc(32px + env(safe-area-inset-top)) 32px 32px;
   min-height: 0;
 }
 html[data-theme="light"] .project-tasks { background: #faf9fe; }
