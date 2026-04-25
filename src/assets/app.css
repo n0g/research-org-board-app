@@ -432,13 +432,14 @@ html[data-theme="dark"] .sidebar-filter-active {
   overflow-x: auto;
   overflow-y: hidden;
   padding: 24px;
+  scroll-padding: 24px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   user-select: none;
   background: var(--bg);
 }
 html[data-theme="light"] .board { background: #ffffff; }
-@media (min-width: 768px) { .board { padding-left: 48px; } }
+@media (min-width: 768px) { .board { padding-left: 48px; scroll-padding-left: 48px; } }
 .board::-webkit-scrollbar { height: 4px; }
 .board::-webkit-scrollbar-track { background: transparent; }
 .board::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
@@ -487,8 +488,8 @@ html[data-theme="light"] .board { background: #ffffff; }
   gap: 8px;
   padding-bottom: 24px;
 }
-.col-body::-webkit-scrollbar { width: 3px; }
-.col-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+.col-body { scrollbar-width: none; }
+.col-body::-webkit-scrollbar { display: none; }
 
 .empty-col {
   font-size: 13px;
