@@ -44,8 +44,9 @@
               <span v-for="person in personLabels" :key="person" class="collab-chip">
                 <span class="material-symbols-outlined">person</span>
                 {{ person }}
+                <button class="collab-chip-remove" :aria-label="`Remove ${person}`" @click.stop="removeCollab(person)">×</button>
               </span>
-              <button v-if="!addingCollab" class="collab-add-pill" @click="startAddCollab">+</button>
+              <button v-if="!addingCollab" class="collab-add-pill" @click.stop="startAddCollab">+</button>
               <div v-else ref="collabWrapperEl" class="collab-combo-wrapper">
                 <input
                   ref="collabInputEl"
@@ -417,6 +418,10 @@ async function commitCollab(name) {
 function cancelAddCollab() {
   addingCollab.value = false
   collabQuery.value = ''
+}
+
+async function removeCollab(name) {
+  await store.removeCollaborator(projectId.value, name).catch(console.error)
 }
 
 // Close popups on outside click

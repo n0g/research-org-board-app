@@ -1235,6 +1235,24 @@ html[data-theme="dark"] .popup-dropdown {
   color: var(--text);
 }
 .collab-chip .material-symbols-outlined { font-size: 14px; color: var(--text3); }
+.collab-chip-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 2px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text3);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+.collab-chip-remove:hover { background: var(--border); color: var(--text); }
 
 
 .todoist-link {

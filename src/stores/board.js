@@ -212,6 +212,15 @@ export const useBoardStore = defineStore('board', () => {
     task.labels = newLabels
   }
 
+  async function removeCollaborator(projectId, name) {
+    const stageInfo = getProjectStage(tasks.value, stageLabels.value, projectId)
+    if (!stageInfo) return
+    const task = stageInfo.task
+    const newLabels = (task.labels || []).filter(l => stripPersonPrefix(l) !== name)
+    await api(token.value, `/tasks/${task.id}`, 'POST', { labels: newLabels })
+    task.labels = newLabels
+  }
+
   async function updateVenue(projectId, name) {
     const existing = projectDeadlineTaskBase(projectId)
     if (!name) return
@@ -324,7 +333,7 @@ export const useBoardStore = defineStore('board', () => {
     initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,
     projectStage, projectMeta, projectTasks, projectDeadline,
     moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText,
-    updateVenue, setDeadlineDate, addCollaborator, renameProject,
+    updateVenue, setDeadlineDate, addCollaborator, removeCollaborator, renameProject,
     projectDeadlineTaskBase, projectDeadlineTaskObj,
     projectSummaryTask, updateSummary, createProject, deleteProject, setFilter,
   }
