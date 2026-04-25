@@ -7,7 +7,7 @@ export const DEFAULT_STAGES = [
   { name: 'On Ice',           label: 'stage::on-ice' },
 ]
 
-const VENUES = ['ccs', 'usenix', 'ndss', 's&p', 'soups', 'chi', 'cscw', 'pets', 'popets']
+export const VENUES = ['ccs', 'usenix', 'ndss', 's&p', 'soups', 'chi', 'cscw', 'pets', 'popets']
 
 export function getProjectStage(tasks, stageLabels, projectId) {
   const stageLabelSet = new Set(stageLabels)

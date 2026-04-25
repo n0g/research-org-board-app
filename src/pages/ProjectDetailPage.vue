@@ -13,6 +13,7 @@
         >
           <span class="material-symbols-outlined">side_navigation</span>
         </button>
+
         <!-- Left metadata pane -->
         <section class="project-meta">
           <button class="back-btn" @click="goBack">
@@ -25,27 +26,109 @@
           <!-- Status -->
           <div class="meta-section">
             <div class="meta-label">Status</div>
-            <div class="meta-value">
-              <span class="status-dot" :class="stageDotClass"></span>
-              <span>{{ stageInfo?.task.content ?? '—' }}</span>
-            </div>
+            <div
+              v-if="!editingStatus"
+              class="meta-editable"
+              :class="{ placeholder: !statusText }"
+              @click="startEdit('status')"
+            >{{ statusText || 'Add a status…' }}</div>
+            <textarea
+              v-else
+              ref="statusTextareaEl"
+              v-model="statusDraft"
+              class="meta-textarea"
+              rows="3"
+              @blur="saveStatus"
+              @keydown.escape.prevent="cancelStatus"
+              @keydown.meta.enter.prevent="statusTextareaEl?.blur()"
+            ></textarea>
           </div>
 
-          <!-- Target Venue -->
-          <div v-if="meta.venue" class="meta-section">
-            <div class="meta-label">Target Venue</div>
-            <div class="meta-value">
-              <span class="material-symbols-outlined">label</span>
-              {{ meta.venue }}
-            </div>
-          </div>
-
-          <!-- Deadline -->
+          <!-- Summary -->
           <div class="meta-section">
-            <div class="meta-label">Deadline</div>
-            <div class="meta-value">
-              <span class="material-symbols-outlined">calendar_today</span>
-              <span :class="deadlineDateClass">{{ formattedDeadline }}</span>
+            <div class="meta-label">Summary</div>
+            <div
+              v-if="!editingSummary"
+              class="meta-editable"
+              :class="{ placeholder: !summaryText }"
+              @click="startEdit('summary')"
+            >{{ summaryText || 'Add a summary…' }}</div>
+            <textarea
+              v-else
+              ref="summaryTextareaEl"
+              v-model="summaryDraft"
+              class="meta-textarea"
+              rows="4"
+              @blur="saveSummary"
+              @keydown.escape.prevent="cancelSummary"
+              @keydown.meta.enter.prevent="summaryTextareaEl?.blur()"
+            ></textarea>
+          </div>
+
+          <!-- Deadline + Venue -->
+          <div class="meta-row-pair">
+            <!-- Deadline -->
+            <div class="meta-section">
+              <div class="meta-label">Deadline</div>
+              <div class="meta-value">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span
+                  v-if="deadlineTask"
+                  class="meta-date-btn"
+                  :class="deadlineDateClass"
+                  @click="datePickerEl?.showPicker?.() || datePickerEl?.click()"
+                >{{ formattedDeadline }}</span>
+                <span v-else class="meta-value-muted">None</span>
+                <input
+                  v-if="deadlineTask"
+                  ref="datePickerEl"
+                  type="date"
+                  class="meta-date-input"
+                  :value="deadlineDateValue"
+                  @change="onDeadlineChange"
+                >
+              </div>
+            </div>
+
+            <!-- Venue -->
+            <div class="meta-section">
+              <div class="meta-label">Venue</div>
+              <div ref="venueWrapperEl" class="popup-wrapper">
+                <button class="popup-btn" @click.stop="venuePopupOpen = !venuePopupOpen">
+                  <span>{{ meta.venue ?? 'None' }}</span>
+                  <span class="material-symbols-outlined popup-chevron">expand_more</span>
+                </button>
+                <div v-if="venuePopupOpen" class="popup-dropdown">
+                  <button class="popup-option" :class="{ selected: !meta.venue }" @click="selectVenue(null)">None</button>
+                  <button
+                    v-for="v in venueOptions"
+                    :key="v"
+                    class="popup-option"
+                    :class="{ selected: meta.venue === v }"
+                    @click="selectVenue(v)"
+                  >{{ v }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage -->
+          <div class="meta-section">
+            <div class="meta-label">Pipeline Stage</div>
+            <div ref="stageWrapperEl" class="popup-wrapper">
+              <button class="popup-btn" @click.stop="stagePopupOpen = !stagePopupOpen">
+                <span>{{ stageObj?.name ?? 'Unassigned' }}</span>
+                <span class="material-symbols-outlined popup-chevron">expand_more</span>
+              </button>
+              <div v-if="stagePopupOpen" class="popup-dropdown">
+                <button
+                  v-for="stage in store.stages"
+                  :key="stage.label"
+                  class="popup-option"
+                  :class="{ selected: stageInfo?.label === stage.label }"
+                  @click="selectStage(stage)"
+                >{{ stage.name }}</button>
+              </div>
             </div>
           </div>
 
@@ -57,20 +140,6 @@
                 <span class="material-symbols-outlined">person</span>
                 {{ person }}
               </span>
-            </div>
-          </div>
-
-          <!-- Pipeline Stage -->
-          <div v-if="store.stages" class="meta-section">
-            <div class="meta-label">Pipeline Stage</div>
-            <div class="stage-selector">
-              <button
-                v-for="(stage, idx) in store.stages"
-                :key="stage.label"
-                class="stage-opt"
-                :class="{ active: stageInfo?.label === stage.label }"
-                @click="changeStage(stage)"
-              >{{ stage.name }}</button>
             </div>
           </div>
 
@@ -105,7 +174,6 @@
             >
           </div>
 
-          <!-- Task section label -->
           <div v-if="tasks.length" class="task-group-label">Tasks</div>
 
           <TaskItem
@@ -128,10 +196,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useSidebar } from '../composables/useSidebar.js'
+import { VENUES } from '../lib/helpers.js'
 
 import AppSidebar from '../components/AppSidebar.vue'
 import TaskItem from '../components/TaskItem.vue'
@@ -145,33 +214,35 @@ const { sidebarCollapsed, toggleSidebar } = useSidebar()
 const newTaskContent = ref('')
 
 const projectId = computed(() => props.f7route.params.id)
-
-const project = computed(() =>
-  store.displayProjects.find(p => p.id === projectId.value) ?? null
-)
-
+const project = computed(() => store.displayProjects.find(p => p.id === projectId.value) ?? null)
 const stageInfo = computed(() => store.projectStage(projectId.value))
 const meta = computed(() => store.projectMeta(projectId.value))
 const tasks = computed(() => store.projectTasks(projectId.value))
+const deadlineTask = computed(() => store.projectDeadlineTaskObj(projectId.value))
 const deadline = computed(() => store.projectDeadline(projectId.value))
 
 const stageLabelSet = computed(() => new Set(store.stageLabels))
+const stageObj = computed(() => store.stages?.find(s => s.label === stageInfo.value?.label) ?? null)
 
 const personLabels = computed(() =>
   stageInfo.value
-    ? (stageInfo.value.task.labels || []).filter(l => !stageLabelSet.value.has(l))
+    ? (stageInfo.value.task.labels || []).filter(l => !stageLabelSet.value.has(l) && !VENUES.includes(l.toLowerCase()))
     : []
 )
 
-const stageIndex = computed(() => {
-  if (!stageInfo.value || !store.stages) return -1
-  return store.stages.findIndex(s => s.label === stageInfo.value.label)
+const venueOptions = computed(() => {
+  const standard = VENUES.map(v => v.toUpperCase())
+  const extra = store.allVenues.filter(v => !standard.includes(v))
+  return [...standard, ...extra]
 })
 
-const stageDotClass = computed(() => {
-  const idx = stageIndex.value
-  if (idx < 0) return ''
-  return `stage-${Math.min(idx, 5)}`
+// ── Deadline ──
+const datePickerEl = ref(null)
+
+const deadlineDateValue = computed(() => {
+  if (!deadline.value) return ''
+  const d = deadline.value
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 })
 
 const formattedDeadline = computed(() => {
@@ -187,14 +258,91 @@ const deadlineDateClass = computed(() => {
   return ''
 })
 
-async function changeStage(stage) {
-  if (!stageInfo.value) return
-  const oldLabel = stageInfo.value.label
-  const oldTaskId = stageInfo.value.task.id
-  if (oldLabel === stage.label) return
-  await store.moveStage(projectId.value, oldTaskId, oldLabel, stage.label).catch(console.error)
+async function onDeadlineChange(e) {
+  if (!deadlineTask.value) return
+  await store.updateTaskDue(deadlineTask.value.id, e.target.value).catch(console.error)
 }
 
+// ── Status ──
+const statusText = computed(() => stageInfo.value?.task.content ?? '')
+const editingStatus = ref(false)
+const statusDraft = ref('')
+const statusTextareaEl = ref(null)
+
+async function startEdit(field) {
+  if (field === 'status') {
+    statusDraft.value = statusText.value
+    editingStatus.value = true
+    await nextTick()
+    statusTextareaEl.value?.focus()
+    statusTextareaEl.value?.select()
+  } else {
+    summaryDraft.value = summaryText.value
+    editingSummary.value = true
+    await nextTick()
+    summaryTextareaEl.value?.focus()
+    summaryTextareaEl.value?.select()
+  }
+}
+
+async function saveStatus() {
+  editingStatus.value = false
+  const val = statusDraft.value.trim() || statusText.value
+  if (val !== statusText.value && stageInfo.value) {
+    await store.updateStatusText(stageInfo.value.task.id, val).catch(console.error)
+  }
+}
+function cancelStatus() { editingStatus.value = false }
+
+// ── Summary (localStorage) ──
+const SUMMARIES_KEY = 'rb_summaries'
+function loadSummary(id) {
+  return JSON.parse(localStorage.getItem(SUMMARIES_KEY) || '{}')[id] ?? ''
+}
+function persistSummary(id, text) {
+  const all = JSON.parse(localStorage.getItem(SUMMARIES_KEY) || '{}')
+  all[id] = text
+  localStorage.setItem(SUMMARIES_KEY, JSON.stringify(all))
+}
+
+const summaryText = ref(loadSummary(projectId.value))
+const editingSummary = ref(false)
+const summaryDraft = ref('')
+const summaryTextareaEl = ref(null)
+
+function saveSummary() {
+  editingSummary.value = false
+  persistSummary(projectId.value, summaryDraft.value.trim())
+  summaryText.value = summaryDraft.value.trim()
+}
+function cancelSummary() { editingSummary.value = false }
+
+// ── Stage popup ──
+const stageWrapperEl = ref(null)
+const stagePopupOpen = ref(false)
+
+async function selectStage(stage) {
+  stagePopupOpen.value = false
+  if (!stageInfo.value || stageInfo.value.label === stage.label) return
+  await store.moveStage(projectId.value, stageInfo.value.task.id, stageInfo.value.label, stage.label).catch(console.error)
+}
+
+// ── Venue popup ──
+const venueWrapperEl = ref(null)
+const venuePopupOpen = ref(false)
+
+async function selectVenue(venue) {
+  venuePopupOpen.value = false
+  await store.updateVenue(projectId.value, venue).catch(console.error)
+}
+
+// Close popups on outside click
+function onDocClick(e) {
+  if (!stageWrapperEl.value?.contains(e.target)) stagePopupOpen.value = false
+  if (!venueWrapperEl.value?.contains(e.target)) venuePopupOpen.value = false
+}
+
+// ── Tasks ──
 async function addTask() {
   const content = newTaskContent.value.trim()
   if (!content || !project.value) return
@@ -202,26 +350,21 @@ async function addTask() {
   await store.quickAddTask(content, project.value.id).catch(console.error)
 }
 
-function goBack() {
-  f7.views.main.router.back()
-}
-
-function goBoard() {
-  f7.views.main.router.navigate('/board/', { clearPreviousHistory: true })
-}
-
-function goReviews() {
-  f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true })
-}
-
-function goSettings() {
-  f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true })
-}
+// ── Navigation ──
+function goBack() { f7.views.main.router.back() }
+function goBoard() { f7.views.main.router.navigate('/board/', { clearPreviousHistory: true }) }
+function goReviews() { f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true }) }
+function goSettings() { f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true }) }
 
 onMounted(async () => {
+  document.addEventListener('click', onDocClick)
   if (!store.tasks.length) {
     store.initStages()
     await store.loadData()
   }
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', onDocClick)
 })
 </script>

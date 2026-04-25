@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { api, apiAll } from '../lib/todoist.js'
 import {
   DEFAULT_STAGES,
+  VENUES,
   getProjectStage,
   getProjectMeta,
   getProjectTasks,
@@ -162,12 +163,35 @@ export const useBoardStore = defineStore('board', () => {
     if (task) task.content = content
   }
 
+  async function updateVenue(projectId, newVenue) {
+    const stageInfo = getProjectStage(tasks.value, stageLabels.value, projectId)
+    if (!stageInfo) return
+    const task = stageInfo.task
+    const venueSet = new Set(VENUES)
+    const labelsWithoutVenue = (task.labels || []).filter(l => !venueSet.has(l.toLowerCase()))
+    const newLabels = newVenue ? [...labelsWithoutVenue, newVenue.toLowerCase()] : labelsWithoutVenue
+    await api(token.value, `/tasks/${task.id}`, 'POST', { labels: newLabels })
+    task.labels = newLabels
+  }
+
+  function projectDeadlineTaskObj(projectId) {
+    const candidates = tasks.value.filter(
+      t => t.project_id === projectId && deadlineSectionIds.value.has(t.section_id) && !t.is_completed && t.due
+    )
+    if (!candidates.length) return null
+    const future = candidates.filter(t => new Date(t.due.date) > new Date())
+    return future.length
+      ? future.sort((a, b) => new Date(a.due.date) - new Date(b.due.date))[0]
+      : candidates.sort((a, b) => new Date(b.due.date) - new Date(a.due.date))[0]
+  }
+
   return {
     token, stages, projects, tasks, loading, lastUpdated, cardDragging, labels,
     activeFilter, stageLabels, displayProjects, excludedSectionIds, deadlineSectionIds,
     allCollaborators, allVenues,
     initStages, saveToken, saveStages, resetToken, loadData,
     projectStage, projectMeta, projectTasks, projectDeadline,
-    moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText, setFilter,
+    moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText,
+    updateVenue, projectDeadlineTaskObj, setFilter,
   }
 })
