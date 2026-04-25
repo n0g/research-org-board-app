@@ -348,29 +348,26 @@ html[data-theme="dark"] .sidebar-filter-active {
   padding: 2px 14px 6px;
 }
 
-/* Collapsed sidebar */
-.board-sidebar.collapsed { width: 64px; }
-.board-sidebar.collapsed .sidebar-label { display: none; }
-.board-sidebar.collapsed .sidebar-section-header { display: none; }
-.board-sidebar.collapsed .sidebar-brand-name { display: none; }
-.board-sidebar.collapsed .sidebar-last-updated { display: none; }
-.board-sidebar.collapsed .sidebar-brand { justify-content: center; padding: 20px 8px 16px; }
-.board-sidebar.collapsed .sidebar-nav { padding-bottom: 8px; }
-.board-sidebar.collapsed .sidebar-nav-item {
-  justify-content: center;
-  width: 40px;
-  margin: 1px auto;
-  padding: 8px 0;
-  border: none !important;
-  box-shadow: none !important;
+/* Collapsed sidebar — fully hidden */
+.board-sidebar.collapsed { width: 0; overflow: hidden; border-right: none; }
+
+/* Floating expand button shown when sidebar is hidden */
+.sidebar-expand-btn {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 12px);
+  left: 12px;
+  z-index: 10;
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.1s, color 0.1s;
 }
-.board-sidebar.collapsed .sidebar-nav-active {
-  background: var(--bg3) !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-.board-sidebar.collapsed .sidebar-footer { padding: 8px 0; }
-.board-sidebar.collapsed .sidebar-footer .sidebar-nav-item { width: 40px; margin: 1px auto; justify-content: center; }
+.sidebar-expand-btn:hover { background: var(--bg3); color: var(--text); }
+.sidebar-expand-btn .material-symbols-outlined { font-size: 20px; }
 
 /* ── BOARD MAIN AREA ── */
 .board-main {
@@ -441,7 +438,7 @@ html[data-theme="dark"] .sidebar-filter-active {
   background: var(--bg);
 }
 html[data-theme="light"] .board { background: #ffffff; }
-@media (min-width: 768px) { .board { padding-left: 40px; } }
+@media (min-width: 768px) { .board { padding-left: 48px; } }
 .board::-webkit-scrollbar { height: 4px; }
 .board::-webkit-scrollbar-track { background: transparent; }
 .board::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
@@ -801,6 +798,7 @@ html[data-theme="dark"] .settings-sheet {
 }
 
 .project-main {
+  position: relative;
   display: flex;
   flex-direction: row;
   flex: 1;

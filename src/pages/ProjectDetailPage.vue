@@ -4,6 +4,15 @@
       <AppSidebar current-page="board" @settings="settingsOpen = true" />
 
       <div class="project-main">
+        <button
+          v-if="sidebarCollapsed"
+          class="sidebar-expand-btn"
+          title="Expand sidebar"
+          aria-label="Expand sidebar"
+          @click="toggleSidebar"
+        >
+          <span class="material-symbols-outlined">side_navigation</span>
+        </button>
         <!-- Left metadata pane -->
         <section class="project-meta">
           <button class="back-btn" @click="goBack">
@@ -135,7 +144,7 @@ const props = defineProps({
 })
 
 const store = useBoardStore()
-const { sidebarCollapsed } = useSidebar()
+const { sidebarCollapsed, toggleSidebar } = useSidebar()
 const settingsOpen = ref(false)
 const newTaskContent = ref('')
 

@@ -5,6 +5,15 @@
 
       <!-- Board main area -->
       <div ref="screenEl" class="board-main">
+        <button
+          v-if="sidebarCollapsed"
+          class="sidebar-expand-btn"
+          title="Expand sidebar"
+          aria-label="Expand sidebar"
+          @click="toggleSidebar"
+        >
+          <span class="material-symbols-outlined">side_navigation</span>
+        </button>
         <div ref="ptrIndicator" class="ptr-indicator" aria-hidden="true"></div>
 
         <div v-if="store.loading && !boardReady" class="board-loading" role="status">
@@ -49,11 +58,13 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { usePullToRefresh } from '../composables/usePullToRefresh.js'
+import { useSidebar } from '../composables/useSidebar.js'
 import BoardColumn from '../components/BoardColumn.vue'
 import AppSidebar from '../components/AppSidebar.vue'
 import SettingsSheet from '../components/SettingsSheet.vue'
 
 const store = useBoardStore()
+const { sidebarCollapsed, toggleSidebar } = useSidebar()
 const screenEl = ref(null)
 const ptrIndicator = ref(null)
 const settingsOpen = ref(false)
