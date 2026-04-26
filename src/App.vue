@@ -14,7 +14,7 @@ import { useTheme } from './composables/useTheme.js'
 import { useAccentColor } from './composables/useAccentColor.js'
 
 useTheme()
-const accentColor = useAccentColor()
+useAccentColor()
 
 const store = useBoardStore()
 const reviewsStore = useReviewsStore()
@@ -39,24 +39,26 @@ watch(() => reviewsStore.proxyUrl, (url) => {
   settingsStore.save(store.token, 'hotcrp_proxy', url)
 })
 
-watch(accentColor.accentColor, (color) => {
-  if (!settingsLoaded.value || !store.token) return
-  settingsStore.save(store.token, 'accent_color', color)
-})
-
 onMounted(async () => {
   if (!store.token) { settingsLoaded.value = true; return }
 
   const settings = await settingsStore.load(store.token)
 
-  if (settings.stages?.length)    store.saveStages(settings.stages)
-  if (settings.hotcrp_sites)      reviewsStore.setSites(settings.hotcrp_sites)
-  if (settings.hotcrp_proxy)      reviewsStore.saveProxy(settings.hotcrp_proxy)
-  if (settings.accent_color)      accentColor.setColor(settings.accent_color)
+  if (settings.stages?.length)  store.saveStages(settings.stages)
+  if (settings.hotcrp_sites)    reviewsStore.setSites(settings.hotcrp_sites)
+  if (settings.hotcrp_proxy)    reviewsStore.saveProxy(settings.hotcrp_proxy)
 
-  // Let Vue flush reactive updates (watch callbacks fire here, see settingsLoaded=false, skip save)
+  // Let Vue flush reactive updates so watch callbacks fire while settingsLoaded=false
   await nextTick()
   settingsLoaded.value = true
+
+  // Backfill: write any settings not yet in Todoist (e.g. first run of sync feature)
+  if (!settings.stages && store.stages?.length)
+    settingsStore.save(store.token, 'stages', store.stages)
+  if (!settings.hotcrp_sites && reviewsStore.sites.length)
+    settingsStore.save(store.token, 'hotcrp_sites', reviewsStore.sites)
+  if (!settings.hotcrp_proxy && reviewsStore.proxyUrl)
+    settingsStore.save(store.token, 'hotcrp_proxy', reviewsStore.proxyUrl)
 })
 
 const f7params = {
