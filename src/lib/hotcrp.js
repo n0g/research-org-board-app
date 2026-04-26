@@ -14,8 +14,10 @@ async function _hotcrpGet(siteUrl, token, proxyUrl, path) {
   // Pass token as query param to the Worker so it adds Authorization server-side,
   // avoiding CORS preflight caused by custom request headers from the browser.
   // For direct requests (no proxy), send the header directly.
+  // Strip any trailing ?url= or &url= that users may have stored from the old corsproxy.io format
+  const proxyBase = proxyUrl.replace(/[?&]url=.*$/, '').replace(/\/+$/, '')
   const url = proxyUrl
-    ? `${proxyUrl.replace(/\/+$/, '')}?url=${encodeURIComponent(hotcrpUrl)}&token=${encodeURIComponent(token)}`
+    ? `${proxyBase}?url=${encodeURIComponent(hotcrpUrl)}&token=${encodeURIComponent(token)}`
     : hotcrpUrl
 
   const init = proxyUrl ? {} : { headers: { 'Authorization': `Bearer ${token}` } }
