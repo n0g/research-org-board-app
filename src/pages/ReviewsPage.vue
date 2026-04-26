@@ -102,10 +102,10 @@
     </div>
 
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn" @click="goBoard">Board</button>
-      <button class="tab-btn" @click="goTasks">Tasks</button>
-      <button class="tab-btn tab-btn-active" aria-current="page">Reviews</button>
-      <button class="tab-btn" @click="goSettings">Settings</button>
+      <button class="tab-btn" @click="goBoard"><span class="material-symbols-outlined">dashboard</span>Board</button>
+      <button class="tab-btn" @click="goTasks"><span class="material-symbols-outlined">checklist</span>Tasks</button>
+      <button class="tab-btn tab-btn-active" aria-current="page"><span class="material-symbols-outlined">grading</span>Reviews</button>
+      <button class="tab-btn" @click="goSettings"><span class="material-symbols-outlined">settings</span>Settings</button>
     </f7-toolbar>
   </f7-page>
 </template>
