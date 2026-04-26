@@ -1,0 +1,288 @@
+<template>
+  <f7-page name="tasks" class="tasks-page" no-swipeback>
+    <div class="tasks-screen">
+      <AppSidebar current-page="tasks" />
+
+      <div class="tasks-main">
+        <button
+          v-if="sidebarCollapsed"
+          class="sidebar-expand-btn"
+          title="Expand sidebar"
+          aria-label="Expand sidebar"
+          @click="toggleSidebar"
+        >
+          <span class="material-symbols-outlined">side_navigation</span>
+        </button>
+
+        <!-- Left: task list -->
+        <div class="triage-list">
+          <div class="triage-tabs">
+            <div class="seg-ctrl">
+              <button
+                v-for="t in TABS"
+                :key="t.key"
+                class="seg-btn"
+                :class="{ active: tab === t.key }"
+                @click="tab = t.key"
+              >{{ t.label }}</button>
+            </div>
+          </div>
+
+          <div class="triage-list-body">
+            <div v-if="!filteredTasks.length" class="triage-empty-list">No tasks</div>
+            <div
+              v-for="task in filteredTasks"
+              :key="task.id"
+              class="triage-task-row"
+              :class="{ selected: selectedTask?.id === task.id }"
+              @click="selectTask(task)"
+            >
+              <div class="triage-task-project">{{ projectName(task) }}</div>
+              <div class="triage-task-title">{{ task.content }}</div>
+              <div class="triage-task-meta">
+                <div class="triage-task-tags">
+                  <span v-if="getUrgencyLabel(task)" class="triage-tag">
+                    <span class="material-symbols-outlined">bolt</span>{{ getUrgencyLabel(task) }}
+                  </span>
+                  <span v-if="getImportance(task)" class="triage-tag">
+                    <span class="material-symbols-outlined">star</span>{{ getImportance(task) }}
+                  </span>
+                  <span v-if="getTime(task)" class="triage-tag triage-tag-dim">{{ getTime(task) }}</span>
+                </div>
+                <span v-if="task.due?.date" class="triage-task-date">{{ formatDeadline(task.due.date) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: task detail -->
+        <div class="triage-detail">
+          <template v-if="selectedTask">
+            <div class="triage-detail-inner">
+              <header class="triage-detail-header">
+                <div class="triage-project-badge">{{ projectName(selectedTask) }}</div>
+                <h2 class="triage-detail-title">{{ selectedTask.content }}</h2>
+              </header>
+
+              <div class="triage-fields">
+                <div class="triage-field">
+                  <label class="triage-field-label">Urgency</label>
+                  <div class="seg-ctrl">
+                    <button
+                      v-for="u in URGENCY_OPTS"
+                      :key="u.val"
+                      class="seg-btn"
+                      :class="{ active: draft.urgency === u.val }"
+                      @click="draft.urgency = u.val"
+                    >{{ u.label }}</button>
+                  </div>
+                </div>
+
+                <div class="triage-field">
+                  <label class="triage-field-label">Importance</label>
+                  <div class="seg-ctrl">
+                    <button
+                      v-for="lvl in LEVEL_OPTS"
+                      :key="lvl"
+                      class="seg-btn"
+                      :class="{ active: draft.importance === lvl }"
+                      @click="draft.importance = lvl"
+                    >{{ capitalize(lvl) }}</button>
+                  </div>
+                </div>
+
+                <div class="triage-field">
+                  <label class="triage-field-label">Estimated Time</label>
+                  <div class="seg-ctrl">
+                    <button
+                      v-for="t in TIME_OPTS"
+                      :key="t"
+                      class="seg-btn"
+                      :class="{ active: draft.time === t }"
+                      @click="draft.time = t"
+                    >{{ t }}</button>
+                  </div>
+                </div>
+
+                <div class="triage-field">
+                  <label class="triage-field-label">Delegatable</label>
+                  <div class="seg-ctrl triage-seg-narrow">
+                    <button class="seg-btn" :class="{ active: draft.delegatable === 'no' }" @click="draft.delegatable = 'no'">No</button>
+                    <button class="seg-btn" :class="{ active: draft.delegatable === 'yes' }" @click="draft.delegatable = 'yes'">Yes</button>
+                  </div>
+                </div>
+
+                <div class="triage-field">
+                  <label class="triage-field-label">Deadline</label>
+                  <input
+                    class="meta-date-visible"
+                    type="date"
+                    v-model="draft.deadline"
+                  >
+                </div>
+
+                <div class="triage-actions">
+                  <button class="btn primary triage-save-btn" :disabled="saving" @click="saveChanges">
+                    {{ saving ? 'Saving…' : 'Save Changes' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </template>
+          <div v-else class="triage-no-selection">
+            <span class="material-symbols-outlined">checklist</span>
+            <p>Select a task to triage</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
+      <button class="tab-btn" @click="goBoard">Board</button>
+      <button class="tab-btn tab-btn-active" aria-current="page">Tasks</button>
+      <button class="tab-btn" @click="goReviews">Reviews</button>
+      <button class="tab-btn" @click="goSettings">Settings</button>
+    </f7-toolbar>
+  </f7-page>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { f7 } from 'framework7-vue/bundle'
+import { useBoardStore } from '../stores/board.js'
+import { useSidebar } from '../composables/useSidebar.js'
+import { parseLocalDate } from '../lib/helpers.js'
+import AppSidebar from '../components/AppSidebar.vue'
+
+const store = useBoardStore()
+const { sidebarCollapsed, toggleSidebar } = useSidebar()
+
+const TABS = [
+  { key: 'all', label: 'All' },
+  { key: 'important', label: 'Important' },
+  { key: 'quick', label: 'Quick' },
+  { key: 'urgent', label: 'Urgent' },
+]
+const URGENCY_OPTS = [
+  { val: 'low', label: 'Low' },
+  { val: 'med', label: 'Med' },
+  { val: 'high', label: 'High' },
+]
+const LEVEL_OPTS = ['low', 'med', 'high']
+const TIME_OPTS = ['1h', '2h', '4h', '8h']
+const TRIAGE_PREFIXES = ['importance::', 'time::', 'delegatable::']
+
+const tab = ref('all')
+const selectedTask = ref(null)
+const saving = ref(false)
+const draft = ref({ urgency: 'low', importance: null, time: null, delegatable: null, deadline: '' })
+
+// ── Task data ──
+const allTasks = computed(() => {
+  const projectSet = new Set(store.displayProjects.map(p => p.id))
+  return store.tasks.filter(t =>
+    !t.is_completed &&
+    projectSet.has(t.project_id) &&
+    !store.excludedSectionIds.has(t.section_id)
+  )
+})
+
+const filteredTasks = computed(() => {
+  switch (tab.value) {
+    case 'important': return allTasks.value.filter(t => getLabel(t, 'importance::') === 'high')
+    case 'quick': return allTasks.value.filter(t => ['1h', '2h'].includes(getLabel(t, 'time::')))
+    case 'urgent': return allTasks.value.filter(t => (t.priority ?? 4) <= 2)
+    default: return allTasks.value
+  }
+})
+
+function projectName(task) {
+  return store.displayProjects.find(p => p.id === task.project_id)?.name ?? ''
+}
+
+// ── Attribute helpers ──
+function getLabel(task, prefix) {
+  return (task.labels || []).find(l => l.startsWith(prefix))?.slice(prefix.length) ?? null
+}
+
+function getUrgencyLabel(task) {
+  const p = task.priority ?? 4
+  if (p === 2) return 'High'
+  if (p === 3) return 'Med'
+  if (p === 4) return 'Low'
+  return null
+}
+
+function getImportance(task) {
+  const v = getLabel(task, 'importance::')
+  return v ? capitalize(v) : null
+}
+
+function getTime(task) {
+  return getLabel(task, 'time::')
+}
+
+function urgencyFromPriority(p) {
+  if (p === 2) return 'high'
+  if (p === 3) return 'med'
+  return 'low'
+}
+
+function priorityFromUrgency(u) {
+  if (u === 'high') return 2
+  if (u === 'med') return 3
+  return 4
+}
+
+function formatDeadline(dateStr) {
+  const d = parseLocalDate(dateStr)
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function capitalize(s) {
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''
+}
+
+// ── Selection ──
+function selectTask(task) {
+  selectedTask.value = task
+  draft.value = {
+    urgency: urgencyFromPriority(task.priority ?? 4),
+    importance: getLabel(task, 'importance::'),
+    time: getLabel(task, 'time::'),
+    delegatable: getLabel(task, 'delegatable::'),
+    deadline: task.due?.date ?? '',
+  }
+}
+
+// ── Save ──
+async function saveChanges() {
+  if (!selectedTask.value || saving.value) return
+  saving.value = true
+  try {
+    const task = selectedTask.value
+    const baseLabels = (task.labels || []).filter(l => !TRIAGE_PREFIXES.some(p => l.startsWith(p)))
+    const triageLabels = []
+    if (draft.value.importance) triageLabels.push(`importance::${draft.value.importance}`)
+    if (draft.value.time) triageLabels.push(`time::${draft.value.time}`)
+    if (draft.value.delegatable) triageLabels.push(`delegatable::${draft.value.delegatable}`)
+    await store.updateTaskTriage(task.id, {
+      priority: priorityFromUrgency(draft.value.urgency),
+      labels: [...baseLabels, ...triageLabels],
+      dueDate: draft.value.deadline || null,
+    })
+  } finally {
+    saving.value = false
+  }
+}
+
+// ── Navigation ──
+function goBoard() { f7.views.main.router.navigate('/board/', { clearPreviousHistory: true }) }
+function goReviews() { f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true }) }
+function goSettings() { f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true }) }
+
+onMounted(async () => {
+  store.initStages()
+  await store.loadIfStale()
+})
+</script>

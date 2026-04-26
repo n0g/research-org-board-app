@@ -38,10 +38,15 @@
         <span class="sidebar-label">Reviews</span>
       </button>
 
-      <div class="sidebar-nav-item sidebar-nav-disabled" title="Tasks (coming soon)">
-        <span class="material-symbols-outlined" aria-hidden="true">check</span>
+      <button
+        class="sidebar-nav-item"
+        :class="currentPage === 'tasks' ? 'sidebar-nav-active' : ''"
+        title="Tasks"
+        @click="currentPage !== 'tasks' && goTasks()"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">checklist</span>
         <span class="sidebar-label">Tasks</span>
-      </div>
+      </button>
 
       <div class="sidebar-nav-item sidebar-nav-disabled" title="Schedule (coming soon)">
         <span class="material-symbols-outlined" aria-hidden="true">calendar_today</span>
@@ -144,6 +149,10 @@ const lastUpdatedText = computed(() =>
 
 function goBoard() {
   f7.views.main.router.navigate('/board/', { clearPreviousHistory: true })
+}
+
+function goTasks() {
+  f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true })
 }
 
 function goReviews() {

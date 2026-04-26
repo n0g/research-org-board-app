@@ -46,6 +46,7 @@
 
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
       <button class="tab-btn tab-btn-active" aria-current="page">Board</button>
+      <button class="tab-btn" @click="goTasks">Tasks</button>
       <button class="tab-btn" @click="goReviews">Reviews</button>
       <button class="tab-btn" @click="goSettings">Settings</button>
     </f7-toolbar>
@@ -79,6 +80,7 @@ function openNewProject() {
   f7.views.main.router.navigate('/project/new/')
 }
 
+function goTasks() { f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true }) }
 function goReviews() {
   f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true })
 }

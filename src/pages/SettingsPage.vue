@@ -194,6 +194,7 @@
 
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
       <button class="tab-btn" @click="goBoard">Board</button>
+      <button class="tab-btn" @click="goTasks">Tasks</button>
       <button class="tab-btn" @click="goReviews">Reviews</button>
       <button class="tab-btn tab-btn-active" aria-current="page">Settings</button>
     </f7-toolbar>
@@ -280,6 +281,7 @@ function disconnect() {
 
 // ── Navigation ──
 function goBoard() { f7.views.main.router.navigate('/board/', { clearPreviousHistory: true }) }
+function goTasks() { f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true }) }
 function goReviews() { f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true }) }
 
 onMounted(async () => {

@@ -6,6 +6,7 @@ import HotCRPPage from './pages/HotCRPPage.vue'
 import ProjectDetailPage from './pages/ProjectDetailPage.vue'
 import NewProjectPage from './pages/NewProjectPage.vue'
 import SettingsPage from './pages/SettingsPage.vue'
+import TaskTriagePage from './pages/TaskTriagePage.vue'
 
 export default [
   { path: '/', component: TokenPage },
@@ -16,5 +17,6 @@ export default [
   { path: '/hotcrp/', component: HotCRPPage },
   { path: '/project/new/', component: NewProjectPage },
   { path: '/project/:id/', component: ProjectDetailPage },
+  { path: '/tasks/', component: TaskTriagePage },
   { path: '/settings/', component: SettingsPage },
 ]

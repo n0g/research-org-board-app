@@ -275,6 +275,23 @@ export const useBoardStore = defineStore('board', () => {
     }
   }
 
+  async function updateTaskTriage(taskId, { priority, labels, dueDate }) {
+    const body = {}
+    if (priority !== undefined) body.priority = priority
+    if (labels !== undefined) body.labels = labels
+    if (dueDate !== undefined) {
+      if (dueDate) body.due_date = dueDate
+      else body.due_string = 'no due date'
+    }
+    await api(token.value, `/tasks/${taskId}`, 'POST', body)
+    const task = tasks.value.find(t => t.id === taskId)
+    if (task) {
+      if (priority !== undefined) task.priority = priority
+      if (labels !== undefined) task.labels = labels
+      if (dueDate !== undefined) task.due = dueDate ? { date: dueDate } : null
+    }
+  }
+
   async function deleteProject(projectId) {
     await api(token.value, `/projects/${projectId}`, 'DELETE')
     projects.value = projects.value.filter(p => p.id !== projectId)
@@ -335,6 +352,6 @@ export const useBoardStore = defineStore('board', () => {
     moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText,
     updateVenue, setDeadlineDate, addCollaborator, removeCollaborator, renameProject,
     projectDeadlineTaskBase, projectDeadlineTaskObj,
-    projectSummaryTask, updateSummary, createProject, deleteProject, setFilter,
+    projectSummaryTask, updateSummary, updateTaskTriage, createProject, deleteProject, setFilter,
   }
 })
