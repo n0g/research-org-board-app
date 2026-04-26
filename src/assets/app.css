@@ -18,8 +18,8 @@
   --text3: #a1a1aa;
   --count-bg: #e9e7ed;
   --count-text: #4c4546;
-  --accent: #000000;
-  --accent-bg: rgba(0,0,0,0.05);
+  --accent: #e879f9;
+  --accent-bg: rgba(232,121,249,0.15);
   --red: #ef4444;
   --green: #22c55e;
   --blue: #3b82f6;
@@ -67,8 +67,8 @@ html[data-theme="dark"] {
   --text3: rgba(235,235,245,0.30);
   --count-bg: rgba(84,84,88,0.35);
   --count-text: rgba(235,235,245,0.60);
-  --accent: #a78bfa;
-  --accent-bg: rgba(167,139,250,0.15);
+  --accent: #e879f9;
+  --accent-bg: rgba(232,121,249,0.15);
   --red: #FF453A;
   --green: #32D74B;
   --blue: #0A84FF;

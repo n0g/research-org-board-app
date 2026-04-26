@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 
 const KEY = 'rb_accent_color'
-export const DEFAULT_ACCENT_COLOR = '#a78bfa'
+export const DEFAULT_ACCENT_COLOR = '#e879f9'
 
 const stored = localStorage.getItem(KEY) || localStorage.getItem('rb_venue_color') || DEFAULT_ACCENT_COLOR
 const color = ref(stored)
