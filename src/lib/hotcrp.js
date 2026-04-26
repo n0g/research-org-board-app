@@ -8,11 +8,11 @@ export async function fetchReviewPapers(siteUrl, token, proxyUrl = '') {
 }
 
 export async function fetchPaperStatus(siteUrl, paperId, token, proxyUrl = '') {
-  const data = await _hotcrpGet(siteUrl, token, proxyUrl, `/api/papers?q=${paperId}`)
+  const data = await _hotcrpGet(siteUrl, token, proxyUrl, `/api/papers?q=${paperId}&fields=reviews,reviewRequests,status,decision`)
   // Response can be array, { papers: [...] }, or a single paper object
   const paper = Array.isArray(data) ? data[0] : (data.papers ? data.papers[0] : (data.pid ? data : null))
   console.log('[hotcrp] paper fields:', paper ? Object.keys(paper) : null)
-  console.log('[hotcrp] paper reviews field:', paper?.reviews)
+  console.log('[hotcrp] paper status:', paper?.status, 'reviews:', paper?.reviews, 'reviewRequests:', paper?.reviewRequests, 'decision:', paper?.decision)
   return paper ?? null
 }
 
