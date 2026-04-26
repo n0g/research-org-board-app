@@ -173,7 +173,7 @@
               <a
                 v-if="submissionUrl && !editingSubmission"
                 :href="submissionUrl"
-                class="submission-open-btn"
+                class="submission-open-btn external"
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Open submission"
