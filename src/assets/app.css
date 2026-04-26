@@ -67,8 +67,8 @@ html[data-theme="dark"] {
   --text3: rgba(235,235,245,0.30);
   --count-bg: rgba(84,84,88,0.35);
   --count-text: rgba(235,235,245,0.60);
-  --accent: #FF9F0A;
-  --accent-bg: rgba(255,159,10,0.15);
+  --accent: #a78bfa;
+  --accent-bg: rgba(167,139,250,0.15);
   --red: #FF453A;
   --green: #32D74B;
   --blue: #0A84FF;
@@ -586,14 +586,14 @@ html[data-theme="light"] .card { background: #ffffff; }
   width: 8px; height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
-  background: var(--venue-color, #a78bfa);
+  background: var(--accent);
 }
 .card-venue-name {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--venue-color, #a78bfa);
+  color: var(--accent);
 }
 
 .card-name {
@@ -722,7 +722,7 @@ input[type="text"], input[type="password"], input[type="date"] {
   outline: none;
   transition: border-color 0.15s;
 }
-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,0,0,0.08); }
+input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
 html[data-theme="dark"] input:focus { box-shadow: 0 0 0 2px rgba(255,159,10,0.15); }
 
 /* ── BOTTOM TABBAR ── */

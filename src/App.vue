@@ -8,8 +8,10 @@
 import routes from './routes.js'
 import { useBoardStore } from './stores/board.js'
 import { useTheme } from './composables/useTheme.js'
+import { useAccentColor } from './composables/useAccentColor.js'
 
-useTheme() // keeps OS dark-mode listener alive for the app lifetime
+useTheme()
+useAccentColor()
 
 const store = useBoardStore()
 const initialUrl = store.token ? '/board/' : '/'

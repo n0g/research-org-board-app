@@ -21,12 +21,12 @@
           <div class="settings-section">
             <div class="settings-section-title">Appearance</div>
             <div class="settings-row">
-              <span class="settings-row-label">Venue badge color</span>
+              <span class="settings-row-label">Accent color</span>
               <input
                 type="color"
                 class="venue-color-picker"
-                :value="venueColor"
-                @input="setVenueColor($event.target.value)"
+                :value="accentColor"
+                @input="setAccentColor($event.target.value)"
               >
             </div>
             <div class="settings-row">
@@ -207,7 +207,7 @@ import { useBoardStore } from '../stores/board.js'
 import { useReviewsStore } from '../stores/reviews.js'
 import { useSidebar } from '../composables/useSidebar.js'
 import { useTheme } from '../composables/useTheme.js'
-import { useVenueColor } from '../composables/useVenueColor.js'
+import { useAccentColor } from '../composables/useAccentColor.js'
 import { DEFAULT_STAGES } from '../lib/helpers.js'
 import { apiAll } from '../lib/todoist.js'
 import { initSortable } from '../lib/sortable.js'
@@ -217,7 +217,7 @@ const boardStore = useBoardStore()
 const reviewsStore = useReviewsStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
 const { setTheme, themePref } = useTheme()
-const { venueColor, setColor: setVenueColor } = useVenueColor()
+const { accentColor, setColor: setAccentColor } = useAccentColor()
 
 // ── Stages ──
 const rowsEl = ref(null)
