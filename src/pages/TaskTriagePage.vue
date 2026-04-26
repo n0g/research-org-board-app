@@ -1,7 +1,33 @@
 <template>
   <f7-page name="tasks" class="tasks-page" no-swipeback>
     <div class="tasks-screen">
-      <AppSidebar current-page="tasks" />
+      <AppSidebar current-page="tasks">
+        <template #filters>
+          <template v-if="store.displayProjects.length">
+            <div class="sidebar-section-header" @click="projectsOpen = !projectsOpen">
+              <span class="sidebar-section-label">Projects</span>
+              <span
+                class="material-symbols-outlined sidebar-section-chevron"
+                :class="{ open: projectsOpen }"
+                aria-hidden="true"
+              >keyboard_arrow_down</span>
+            </div>
+            <template v-if="projectsOpen">
+              <button
+                v-for="project in store.displayProjects"
+                :key="project.id"
+                class="sidebar-nav-item"
+                :class="{ 'sidebar-filter-active': activeProjectId === project.id }"
+                :title="project.name"
+                @click="toggleProject(project.id)"
+              >
+                <span class="material-symbols-outlined" aria-hidden="true">folder</span>
+                <span class="sidebar-label">{{ project.name }}</span>
+              </button>
+            </template>
+          </template>
+        </template>
+      </AppSidebar>
 
       <div class="tasks-main">
         <button
@@ -176,6 +202,13 @@ const tab = ref('all')
 const selectedTask = ref(null)
 const saving = ref(false)
 const draft = ref({ urgency: 'low', importance: null, time: null, delegatable: null, deadline: '' })
+const projectsOpen = ref(true)
+const activeProjectId = ref(null)
+
+function toggleProject(id) {
+  activeProjectId.value = activeProjectId.value === id ? null : id
+  selectedTask.value = null
+}
 
 // ── Task data ──
 const allTasks = computed(() => {
@@ -188,11 +221,14 @@ const allTasks = computed(() => {
 })
 
 const filteredTasks = computed(() => {
+  let tasks = activeProjectId.value
+    ? allTasks.value.filter(t => t.project_id === activeProjectId.value)
+    : allTasks.value
   switch (tab.value) {
-    case 'important': return allTasks.value.filter(t => getLabel(t, 'importance::') === 'high')
-    case 'quick': return allTasks.value.filter(t => ['1h', '2h'].includes(getLabel(t, 'time::')))
-    case 'urgent': return allTasks.value.filter(t => (t.priority ?? 4) <= 2)
-    default: return allTasks.value
+    case 'important': return tasks.filter(t => getLabel(t, 'importance::') === 'high')
+    case 'quick': return tasks.filter(t => ['1h', '2h'].includes(getLabel(t, 'time::')))
+    case 'urgent': return tasks.filter(t => (t.priority ?? 4) <= 2)
+    default: return tasks
   }
 })
 
