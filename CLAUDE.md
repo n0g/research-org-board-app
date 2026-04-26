@@ -135,23 +135,63 @@ Reviews page (`/reviews/`) shows papers assigned to the user for review, fetched
 ### Architecture
 
 - **`stores/reviews.js`** — Pinia setup store; holds `sites[]`, `proxyUrl`, `results[]`, `loading`, `lastUpdated`
-- **`lib/hotcrp.js`** — `fetchReviewPapers(siteUrl, token, proxyUrl)` — fetches `GET /api/papers?q=re:me` with auth
+- **`lib/hotcrp.js`** — `fetchReviewPapers(siteUrl, token, proxyUrl)` and `fetchWhoami(siteUrl, token, proxyUrl)` — internal `_hotcrpGet` helper handles URL/auth construction
 - **`pages/HotCRPPage.vue`** — configure CORS proxy URL and add/remove HotCRP sites
 - **`pages/ReviewsPage.vue`** — lists papers per site with review status badge (Not started / In progress / Submitted)
 
+### Authentication
+
+HotCRP API requires `Authorization: Bearer TOKEN` header (confirmed working). The `api_key` query param does **not** work — it returns `{"ok": false, "status_code": 401}`.
+
 ### CORS Proxy
 
-Browsers block direct HotCRP requests. The app routes through a configurable proxy URL:
+Browsers block direct HotCRP requests. The app routes through a configurable Cloudflare Worker proxy.
 
-- **Generic proxy** (e.g. `https://corsproxy.io/?url=`): `api_key` is embedded in the encoded target URL so the proxy forwards it transparently
-- **Custom Cloudflare Worker**: also receives `&token=TOKEN` separately so it can send `Authorization: Bearer TOKEN` instead
+**Why not send the Authorization header from the browser directly?** Custom request headers trigger a CORS preflight (OPTIONS) request. To avoid this, the app passes the token as a query param to the Worker, and the Worker adds the `Authorization: Bearer` header server-side when calling HotCRP.
 
 URL construction:
 ```js
-// With proxy: api_key embedded in target, token also passed separately for Workers
-`${proxyUrl}?url=${encodeURIComponent(hotcrpPath + '&api_key=' + encodeURIComponent(token))}&token=${encodeURIComponent(token)}`
-// Direct (no proxy):
-`${hotcrpPath}&api_key=${encodeURIComponent(token)}`
+// With proxy: token passed as query param, Worker adds Authorization header
+`${proxyUrl}?url=${encodeURIComponent(hotcrpUrl)}&token=${encodeURIComponent(token)}`
+// Direct (no proxy): Authorization header sent directly
+fetch(hotcrpUrl, { headers: { 'Authorization': `Bearer ${token}` } })
+```
+
+**Cloudflare Worker code** (the Worker the proxy URL points to):
+```js
+export default {
+  async fetch(request) {
+    const { searchParams } = new URL(request.url)
+    const target = searchParams.get('url')
+    const token = searchParams.get('token')
+
+    if (!target) return new Response('Missing url param', { status: 400 })
+
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET',
+          'Access-Control-Allow-Headers': '*',
+        }
+      })
+    }
+
+    const headers = {}
+    if (token) headers['Authorization'] = `Bearer ${token}`
+
+    const response = await fetch(target, { headers })
+    const body = await response.text()
+
+    return new Response(body, {
+      status: response.status,
+      headers: {
+        'Content-Type': response.headers.get('Content-Type') || 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      }
+    })
+  }
+}
 ```
 
 ### Site/Proxy Storage
