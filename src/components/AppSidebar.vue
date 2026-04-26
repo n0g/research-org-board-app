@@ -34,7 +34,7 @@
         title="Reviews"
         @click="currentPage !== 'reviews' && goReviews()"
       >
-        <span class="material-symbols-outlined" aria-hidden="true">checklist</span>
+        <span class="material-symbols-outlined" aria-hidden="true">grading</span>
         <span class="sidebar-label">Reviews</span>
       </button>
 
