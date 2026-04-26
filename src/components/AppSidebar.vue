@@ -54,8 +54,11 @@
       </div>
     </nav>
 
+    <!-- Custom filters slot (e.g. Reviews page conferences) — hides default collaborators/venues -->
+    <slot name="filters" />
+
     <!-- Collaborators section -->
-    <template v-if="store.allCollaborators.length">
+    <template v-if="!$slots.filters && store.allCollaborators.length">
       <div
         class="sidebar-section-header"
         @click="collabOpen = !collabOpen"
@@ -83,7 +86,7 @@
     </template>
 
     <!-- Venues section -->
-    <template v-if="store.allVenues.length">
+    <template v-if="!$slots.filters && store.allVenues.length">
       <div
         class="sidebar-section-header"
         @click="venuesOpen = !venuesOpen"
