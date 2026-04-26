@@ -58,11 +58,11 @@
             <div class="settings-section-title">Pipeline Stages</div>
             <p class="settings-hint">Map Todoist labels to pipeline stages. Order = column order on the board.</p>
 
-            <template v-if="boardStore.labels.length">
+            <template v-if="boardStore.labels.some(l => l.name.startsWith('stage::'))">
               <div class="settings-subsection-label">Your Todoist labels</div>
               <div class="label-chips" role="list">
                 <span
-                  v-for="l in boardStore.labels"
+                  v-for="l in boardStore.labels.filter(l => l.name.startsWith('stage::'))"
                   :key="l.id"
                   class="chip"
                   tabindex="0"
