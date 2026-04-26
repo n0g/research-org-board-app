@@ -742,7 +742,10 @@ html[data-theme="dark"] input:focus { box-shadow: 0 0 0 2px rgba(255,159,10,0.15
   border-top: 1px solid var(--border) !important;
   height: auto !important;
   padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: none !important;
 }
+.bottom-tabbar.toolbar::before,
+.bottom-tabbar.toolbar::after { display: none !important; }
 .bottom-tabbar .toolbar-inner {
   position: relative !important;
   height: auto !important;
@@ -1006,7 +1009,7 @@ html[data-theme="dark"] .project-meta { background: var(--bg2); }
 @media (max-width: 767px) {
   .project-main { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
   .project-meta { width: 100%; border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; flex-shrink: 0; height: auto; }
-  .project-tasks { overflow-y: visible; flex: none; min-height: 60vh; }
+  .project-tasks { overflow-y: visible; flex: none; min-height: 100vh; }
 }
 
 .back-btn {
