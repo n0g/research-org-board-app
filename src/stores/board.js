@@ -22,6 +22,7 @@ export const useBoardStore = defineStore('board', () => {
   const deadlineSectionIds = ref(new Set())
   const deadlineSectionByProject = ref(new Map())
   const summarySectionByProject = ref(new Map())
+  const submissionSectionByProject = ref(new Map())
   const lastUpdated = ref(null)
   const loading = ref(false)
   const cardDragging = ref(false)
@@ -122,7 +123,7 @@ export const useBoardStore = defineStore('board', () => {
       ])
       projects.value = projectsData
       tasks.value = tasksData
-      const EXCLUDED = new Set(['📌 Current Status', '📌 Deadlines', '📌 Summary'])
+      const EXCLUDED = new Set(['📌 Current Status', '📌 Deadlines', '📌 Summary', '📌 Submission'])
       excludedSectionIds.value = new Set(sectionsData.filter(s => EXCLUDED.has(s.name)).map(s => s.id))
       deadlineSectionIds.value = new Set(sectionsData.filter(s => s.name === '📌 Deadlines').map(s => s.id))
       const deadlineMap = new Map()
@@ -131,6 +132,9 @@ export const useBoardStore = defineStore('board', () => {
       const summaryMap = new Map()
       sectionsData.filter(s => s.name === '📌 Summary').forEach(s => summaryMap.set(s.project_id, s.id))
       summarySectionByProject.value = summaryMap
+      const submissionMap = new Map()
+      sectionsData.filter(s => s.name === '📌 Submission').forEach(s => submissionMap.set(s.project_id, s.id))
+      submissionSectionByProject.value = submissionMap
       lastUpdated.value = new Date()
     } finally {
       loading.value = false
@@ -275,6 +279,33 @@ export const useBoardStore = defineStore('board', () => {
     }
   }
 
+  function projectSubmissionTask(projectId) {
+    const sectionId = submissionSectionByProject.value.get(projectId)
+    if (!sectionId) return null
+    return tasks.value.find(t => t.project_id === projectId && t.section_id === sectionId && !t.is_completed) ?? null
+  }
+
+  async function updateSubmissionUrl(projectId, url) {
+    const existing = projectSubmissionTask(projectId)
+    if (!url) {
+      if (existing) {
+        await api(token.value, `/tasks/${existing.id}`, 'POST', { content: ' ' })
+        existing.content = ' '
+      }
+      return
+    }
+    if (existing) {
+      if (url === existing.content) return
+      await api(token.value, `/tasks/${existing.id}`, 'POST', { content: url })
+      existing.content = url
+    } else {
+      const sectionId = submissionSectionByProject.value.get(projectId)
+      if (!sectionId) return
+      const task = await api(token.value, '/tasks', 'POST', { content: url, project_id: projectId, section_id: sectionId })
+      tasks.value.push(task)
+    }
+  }
+
   async function updateTaskTriage(taskId, { priority, labels, dueDate }) {
     const body = {}
     if (priority !== undefined) body.priority = priority
@@ -304,10 +335,11 @@ export const useBoardStore = defineStore('board', () => {
 
     const project = await api(token.value, '/projects', 'POST', { name, parent_id: root.id })
 
-    const [statusSection, deadlinesSection, summarySection] = await Promise.all([
+    const [statusSection, deadlinesSection, summarySection, submissionSection] = await Promise.all([
       api(token.value, '/sections', 'POST', { name: '📌 Current Status', project_id: project.id }),
       api(token.value, '/sections', 'POST', { name: '📌 Deadlines', project_id: project.id }),
       api(token.value, '/sections', 'POST', { name: '📌 Summary', project_id: project.id }),
+      api(token.value, '/sections', 'POST', { name: '📌 Submission', project_id: project.id }),
     ])
 
     const defaultLabel = stages.value?.[0]?.label || 'stage::planning'
@@ -320,7 +352,7 @@ export const useBoardStore = defineStore('board', () => {
 
     projects.value.push(project)
     tasks.value.push(statusTask)
-    excludedSectionIds.value = new Set([...excludedSectionIds.value, statusSection.id, deadlinesSection.id, summarySection.id])
+    excludedSectionIds.value = new Set([...excludedSectionIds.value, statusSection.id, deadlinesSection.id, summarySection.id, submissionSection.id])
     deadlineSectionIds.value = new Set([...deadlineSectionIds.value, deadlinesSection.id])
     const dm = new Map(deadlineSectionByProject.value)
     dm.set(project.id, deadlinesSection.id)
@@ -328,6 +360,9 @@ export const useBoardStore = defineStore('board', () => {
     const sm = new Map(summarySectionByProject.value)
     sm.set(project.id, summarySection.id)
     summarySectionByProject.value = sm
+    const sbm = new Map(submissionSectionByProject.value)
+    sbm.set(project.id, submissionSection.id)
+    submissionSectionByProject.value = sbm
 
     return project
   }
@@ -352,6 +387,7 @@ export const useBoardStore = defineStore('board', () => {
     moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText,
     updateVenue, setDeadlineDate, addCollaborator, removeCollaborator, renameProject,
     projectDeadlineTaskBase, projectDeadlineTaskObj,
-    projectSummaryTask, updateSummary, updateTaskTriage, createProject, deleteProject, setFilter,
+    projectSummaryTask, updateSummary, projectSubmissionTask, updateSubmissionUrl,
+    updateTaskTriage, createProject, deleteProject, setFilter,
   }
 })

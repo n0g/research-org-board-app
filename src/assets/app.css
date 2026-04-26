@@ -1114,6 +1114,35 @@ html[data-theme="dark"] .due-soon-text { color: var(--amber); }
   gap: 0 24px;
 }
 
+/* Submission URL row */
+.submission-url-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+.submission-url-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.submission-url-row .meta-input { flex: 1; min-width: 0; }
+.submission-open-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 36px;
+  border-radius: 8px;
+  color: var(--text3);
+  text-decoration: none;
+  transition: color 0.12s, background 0.12s;
+}
+.submission-open-btn:hover { color: var(--accent); background: var(--accent-bg); }
+.submission-open-btn .material-symbols-outlined { font-size: 18px; }
+
 /* Visible deadline date input */
 .meta-date-visible {
   font-size: 13px;

@@ -170,6 +170,38 @@
             ></textarea>
           </div>
 
+          <!-- Submission URL -->
+          <div class="meta-section">
+            <div class="meta-label">Submission</div>
+            <div class="submission-url-row">
+              <div
+                v-if="!editingSubmission"
+                class="meta-editable submission-url-text"
+                :class="{ placeholder: !submissionUrl }"
+                @click="startEditSubmission"
+              >{{ submissionUrl || 'Add submission URL…' }}</div>
+              <input
+                v-else
+                ref="submissionInputEl"
+                v-model="submissionDraft"
+                class="meta-input"
+                type="url"
+                placeholder="https://…"
+                @blur="saveSubmission"
+                @keydown.enter.prevent="submissionInputEl?.blur()"
+                @keydown.escape.prevent="cancelSubmission"
+              >
+              <a
+                v-if="submissionUrl && !editingSubmission"
+                :href="submissionUrl"
+                class="submission-open-btn"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Open submission"
+              ><span class="material-symbols-outlined">open_in_new</span></a>
+            </div>
+          </div>
+
           <!-- Todoist link + delete -->
           <div v-if="project" class="project-meta-footer">
             <a
@@ -376,6 +408,32 @@ async function saveSummary() {
   }
 }
 function cancelSummary() { editingSummary.value = false }
+
+// ── Submission URL (Todoist 📌 Submission section) ──
+const submissionUrl = computed(() => {
+  const t = store.projectSubmissionTask(projectId.value)
+  return t?.content?.trim() || ''
+})
+const editingSubmission = ref(false)
+const submissionDraft = ref('')
+const submissionInputEl = ref(null)
+
+async function startEditSubmission() {
+  submissionDraft.value = submissionUrl.value
+  editingSubmission.value = true
+  await nextTick()
+  submissionInputEl.value?.focus()
+  submissionInputEl.value?.select()
+}
+
+async function saveSubmission() {
+  editingSubmission.value = false
+  const val = submissionDraft.value.trim()
+  if (val !== submissionUrl.value) {
+    await store.updateSubmissionUrl(projectId.value, val).catch(console.error)
+  }
+}
+function cancelSubmission() { editingSubmission.value = false }
 
 // ── Stage popup ──
 const stageWrapperEl = ref(null)
