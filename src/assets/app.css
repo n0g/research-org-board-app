@@ -564,16 +564,27 @@ html[data-theme="light"] .card { background: #ffffff; }
 .card.on-ice { filter: grayscale(0.6); opacity: 0.6; }
 .card.on-ice:hover { opacity: 0.8; }
 
-/* Stale indicator (top-right) */
-.card-stale-indicator {
+/* Top-right corner icon cluster */
+.card-top-right {
   position: absolute;
   top: 10px;
   right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.card-stale-indicator {
   color: #f97316;
   font-size: 14px;
   font-weight: 700;
   line-height: 1;
 }
+.card-submission-icon .material-symbols-outlined { font-size: 14px; line-height: 1; display: block; }
+.card-submission-submitted { color: var(--blue); }
+.card-submission-accepted  { color: var(--green); }
+.card-submission-rejected  { color: var(--red); }
+.card-submission-draft     { color: var(--text3); }
+.card-submission-other     { color: var(--text3); }
 
 /* Venue badge */
 .card-venue-badge {

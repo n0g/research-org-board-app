@@ -12,8 +12,16 @@
     @keydown.enter.prevent="$emit('click')"
     @keydown.space.prevent="$emit('click')"
   >
-    <!-- Stale indicator -->
-    <div v-if="isStale && !isOnIce" class="card-stale-indicator" :aria-label="`Stale: ${staleWeeks}w`">!</div>
+    <!-- Top-right corner icons -->
+    <div class="card-top-right">
+      <span
+        v-if="submissionStatus"
+        class="card-submission-icon"
+        :class="`card-submission-${submissionStatusKey}`"
+        :title="submissionStatus"
+      ><span class="material-symbols-outlined">{{ submissionStatusIcon }}</span></span>
+      <div v-if="isStale && !isOnIce" class="card-stale-indicator" :aria-label="`Stale: ${staleWeeks}w`">!</div>
+    </div>
 
     <!-- Venue badge -->
     <div v-if="meta.venue" class="card-venue-badge">
@@ -48,6 +56,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useBoardStore } from '../stores/board.js'
+import { useReviewsStore } from '../stores/reviews.js'
 import { VENUES, stripPersonPrefix, isPersonLabel, nearestDue, dueStatus, formatDate } from '../lib/helpers.js'
 
 const props = defineProps({
@@ -58,6 +67,7 @@ const props = defineProps({
 const emit = defineEmits(['click'])
 
 const store = useBoardStore()
+const reviewsStore = useReviewsStore()
 const cardEl = ref(null)
 const dragging = ref(false)
 
@@ -85,6 +95,24 @@ const staleDays = computed(() =>
 const isStale = computed(() => staleDays.value !== null && staleDays.value > 14)
 const isOnIce = computed(() => props.stage?.label === 'stage::on-ice')
 const staleWeeks = computed(() => staleDays.value ? Math.floor(staleDays.value / 7) : 0)
+
+// Submission status badge
+const submissionStatus = computed(() => reviewsStore.submissionStatuses[props.project.id]?.status ?? null)
+const submissionStatusKey = computed(() => {
+  const s = (submissionStatus.value || '').toLowerCase()
+  if (s.includes('accept')) return 'accepted'
+  if (s.includes('reject')) return 'rejected'
+  if (s === 'submitted' || (s.includes('submit') && !s.includes('not'))) return 'submitted'
+  if (s.includes('not')) return 'draft'
+  return 'draft'
+})
+const submissionStatusIcon = computed(() => {
+  const k = submissionStatusKey.value
+  if (k === 'accepted') return 'check_circle'
+  if (k === 'rejected') return 'cancel'
+  if (k === 'submitted') return 'cloud_upload'
+  return 'radio_button_unchecked'
+})
 
 // Deadline display
 const deadlineDate = computed(() => deadline.value)

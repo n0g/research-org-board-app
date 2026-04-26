@@ -57,12 +57,14 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
+import { useReviewsStore } from '../stores/reviews.js'
 import { usePullToRefresh } from '../composables/usePullToRefresh.js'
 import { useSidebar } from '../composables/useSidebar.js'
 import BoardColumn from '../components/BoardColumn.vue'
 import AppSidebar from '../components/AppSidebar.vue'
 
 const store = useBoardStore()
+const reviewsStore = useReviewsStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
 const screenEl = ref(null)
 const ptrIndicator = ref(null)
@@ -102,10 +104,19 @@ function onKeyDown(e) {
   }
 }
 
+function triggerSubmissionStatuses() {
+  const items = store.displayProjects.map(p => ({
+    id: p.id,
+    submissionUrl: store.projectSubmissionTask(p.id)?.content?.trim() || '',
+  }))
+  reviewsStore.loadSubmissionStatuses(items)
+}
+
 onMounted(async () => {
   store.initStages()
   await store.loadIfStale()
   boardReady.value = true
+  triggerSubmissionStatuses()
   const label = new URLSearchParams(location.search).get('stage')
   if (label && store.stages) {
     const idx = store.stages.findIndex(s => s.label === label)

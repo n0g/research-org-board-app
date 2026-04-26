@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { fetchReviewPapers } from '../lib/hotcrp.js'
+import { fetchReviewPapers, fetchPaperStatus, extractPaperId, matchSiteForUrl } from '../lib/hotcrp.js'
 
 const SITES_KEY = 'rb_hotcrp_sites'
 const PROXY_KEY = 'rb_hotcrp_proxy'
@@ -11,6 +11,8 @@ export const useReviewsStore = defineStore('reviews', () => {
   const results = ref([])
   const loading = ref(false)
   const lastUpdated = ref(null)
+  // { [projectId]: { status: string, fetchedAt: number } }
+  const submissionStatuses = ref({})
 
   function saveSites() {
     localStorage.setItem(SITES_KEY, JSON.stringify(sites.value))
@@ -60,5 +62,33 @@ export const useReviewsStore = defineStore('reviews', () => {
     }
   }
 
-  return { sites, proxyUrl, results, loading, lastUpdated, addSite, removeSite, saveProxy, loadAll }
+  // projects: Array<{ id: string, submissionUrl: string }>
+  async function loadSubmissionStatuses(projects) {
+    if (!sites.value.length) return
+    const TEN_MIN = 10 * 60 * 1000
+    const now = Date.now()
+    const toFetch = projects.filter(({ id, submissionUrl }) => {
+      if (!submissionUrl) return false
+      const site = matchSiteForUrl(sites.value, submissionUrl)
+      if (!site || !extractPaperId(submissionUrl)) return false
+      const cached = submissionStatuses.value[id]
+      return !cached || now - cached.fetchedAt > TEN_MIN
+    })
+    if (!toFetch.length) return
+    await Promise.allSettled(toFetch.map(async ({ id, submissionUrl }) => {
+      const site = matchSiteForUrl(sites.value, submissionUrl)
+      const pid = extractPaperId(submissionUrl)
+      try {
+        const paper = await fetchPaperStatus(site.url, pid, site.token, proxyUrl.value)
+        if (paper) {
+          submissionStatuses.value = {
+            ...submissionStatuses.value,
+            [id]: { status: paper.status || (paper.submitted ? 'submitted' : 'not submitted'), fetchedAt: Date.now() },
+          }
+        }
+      } catch { /* silently skip — don't break board on API errors */ }
+    }))
+  }
+
+  return { sites, proxyUrl, results, loading, lastUpdated, submissionStatuses, addSite, removeSite, saveProxy, loadAll, loadSubmissionStatuses }
 })
