@@ -1169,9 +1169,11 @@ html[data-theme="dark"] .due-soon-text { color: var(--amber); }
 .sub-chip-green  { background: rgba(34,197,94,0.12);  border-color: rgba(34,197,94,0.3);  color: #16a34a; }
 .sub-chip-gray   { background: var(--bg3); border-color: var(--border); color: var(--text3); }
 .sub-chip-blue   { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.3); color: #2563eb; }
+.sub-chip-red    { background: rgba(239,68,68,0.12);  border-color: rgba(239,68,68,0.3);  color: #dc2626; }
 .sub-chip-accent { background: var(--accent-bg); border-color: rgba(168,85,247,0.3); color: var(--accent); }
 html[data-theme="dark"] .sub-chip-green  { color: #4ade80; }
 html[data-theme="dark"] .sub-chip-blue   { color: #60a5fa; }
+html[data-theme="dark"] .sub-chip-red    { color: #f87171; }
 @keyframes spin-once { to { transform: rotate(360deg); } }
 .spin-icon { display: inline-block; animation: spin-once 1s linear infinite; }
 

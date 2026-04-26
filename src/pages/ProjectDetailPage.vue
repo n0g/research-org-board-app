@@ -186,17 +186,9 @@
               </div>
               <div v-else-if="submissionStatusError" class="submission-status-error">{{ submissionStatusError }}</div>
               <div v-else-if="submissionStatusData" class="submission-status-chips">
-                <span class="sub-chip" :class="submissionStatusData.submitted ? 'sub-chip-green' : 'sub-chip-gray'">
-                  <span class="material-symbols-outlined">{{ submissionStatusData.submitted ? 'check_circle' : 'radio_button_unchecked' }}</span>
-                  {{ submissionStatusData.submitted ? 'Submitted' : 'Not submitted' }}
-                </span>
-                <span v-if="submissionStatusData.reviewCount > 0" class="sub-chip sub-chip-blue">
-                  <span class="material-symbols-outlined">rate_review</span>
-                  {{ submissionStatusData.reviewCount }} review{{ submissionStatusData.reviewCount !== 1 ? 's' : '' }}
-                </span>
-                <span v-if="submissionStatusData.decision" class="sub-chip sub-chip-accent">
-                  <span class="material-symbols-outlined">gavel</span>
-                  {{ submissionStatusData.decision }}
+                <span class="sub-chip" :class="statusChipClass(submissionStatusData.status)">
+                  <span class="material-symbols-outlined">{{ statusChipIcon(submissionStatusData.status) }}</span>
+                  {{ submissionStatusData.status }}
                 </span>
               </div>
               <div v-else-if="!paperIdFromUrl" class="submission-status-hint">No paper ID found in URL</div>
@@ -479,15 +471,31 @@ async function loadSubmissionStatus() {
     const paper = await fetchPaperStatus(site.url, pid, site.token, reviewsStore.proxyUrl)
     if (!paper) { submissionStatusError.value = 'Paper not found'; return }
     submissionStatusData.value = {
-      submitted: !!paper.submitted,
-      reviewCount: Array.isArray(paper.reviews) ? paper.reviews.length : 0,
-      decision: paper.decision || paper.dec || '',
+      status: paper.status || (paper.submitted ? 'submitted' : 'not submitted'),
     }
   } catch (e) {
     submissionStatusError.value = e.message || 'Failed to fetch status'
   } finally {
     submissionStatusLoading.value = false
   }
+}
+
+function statusChipClass(status) {
+  if (!status) return 'sub-chip-gray'
+  const s = status.toLowerCase()
+  if (s.includes('accept')) return 'sub-chip-green'
+  if (s.includes('reject')) return 'sub-chip-red'
+  if (s.includes('submit')) return 'sub-chip-blue'
+  return 'sub-chip-gray'
+}
+
+function statusChipIcon(status) {
+  if (!status) return 'radio_button_unchecked'
+  const s = status.toLowerCase()
+  if (s.includes('accept')) return 'check_circle'
+  if (s.includes('reject')) return 'cancel'
+  if (s.includes('submit')) return 'upload_file'
+  return 'radio_button_unchecked'
 }
 
 watch([submissionUrl, matchedSite], ([url, site]) => {
