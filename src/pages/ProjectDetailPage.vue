@@ -1,5 +1,5 @@
 <template>
-  <f7-page name="project-detail" class="project-page" no-swipeback>
+  <f7-page name="project-detail" class="project-page">
     <div class="project-screen">
       <AppSidebar current-page="board" />
 

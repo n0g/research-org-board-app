@@ -75,11 +75,11 @@ const unassignedProjects = computed(() =>
 )
 
 function openProject(project) {
-  f7.views.main.router.navigate('/project/' + project.id + '/')
+  f7.views.main.router.navigate('/project/' + project.id + '/', { transition: 'f7-push' })
 }
 
 function openNewProject() {
-  f7.views.main.router.navigate('/project/new/')
+  f7.views.main.router.navigate('/project/new/', { transition: 'f7-push' })
 }
 
 function goTasks() { f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true }) }
