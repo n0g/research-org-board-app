@@ -740,9 +740,14 @@ html[data-theme="dark"] input:focus { box-shadow: 0 0 0 2px rgba(255,159,10,0.15
 .bottom-tabbar.toolbar {
   background: var(--bg-sidebar) !important;
   border-top: 1px solid var(--border) !important;
-  display: flex;
   height: auto !important;
   padding-bottom: env(safe-area-inset-bottom);
+}
+.bottom-tabbar .toolbar-inner {
+  position: relative !important;
+  height: auto !important;
+  width: 100%;
+  display: flex;
 }
 html[data-theme="dark"] .bottom-tabbar.toolbar { background: rgba(28,28,30,0.95) !important; }
 
