@@ -7,6 +7,27 @@ export async function fetchReviewPapers(siteUrl, token, proxyUrl = '') {
   return Array.isArray(data) ? data : (data.papers || [])
 }
 
+export async function fetchPaperStatus(siteUrl, paperId, token, proxyUrl = '') {
+  const data = await _hotcrpGet(siteUrl, token, proxyUrl, `/api/paper?p=${paperId}`)
+  // Response can be array, { papers: [...] }, or a single paper object
+  if (Array.isArray(data)) return data[0] ?? null
+  if (data.papers) return data.papers[0] ?? null
+  return data.pid ? data : null
+}
+
+export function extractPaperId(submissionUrl) {
+  const pathMatch = submissionUrl.match(/\/paper\/(\d+)/)
+  if (pathMatch) return pathMatch[1]
+  const queryMatch = submissionUrl.match(/[?&]p=(\d+)/)
+  if (queryMatch) return queryMatch[1]
+  return null
+}
+
+export function matchSiteForUrl(sites, submissionUrl) {
+  if (!submissionUrl) return null
+  return sites.find(s => submissionUrl.startsWith(s.url)) ?? null
+}
+
 async function _hotcrpGet(siteUrl, token, proxyUrl, path) {
   const base = siteUrl.replace(/\/+$/, '')
   const hotcrpUrl = `${base}${path}`

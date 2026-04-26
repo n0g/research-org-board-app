@@ -149,28 +149,7 @@
             </div>
           </div>
 
-          <!-- Summary -->
-          <div class="meta-section">
-            <div class="meta-label">Summary</div>
-            <div
-              v-if="!editingSummary"
-              class="meta-editable"
-              :class="{ placeholder: !summaryText }"
-              @click="startEdit('summary')"
-            >{{ summaryText || 'Add a summary…' }}</div>
-            <textarea
-              v-else
-              ref="summaryTextareaEl"
-              v-model="summaryDraft"
-              class="meta-textarea"
-              rows="4"
-              @blur="saveSummary"
-              @keydown.escape.prevent="cancelSummary"
-              @keydown.meta.enter.prevent="summaryTextareaEl?.blur()"
-            ></textarea>
-          </div>
-
-          <!-- Submission URL -->
+          <!-- Submission URL + status -->
           <div class="meta-section">
             <div class="meta-label">Submission</div>
             <div class="submission-url-row">
@@ -200,6 +179,49 @@
                 title="Open submission"
               ><span class="material-symbols-outlined">open_in_new</span></a>
             </div>
+            <div v-if="submissionUrl && matchedSite" class="submission-status">
+              <div v-if="submissionStatusLoading" class="submission-status-loading">
+                <span class="material-symbols-outlined spin-icon">refresh</span>
+                Checking…
+              </div>
+              <div v-else-if="submissionStatusError" class="submission-status-error">{{ submissionStatusError }}</div>
+              <div v-else-if="submissionStatusData" class="submission-status-chips">
+                <span class="sub-chip" :class="submissionStatusData.submitted ? 'sub-chip-green' : 'sub-chip-gray'">
+                  <span class="material-symbols-outlined">{{ submissionStatusData.submitted ? 'check_circle' : 'radio_button_unchecked' }}</span>
+                  {{ submissionStatusData.submitted ? 'Submitted' : 'Not submitted' }}
+                </span>
+                <span v-if="submissionStatusData.reviewCount > 0" class="sub-chip sub-chip-blue">
+                  <span class="material-symbols-outlined">rate_review</span>
+                  {{ submissionStatusData.reviewCount }} review{{ submissionStatusData.reviewCount !== 1 ? 's' : '' }}
+                </span>
+                <span v-if="submissionStatusData.decision" class="sub-chip sub-chip-accent">
+                  <span class="material-symbols-outlined">gavel</span>
+                  {{ submissionStatusData.decision }}
+                </span>
+              </div>
+              <div v-else-if="!paperIdFromUrl" class="submission-status-hint">No paper ID found in URL</div>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div class="meta-section">
+            <div class="meta-label">Summary</div>
+            <div
+              v-if="!editingSummary"
+              class="meta-editable"
+              :class="{ placeholder: !summaryText }"
+              @click="startEdit('summary')"
+            >{{ summaryText || 'Add a summary…' }}</div>
+            <textarea
+              v-else
+              ref="summaryTextareaEl"
+              v-model="summaryDraft"
+              class="meta-textarea"
+              rows="4"
+              @blur="saveSummary"
+              @keydown.escape.prevent="cancelSummary"
+              @keydown.meta.enter.prevent="summaryTextareaEl?.blur()"
+            ></textarea>
           </div>
 
           <!-- Todoist link + delete -->
@@ -260,11 +282,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
+import { useReviewsStore } from '../stores/reviews.js'
 import { useSidebar } from '../composables/useSidebar.js'
 import { VENUES, stripPersonPrefix, isPersonLabel } from '../lib/helpers.js'
+import { fetchPaperStatus, extractPaperId, matchSiteForUrl } from '../lib/hotcrp.js'
 
 import AppSidebar from '../components/AppSidebar.vue'
 import TaskItem from '../components/TaskItem.vue'
@@ -274,6 +298,7 @@ const props = defineProps({
 })
 
 const store = useBoardStore()
+const reviewsStore = useReviewsStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
 const newTaskContent = ref('')
 
@@ -435,6 +460,41 @@ async function saveSubmission() {
 }
 function cancelSubmission() { editingSubmission.value = false }
 
+// ── Submission status (HotCRP) ──
+const paperIdFromUrl = computed(() => submissionUrl.value ? extractPaperId(submissionUrl.value) : null)
+const matchedSite = computed(() => matchSiteForUrl(reviewsStore.sites, submissionUrl.value))
+
+const submissionStatusLoading = ref(false)
+const submissionStatusError = ref(null)
+const submissionStatusData = ref(null)
+
+async function loadSubmissionStatus() {
+  const site = matchedSite.value
+  const pid = paperIdFromUrl.value
+  if (!site || !pid) { submissionStatusData.value = null; return }
+  submissionStatusLoading.value = true
+  submissionStatusError.value = null
+  submissionStatusData.value = null
+  try {
+    const paper = await fetchPaperStatus(site.url, pid, site.token, reviewsStore.proxyUrl)
+    if (!paper) { submissionStatusError.value = 'Paper not found'; return }
+    submissionStatusData.value = {
+      submitted: !!paper.submitted,
+      reviewCount: Array.isArray(paper.reviews) ? paper.reviews.length : 0,
+      decision: paper.decision || paper.dec || '',
+    }
+  } catch (e) {
+    submissionStatusError.value = e.message || 'Failed to fetch status'
+  } finally {
+    submissionStatusLoading.value = false
+  }
+}
+
+watch([submissionUrl, matchedSite], ([url, site]) => {
+  if (url && site && extractPaperId(url)) loadSubmissionStatus()
+  else { submissionStatusData.value = null; submissionStatusError.value = null }
+})
+
 // ── Stage popup ──
 const stageWrapperEl = ref(null)
 const stagePopupOpen = ref(false)
@@ -516,6 +576,7 @@ onMounted(async () => {
   document.addEventListener('click', onDocClick)
   store.initStages()
   await store.loadIfStale()
+  if (submissionUrl.value && matchedSite.value && paperIdFromUrl.value) loadSubmissionStatus()
 })
 
 onUnmounted(() => {

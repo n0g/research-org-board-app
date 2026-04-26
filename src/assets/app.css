@@ -1143,6 +1143,38 @@ html[data-theme="dark"] .due-soon-text { color: var(--amber); }
 .submission-open-btn:hover { color: var(--accent); background: var(--accent-bg); }
 .submission-open-btn .material-symbols-outlined { font-size: 18px; }
 
+/* Submission status */
+.submission-status { margin-top: 8px; }
+.submission-status-loading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text3);
+}
+.submission-status-error { font-size: 12px; color: var(--red); }
+.submission-status-hint { font-size: 12px; color: var(--text3); font-style: italic; }
+.submission-status-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.sub-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+}
+.sub-chip .material-symbols-outlined { font-size: 13px; }
+.sub-chip-green  { background: rgba(34,197,94,0.12);  border-color: rgba(34,197,94,0.3);  color: #16a34a; }
+.sub-chip-gray   { background: var(--bg3); border-color: var(--border); color: var(--text3); }
+.sub-chip-blue   { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.3); color: #2563eb; }
+.sub-chip-accent { background: var(--accent-bg); border-color: rgba(168,85,247,0.3); color: var(--accent); }
+html[data-theme="dark"] .sub-chip-green  { color: #4ade80; }
+html[data-theme="dark"] .sub-chip-blue   { color: #60a5fa; }
+@keyframes spin-once { to { transform: rotate(360deg); } }
+.spin-icon { display: inline-block; animation: spin-once 1s linear infinite; }
+
 /* Visible deadline date input */
 .meta-date-visible {
   font-size: 13px;
