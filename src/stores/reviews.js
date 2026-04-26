@@ -18,6 +18,11 @@ export const useReviewsStore = defineStore('reviews', () => {
     localStorage.setItem(SITES_KEY, JSON.stringify(sites.value))
   }
 
+  function setSites(newSites) {
+    sites.value = newSites
+    saveSites()
+  }
+
   function saveProxy(url) {
     proxyUrl.value = url.trim()
     if (proxyUrl.value) {
@@ -90,5 +95,5 @@ export const useReviewsStore = defineStore('reviews', () => {
     }))
   }
 
-  return { sites, proxyUrl, results, loading, lastUpdated, submissionStatuses, addSite, removeSite, saveProxy, loadAll, loadSubmissionStatuses }
+  return { sites, proxyUrl, results, loading, lastUpdated, submissionStatuses, addSite, removeSite, setSites, saveProxy, loadAll, loadSubmissionStatuses }
 })
