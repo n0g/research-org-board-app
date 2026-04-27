@@ -74,6 +74,9 @@
                   </span>
                   <span v-if="getTime(task)" class="triage-tag triage-tag-dim">{{ getTime(task) }}</span>
                 </div>
+                <span v-if="scheduledLabel(task)" class="triage-tag triage-tag-scheduled">
+                  <span class="material-symbols-outlined">event</span>{{ scheduledLabel(task) }}
+                </span>
               </div>
             </div>
           </div>
@@ -236,6 +239,13 @@ const filteredTasks = computed(() => {
 
 function projectName(task) {
   return store.displayProjects.find(p => p.id === task.project_id)?.name ?? ''
+}
+
+function scheduledLabel(task) {
+  const ev = calStore.scheduledByTaskId.get(task.id)?.[0]
+  if (!ev) return null
+  const start = new Date(ev.start.dateTime || ev.start.date)
+  return start.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
 }
 
 // ── Calendar / week navigation ──
@@ -418,7 +428,8 @@ async function onPointerUp() {
         new Date(year, month - 1, day),
         slot.hour,
         slot.minute,
-        taskDurationMinutes(task)
+        taskDurationMinutes(task),
+        task.id
       )
     } catch (err) {
       console.error('Failed to create event:', err)

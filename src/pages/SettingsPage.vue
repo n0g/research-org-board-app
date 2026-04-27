@@ -214,6 +214,25 @@
                 </span>
                 <button class="btn sm danger" @click="calStore.disconnect()">Disconnect</button>
               </div>
+              <div class="settings-row" style="margin-top: 12px; align-items: center; gap: 8px">
+                <span class="settings-row-label">Calendar</span>
+                <select
+                  class="cal-select"
+                  :value="calStore.selectedCalendarId"
+                  @change="calStore.saveCalendarId($event.target.value)"
+                  @focus="calStore.fetchCalendarList()"
+                >
+                  <option
+                    v-if="!calStore.calendarList.length"
+                    :value="calStore.selectedCalendarId"
+                  >{{ calStore.selectedCalendarId }}</option>
+                  <option
+                    v-for="cal in calStore.calendarList"
+                    :key="cal.id"
+                    :value="cal.id"
+                  >{{ cal.summary }}</option>
+                </select>
+              </div>
             </template>
           </div>
 

@@ -2066,6 +2066,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 }
 .triage-tag .material-symbols-outlined { font-size: 12px; }
 .triage-tag-dim { color: var(--text3); }
+.triage-tag-scheduled { color: #34A853; }
 .triage-task-date { font-size: 10px; color: var(--text3); font-weight: 500; }
 
 /* Detail pane (right) */
@@ -2535,6 +2536,19 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   overflow: hidden;
   text-overflow: ellipsis;
   box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+
+/* Google Calendar UI */
+.cal-select {
+  flex: 1;
+  font-family: var(--font);
+  font-size: 13px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text);
+  cursor: pointer;
 }
 
 /* Google Calendar connected indicator */

@@ -7,11 +7,25 @@ export const useCalendarStore = defineStore('calendar', () => {
   const clientId = ref(BAKED_CLIENT_ID || localStorage.getItem('rb_gcal_client_id') || '')
   const accessToken = ref(localStorage.getItem('rb_gcal_token') || '')
   const tokenExpiry = ref(parseInt(localStorage.getItem('rb_gcal_token_expiry') || '0'))
+  const selectedCalendarId = ref(localStorage.getItem('rb_gcal_calendar_id') || 'primary')
+  const calendarList = ref([])
   const events = ref([])
   const loading = ref(false)
   const connectError = ref('')
 
   const isConnected = computed(() => !!accessToken.value && Date.now() < tokenExpiry.value)
+
+  const scheduledByTaskId = computed(() => {
+    const map = new Map()
+    for (const ev of events.value) {
+      const taskId = ev.extendedProperties?.private?.todoist_task_id
+      if (taskId) {
+        if (!map.has(taskId)) map.set(taskId, [])
+        map.get(taskId).push(ev)
+      }
+    }
+    return map
+  })
 
   function saveClientId(id) {
     clientId.value = id.trim()
@@ -64,6 +78,24 @@ export const useCalendarStore = defineStore('calendar', () => {
     return _silentRefresh()
   }
 
+  function saveCalendarId(id) {
+    selectedCalendarId.value = id
+    localStorage.setItem('rb_gcal_calendar_id', id)
+  }
+
+  async function fetchCalendarList() {
+    if (!await _ensureToken()) return
+    try {
+      const res = await fetch(
+        'https://www.googleapis.com/calendar/v3/users/me/calendarList?minAccessRole=writer',
+        { headers: { Authorization: `Bearer ${accessToken.value}` } }
+      )
+      if (!res.ok) return
+      const data = await res.json()
+      calendarList.value = data.items || []
+    } catch {}
+  }
+
   function disconnect() {
     if (accessToken.value) {
       try { window.google?.accounts?.oauth2?.revoke(accessToken.value) } catch {}
@@ -71,6 +103,7 @@ export const useCalendarStore = defineStore('calendar', () => {
     accessToken.value = ''
     tokenExpiry.value = 0
     events.value = []
+    calendarList.value = []
     localStorage.removeItem('rb_gcal_token')
     localStorage.removeItem('rb_gcal_token_expiry')
   }
@@ -91,8 +124,9 @@ export const useCalendarStore = defineStore('calendar', () => {
         orderBy: 'startTime',
         maxResults: '250',
       })
+      const calId = encodeURIComponent(selectedCalendarId.value)
       const res = await fetch(
-        `https://www.googleapis.com/calendar/v3/calendars/primary/events?${params}`,
+        `https://www.googleapis.com/calendar/v3/calendars/${calId}/events?${params}`,
         { headers: { Authorization: `Bearer ${accessToken.value}` } }
       )
       if (!res.ok) {
@@ -106,25 +140,28 @@ export const useCalendarStore = defineStore('calendar', () => {
     }
   }
 
-  async function createEvent(title, dateObj, startHour, startMinute, durationMinutes) {
+  async function createEvent(title, dateObj, startHour, startMinute, durationMinutes, taskId) {
     if (!await _ensureToken()) throw new Error('Not authenticated')
     const start = new Date(dateObj)
     start.setHours(startHour, startMinute, 0, 0)
     const end = new Date(start.getTime() + durationMinutes * 60_000)
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const body = {
+      summary: title,
+      start: { dateTime: start.toISOString(), timeZone: tz },
+      end: { dateTime: end.toISOString(), timeZone: tz },
+    }
+    if (taskId) body.extendedProperties = { private: { todoist_task_id: String(taskId) } }
+    const calId = encodeURIComponent(selectedCalendarId.value)
     const res = await fetch(
-      'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+      `https://www.googleapis.com/calendar/v3/calendars/${calId}/events`,
       {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${accessToken.value}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          summary: title,
-          start: { dateTime: start.toISOString(), timeZone: tz },
-          end: { dateTime: end.toISOString(), timeZone: tz },
-        }),
+        body: JSON.stringify(body),
       }
     )
     if (!res.ok) throw new Error(`Failed to create event: ${res.status}`)
@@ -134,8 +171,9 @@ export const useCalendarStore = defineStore('calendar', () => {
   }
 
   return {
-    clientId, events, loading, connectError,
-    isConnected,
-    saveClientId, connect, disconnect, loadWeekEvents, createEvent,
+    clientId, events, loading, connectError, selectedCalendarId, calendarList,
+    isConnected, scheduledByTaskId,
+    saveClientId, saveCalendarId, connect, disconnect,
+    loadWeekEvents, createEvent, fetchCalendarList,
   }
 })
