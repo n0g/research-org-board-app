@@ -177,53 +177,23 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useSidebar } from '../composables/useSidebar.js'
-import { parseLocalDate } from '../lib/helpers.js'
+import {
+  useTaskTriage, TABS, URGENCY_OPTS, LEVEL_OPTS, TIME_OPTS,
+  getLabel, getUrgencyLabel, getImportance, getTime, formatDeadline, capitalize,
+} from '../composables/useTaskTriage.js'
 import AppSidebar from '../components/AppSidebar.vue'
 
 const store = useBoardStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
-
-const TABS = [
-  { key: 'all', label: 'All' },
-  { key: 'important', label: 'Important' },
-  { key: 'quick', label: 'Quick' },
-  { key: 'urgent', label: 'Urgent' },
-]
-const URGENCY_OPTS = [
-  { val: 'low', label: 'Low' },
-  { val: 'med', label: 'Med' },
-  { val: 'high', label: 'High' },
-  { val: 'urgent', label: 'Urgent' },
-]
-const LEVEL_OPTS = ['low', 'med', 'high']
-const TIME_OPTS = ['15m', '30m', '1h', '2h']
-const TRIAGE_PREFIXES = ['importance::', 'time::', 'delegatable::']
+const { draft, saveStatus, currentTask: selectedTask, initDraft } = useTaskTriage()
 
 const tab = ref('all')
-const selectedTask = ref(null)
-const draft = ref({ urgency: 'low', importance: null, time: null, delegatable: null, deadline: '', notes: '' })
 const projectsOpen = ref(true)
 const activeProjectId = ref(null)
-const saveStatus = ref('')
-
-let saveTimer = null
-let statusTimer = null
-let skipNextWatch = false
-
-watch(draft, () => {
-  if (!selectedTask.value || skipNextWatch) { skipNextWatch = false; return }
-  clearTimeout(saveTimer)
-  saveTimer = setTimeout(saveChanges, 800)
-}, { deep: true })
-
-onUnmounted(() => {
-  clearTimeout(saveTimer)
-  clearTimeout(statusTimer)
-})
 
 function toggleProject(id) {
   activeProjectId.value = activeProjectId.value === id ? null : id
@@ -256,89 +226,12 @@ function projectName(task) {
   return store.displayProjects.find(p => p.id === task.project_id)?.name ?? ''
 }
 
-// ── Attribute helpers ──
-function getLabel(task, prefix) {
-  return (task.labels || []).find(l => l.startsWith(prefix))?.slice(prefix.length) ?? null
-}
-
-function getUrgencyLabel(task) {
-  const p = task.priority ?? 4
-  if (p === 1) return 'Urgent'
-  if (p === 2) return 'High'
-  if (p === 3) return 'Med'
-  return 'Low'
-}
-
-function getImportance(task) {
-  const v = getLabel(task, 'importance::')
-  return v ? capitalize(v) : null
-}
-
-function getTime(task) {
-  return getLabel(task, 'time::')
-}
-
-function urgencyFromPriority(p) {
-  if (p === 1) return 'urgent'
-  if (p === 2) return 'high'
-  if (p === 3) return 'med'
-  return 'low'
-}
-
-function priorityFromUrgency(u) {
-  if (u === 'urgent') return 1
-  if (u === 'high') return 2
-  if (u === 'med') return 3
-  return 4
-}
-
-function formatDeadline(dateStr) {
-  const d = parseLocalDate(dateStr)
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-}
-
-function capitalize(s) {
-  return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''
-}
-
 // ── Selection ──
 function selectTask(task) {
-  clearTimeout(saveTimer)
-  skipNextWatch = true
-  selectedTask.value = task
-  draft.value = {
-    urgency: urgencyFromPriority(task.priority ?? 4),
-    importance: getLabel(task, 'importance::'),
-    time: getLabel(task, 'time::'),
-    delegatable: getLabel(task, 'delegatable::'),
-    deadline: task.due?.date ?? '',
-    notes: task.description ?? '',
-  }
-  saveStatus.value = ''
-}
-
-// ── Save ──
-async function saveChanges() {
-  if (!selectedTask.value) return
-  saveStatus.value = 'Saving…'
-  try {
-    const task = selectedTask.value
-    const baseLabels = (task.labels || []).filter(l => !TRIAGE_PREFIXES.some(p => l.startsWith(p)))
-    const triageLabels = []
-    if (draft.value.importance) triageLabels.push(`importance::${draft.value.importance}`)
-    if (draft.value.time) triageLabels.push(`time::${draft.value.time}`)
-    if (draft.value.delegatable) triageLabels.push(`delegatable::${draft.value.delegatable}`)
-    await store.updateTaskTriage(task.id, {
-      priority: priorityFromUrgency(draft.value.urgency),
-      labels: [...baseLabels, ...triageLabels],
-      dueDate: draft.value.deadline || null,
-      description: draft.value.notes,
-    })
-    saveStatus.value = 'Saved'
-    clearTimeout(statusTimer)
-    statusTimer = setTimeout(() => { saveStatus.value = '' }, 2000)
-  } catch {
-    saveStatus.value = 'Error saving'
+  if (window.innerWidth < 768) {
+    f7.views.main.router.navigate(`/tasks/${task.id}/`, { transition: 'f7-push' })
+  } else {
+    initDraft(task)
   }
 }
 

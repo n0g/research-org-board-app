@@ -1959,6 +1959,25 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   height: 100%;
   overflow: hidden;
 }
+
+/* ── TASK DETAIL PAGE (mobile push route) ── */
+.task-detail-page,
+.task-detail-page .page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+.task-detail-page .page-content {
+  flex: 1;
+  overflow: hidden;
+  padding: 0 !important;
+}
+.task-detail-main {
+  height: 100%;
+  overflow-y: auto;
+  padding: calc(24px + env(safe-area-inset-top)) 24px calc(80px + env(safe-area-inset-bottom));
+}
 .tasks-page .page-content {
   flex: 1;
   display: flex;
