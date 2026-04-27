@@ -20,11 +20,25 @@
         @keydown.meta.enter.prevent="titleInputEl?.blur()"
         @keydown.escape.prevent="cancelTitle"
       ></textarea>
+      <div
+        v-if="!editingNotes && !draft.notes"
+        class="triage-notes-placeholder"
+        @click="startEditNotes"
+      >Add notes…</div>
+      <div
+        v-else-if="!editingNotes"
+        class="triage-notes-preview"
+        @click="startEditNotes"
+      >{{ draft.notes }}</div>
       <textarea
+        v-else
+        ref="notesInputEl"
         v-model="draft.notes"
         class="triage-notes"
         placeholder="Add notes…"
-        rows="3"
+        rows="4"
+        @blur="editingNotes = false"
+        @keydown.escape.prevent="editingNotes = false"
       ></textarea>
     </header>
 
@@ -102,7 +116,19 @@ const { draft, saveStatus, initDraft } = useTaskTriage()
 
 const projectName = computed(() => store.displayProjects.find(p => p.id === props.task.project_id)?.name ?? '')
 
-watch(() => props.task, (task) => { if (task) initDraft(task) }, { immediate: true })
+watch(() => props.task, (task) => {
+  if (task) { initDraft(task); editingNotes.value = false; editingTitle.value = false }
+}, { immediate: true })
+
+// ── Notes editing ──
+const editingNotes = ref(false)
+const notesInputEl = ref(null)
+
+async function startEditNotes() {
+  editingNotes.value = true
+  await nextTick()
+  notesInputEl.value?.focus()
+}
 
 // ── Title editing ──
 const editingTitle = ref(false)
