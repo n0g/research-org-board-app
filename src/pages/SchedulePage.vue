@@ -300,7 +300,13 @@ function scheduledLabel(task) {
   const ev = calStore.scheduledByTaskId.get(task.id)?.[0]
   if (!ev) return null
   const start = new Date(ev.start.dateTime || ev.start.date)
-  return start.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+  const datePart = start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+  if (!ev.start.dateTime) return datePart
+  const h = start.getHours(), m = start.getMinutes()
+  const h12 = h % 12 || 12
+  const period = h >= 12 ? 'pm' : 'am'
+  const timePart = m === 0 ? `${h12}${period}` : `${h12}:${String(m).padStart(2, '0')}${period}`
+  return `${datePart} ${timePart}`
 }
 
 // ── Calendar / week navigation ──
