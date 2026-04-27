@@ -26,20 +26,42 @@ export const useCalendarStore = defineStore('calendar', () => {
     localStorage.setItem('rb_gcal_token_expiry', String(expiry))
   }
 
+  function _initClient(callback) {
+    return window.google.accounts.oauth2.initTokenClient({
+      client_id: clientId.value,
+      scope: 'https://www.googleapis.com/auth/calendar.events',
+      callback,
+      error_callback: (err) => callback({ error: err.type }),
+    })
+  }
+
   function connect() {
     connectError.value = ''
     if (!clientId.value) { connectError.value = 'Enter a Client ID first.'; return }
     if (!window.google?.accounts?.oauth2) { connectError.value = 'Google Identity Services not loaded — refresh and try again.'; return }
-    const client = window.google.accounts.oauth2.initTokenClient({
-      client_id: clientId.value,
-      scope: 'https://www.googleapis.com/auth/calendar.events',
-      callback: (resp) => {
-        if (resp.error) { connectError.value = resp.error_description || resp.error; return }
+    _initClient((resp) => {
+      if (resp.error) { connectError.value = resp.error_description || resp.error; return }
+      _storeToken(resp.access_token, resp.expires_in)
+      connectError.value = ''
+    }).requestAccessToken()
+  }
+
+  // Silently get a fresh token using the existing Google session (no popup).
+  // Falls back to false if the session has expired — caller must then prompt the user.
+  function _silentRefresh() {
+    if (!clientId.value || !window.google?.accounts?.oauth2) return Promise.resolve(false)
+    return new Promise((resolve) => {
+      _initClient((resp) => {
+        if (resp.error) { resolve(false); return }
         _storeToken(resp.access_token, resp.expires_in)
-        connectError.value = ''
-      },
+        resolve(true)
+      }).requestAccessToken({ prompt: '' })
     })
-    client.requestAccessToken()
+  }
+
+  async function _ensureToken() {
+    if (isConnected.value) return true
+    return _silentRefresh()
   }
 
   function disconnect() {
@@ -54,7 +76,7 @@ export const useCalendarStore = defineStore('calendar', () => {
   }
 
   async function loadWeekEvents(weekStart) {
-    if (!isConnected.value) return
+    if (!await _ensureToken()) return
     loading.value = true
     try {
       const timeMin = new Date(weekStart)
@@ -85,6 +107,7 @@ export const useCalendarStore = defineStore('calendar', () => {
   }
 
   async function createEvent(title, dateObj, startHour, startMinute, durationMinutes) {
+    if (!await _ensureToken()) throw new Error('Not authenticated')
     const start = new Date(dateObj)
     start.setHours(startHour, startMinute, 0, 0)
     const end = new Date(start.getTime() + durationMinutes * 60_000)
