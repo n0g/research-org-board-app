@@ -47,7 +47,7 @@
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
       <button class="tab-btn tab-btn-active" aria-current="page"><span class="material-symbols-outlined">dashboard</span>Board</button>
       <button class="tab-btn" @click="goTasks"><span class="material-symbols-outlined">checklist</span>Tasks</button>
-      <button class="tab-btn" @click="goReviews"><span class="material-symbols-outlined">grading</span>Reviews</button>
+      <button class="tab-btn" @click="goSchedule"><span class="material-symbols-outlined">calendar_today</span>Schedule</button>
       <button class="tab-btn" @click="goSettings"><span class="material-symbols-outlined">settings</span>Settings</button>
     </f7-toolbar>
   </f7-page>
@@ -83,10 +83,7 @@ function openNewProject() {
 }
 
 function goTasks() { f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true }) }
-function goReviews() {
-  f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true })
-}
-
+function goSchedule() { f7.views.main.router.navigate('/schedule/', { clearPreviousHistory: true }) }
 function goSettings() {
   f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true })
 }
