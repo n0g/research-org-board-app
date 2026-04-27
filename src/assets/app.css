@@ -1007,9 +1007,8 @@ html[data-theme="dark"] .project-meta { background: var(--bg2); }
 .project-meta::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
 @media (max-width: 767px) {
-  .project-main { flex-direction: column; overflow-y: hidden; overflow-x: hidden; background: var(--bg); }
-  .project-meta { width: 100%; border-right: none; border-bottom: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; height: auto; max-height: 45vh; }
-  .project-tasks { overflow-y: auto; flex: 1; min-height: 0; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+  .project-main { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+  .project-meta { width: 100%; border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; flex-shrink: 0; height: auto; }
 }
 
 .back-btn {
@@ -1392,7 +1391,7 @@ html[data-theme="light"] .project-tasks { background: #faf9fe; }
 .project-tasks::-webkit-scrollbar { width: 4px; }
 .project-tasks::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 @media (max-width: 767px) {
-  .project-tasks { padding: 24px 20px calc(16px + env(safe-area-inset-bottom)); }
+  .project-tasks { overflow-y: visible; flex: none; min-height: 100vh; padding: 24px 20px calc(80px + env(safe-area-inset-bottom)); background: var(--bg); }
 }
 
 .tasks-header { margin-bottom: 24px; }
