@@ -118,6 +118,13 @@
                 >
                   <span class="cal-day-name">{{ dayName(day) }}</span>
                   <span class="cal-day-num">{{ day.getDate() }}</span>
+                  <div
+                    v-for="ev in allDayEvents(day)"
+                    :key="ev.id"
+                    class="cal-allday-bar"
+                    :style="{ background: ev._calColor || 'var(--accent)' }"
+                    :title="ev.summary"
+                  >{{ ev.summary }}</div>
                 </div>
               </div>
 
@@ -159,11 +166,13 @@
 
                       <!-- Events -->
                       <div
-                        v-for="ev in dayEvents(day)"
+                        v-for="ev in timedDayEvents(day)"
                         :key="ev.id"
                         class="cal-event"
+                        :class="{ 'cal-event-moving': draggingCalEvent?.id === ev.id }"
                         :style="eventStyle(ev)"
                         :title="ev.summary"
+                        @pointerdown.stop="onCalEventPointerDown($event, ev)"
                       >
                         <div class="cal-event-title">{{ ev.summary }}</div>
                         <div v-if="eventTimeStr(ev)" class="cal-event-time">{{ eventTimeStr(ev) }}</div>
@@ -286,8 +295,9 @@ const weekLabel = computed(() => {
   const start = weekDays.value[0]
   const end = weekDays.value[6]
   const startStr = start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-  const endStr = end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
-  return `${startStr} – ${endStr}`
+  const endStr = end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+  const year = end.getFullYear()
+  return `${startStr} – ${endStr}, ${year}`
 })
 
 function isoDate(d) { return d.toISOString().slice(0, 10) }
@@ -319,12 +329,14 @@ function goToday() {
 }
 
 // ── Events ──
-function dayEvents(day) {
+function timedDayEvents(day) {
   const dateStr = isoDate(day)
-  return calStore.events.filter(ev => {
-    const start = ev.start?.dateTime || ev.start?.date
-    return start?.slice(0, 10) === dateStr
-  })
+  return calStore.events.filter(ev => ev.start?.dateTime && ev.start.dateTime.slice(0, 10) === dateStr)
+}
+
+function allDayEvents(day) {
+  const dateStr = isoDate(day)
+  return calStore.events.filter(ev => !ev.start?.dateTime && ev.start?.date === dateStr)
 }
 
 function eventStyle(ev) {
@@ -346,6 +358,7 @@ function eventTimeStr(ev) {
 
 // ── Drag and drop ──
 const draggingTask = ref(null)
+const draggingCalEvent = ref(null)
 const hoveredSlot = ref(null)
 let ghostEl = null
 
@@ -366,30 +379,47 @@ function isHoveredSlot(day, slot) {
 }
 
 function dropPreviewStyle(day) {
-  if (!draggingTask.value || !hoveredSlot.value) return null
+  if ((!draggingTask.value && !draggingCalEvent.value) || !hoveredSlot.value) return null
   if (hoveredSlot.value.dateStr !== isoDate(day)) return null
   const startMins = (hoveredSlot.value.hour - START_HOUR) * 60 + hoveredSlot.value.minute
-  const duration = taskDurationMinutes(draggingTask.value)
+  let duration = 60
+  if (draggingTask.value) {
+    duration = taskDurationMinutes(draggingTask.value)
+  } else if (draggingCalEvent.value?.start?.dateTime && draggingCalEvent.value?.end?.dateTime) {
+    duration = Math.max(
+      (new Date(draggingCalEvent.value.end.dateTime) - new Date(draggingCalEvent.value.start.dateTime)) / 60000,
+      30
+    )
+  }
   return {
     top: `${(startMins / 30) * SLOT_HEIGHT}px`,
     height: `${(duration / 30) * SLOT_HEIGHT - 2}px`,
   }
 }
 
+function _startDrag(e, label) {
+  ghostEl = document.createElement('div')
+  ghostEl.className = 'cal-drag-ghost'
+  ghostEl.textContent = label
+  ghostEl.style.left = `${e.clientX + 14}px`
+  ghostEl.style.top = `${e.clientY - 10}px`
+  document.body.appendChild(ghostEl)
+  document.addEventListener('pointermove', onPointerMove)
+  document.addEventListener('pointerup', onPointerUp)
+}
+
 function onTaskPointerDown(e, task) {
   if (e.button !== 0) return
   e.preventDefault()
   draggingTask.value = task
+  _startDrag(e, task.content)
+}
 
-  ghostEl = document.createElement('div')
-  ghostEl.className = 'cal-drag-ghost'
-  ghostEl.textContent = task.content
-  ghostEl.style.left = `${e.clientX + 14}px`
-  ghostEl.style.top = `${e.clientY - 10}px`
-  document.body.appendChild(ghostEl)
-
-  document.addEventListener('pointermove', onPointerMove)
-  document.addEventListener('pointerup', onPointerUp)
+function onCalEventPointerDown(e, ev) {
+  if (e.button !== 0) return
+  e.preventDefault()
+  draggingCalEvent.value = ev
+  _startDrag(e, ev.summary)
 }
 
 function onPointerMove(e) {
@@ -417,13 +447,21 @@ async function onPointerUp() {
   if (ghostEl) { ghostEl.remove(); ghostEl = null }
 
   const task = draggingTask.value
+  const calEv = draggingCalEvent.value
   const slot = hoveredSlot.value
   draggingTask.value = null
+  draggingCalEvent.value = null
   hoveredSlot.value = null
 
-  if (task && slot && calStore.isConnected) {
+  if (!slot || !calStore.isConnected) return
+
+  const [year, month, day] = slot.dateStr.split('-').map(Number)
+
+  if (task) {
+    // Delete any existing events for this task, then create a fresh one
+    const existing = calStore.scheduledByTaskId.get(task.id) || []
+    await Promise.allSettled(existing.map(ev => calStore.deleteEvent(ev.id, ev._calId)))
     try {
-      const [year, month, day] = slot.dateStr.split('-').map(Number)
       await calStore.createEvent(
         task.content,
         new Date(year, month - 1, day),
@@ -435,6 +473,16 @@ async function onPointerUp() {
     } catch (err) {
       console.error('Failed to create event:', err)
     }
+  } else if (calEv?.start?.dateTime) {
+    // Move existing calendar event, preserving duration
+    const newStart = new Date(year, month - 1, day, slot.hour, slot.minute, 0, 0)
+    const duration = new Date(calEv.end.dateTime) - new Date(calEv.start.dateTime)
+    const newEnd = new Date(newStart.getTime() + duration)
+    try {
+      await calStore.updateEvent(calEv.id, calEv._calId, newStart, newEnd)
+    } catch (err) {
+      console.error('Failed to move event:', err)
+    }
   }
 }
 
@@ -442,6 +490,8 @@ onBeforeUnmount(() => {
   document.removeEventListener('pointermove', onPointerMove)
   document.removeEventListener('pointerup', onPointerUp)
   if (ghostEl) { ghostEl.remove(); ghostEl = null }
+  draggingTask.value = null
+  draggingCalEvent.value = null
 })
 
 // ── Navigation ──

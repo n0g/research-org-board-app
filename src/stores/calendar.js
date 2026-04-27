@@ -144,7 +144,7 @@ export const useCalendarStore = defineStore('calendar', () => {
           if (res.status === 401) { disconnect(); return [] }
           if (!res.ok) return []
           const data = await res.json()
-          return (data.items || []).map(ev => ({ ...ev, _calColor: cal.backgroundColor }))
+          return (data.items || []).map(ev => ({ ...ev, _calColor: cal.backgroundColor, _calId: cal.id }))
         })
       )
 
@@ -185,14 +185,46 @@ export const useCalendarStore = defineStore('calendar', () => {
     const event = await res.json()
     // Tag with the selected calendar's color so it renders correctly immediately
     const calColor = calendarList.value.find(c => c.id === selectedCalendarId.value)?.backgroundColor ?? null
-    events.value.push({ ...event, _calColor: calColor })
+    events.value.push({ ...event, _calColor: calColor, _calId: selectedCalendarId.value })
     return event
+  }
+
+  async function deleteEvent(eventId, calId) {
+    if (!await _ensureToken()) throw new Error('Not authenticated')
+    const res = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${eventId}`,
+      { method: 'DELETE', headers: { Authorization: `Bearer ${accessToken.value}` } }
+    )
+    if (!res.ok && res.status !== 404 && res.status !== 410) throw new Error(`Failed to delete event: ${res.status}`)
+    events.value = events.value.filter(ev => ev.id !== eventId)
+  }
+
+  async function updateEvent(eventId, calId, newStart, newEnd) {
+    if (!await _ensureToken()) throw new Error('Not authenticated')
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const body = {
+      start: { dateTime: newStart.toISOString(), timeZone: tz },
+      end: { dateTime: newEnd.toISOString(), timeZone: tz },
+    }
+    const res = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${eventId}`,
+      {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${accessToken.value}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }
+    )
+    if (!res.ok) throw new Error(`Failed to update event: ${res.status}`)
+    const updated = await res.json()
+    const idx = events.value.findIndex(ev => ev.id === eventId)
+    if (idx !== -1) events.value[idx] = { ...events.value[idx], ...updated }
+    return updated
   }
 
   return {
     clientId, events, loading, connectError, selectedCalendarId, calendarList, writableCalendars,
     isConnected, scheduledByTaskId,
     saveClientId, saveCalendarId, connect, disconnect,
-    loadWeekEvents, createEvent, fetchCalendarList,
+    loadWeekEvents, createEvent, deleteEvent, updateEvent, fetchCalendarList,
   }
 })
