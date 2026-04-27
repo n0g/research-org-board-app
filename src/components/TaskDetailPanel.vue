@@ -98,6 +98,13 @@
           v-model="draft.deadline"
         >
       </div>
+
+      <div class="triage-complete-row">
+        <button class="triage-complete-btn" :disabled="completing" @click="complete">
+          <span class="material-symbols-outlined">check_circle</span>
+          {{ completing ? 'Marking done…' : 'Mark as done' }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -111,6 +118,8 @@ const props = defineProps({
   task: { type: Object, required: true },
 })
 
+const emit = defineEmits(['completed'])
+
 const store = useBoardStore()
 const { draft, saveStatus, initDraft } = useTaskTriage()
 
@@ -119,6 +128,20 @@ const projectName = computed(() => store.displayProjects.find(p => p.id === prop
 watch(() => props.task, (task) => {
   if (task) { initDraft(task); editingNotes.value = false; editingTitle.value = false }
 }, { immediate: true })
+
+// ── Complete ──
+const completing = ref(false)
+
+async function complete() {
+  if (completing.value) return
+  completing.value = true
+  try {
+    await store.completeTask(props.task.id)
+    emit('completed')
+  } finally {
+    completing.value = false
+  }
+}
 
 // ── Notes editing ──
 const editingNotes = ref(false)

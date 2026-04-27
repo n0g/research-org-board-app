@@ -83,7 +83,7 @@
 
         <!-- Right: task detail -->
         <div class="triage-detail">
-          <TaskDetailPanel v-if="selectedTask" :task="selectedTask" />
+          <TaskDetailPanel v-if="selectedTask" :task="selectedTask" @completed="selectedTask = null" />
           <div v-else class="triage-no-selection">
             <span class="material-symbols-outlined">checklist</span>
             <p>Select a task to triage</p>

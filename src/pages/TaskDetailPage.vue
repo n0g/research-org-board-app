@@ -6,7 +6,7 @@
         Tasks
       </button>
 
-      <TaskDetailPanel v-if="task" :task="task" />
+      <TaskDetailPanel v-if="task" :task="task" @completed="goBack" />
       <div v-else class="triage-no-selection">
         <span class="material-symbols-outlined">checklist</span>
         <p>Task not found</p>
