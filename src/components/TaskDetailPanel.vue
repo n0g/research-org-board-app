@@ -5,7 +5,21 @@
         <div class="triage-project-badge">{{ projectName }}</div>
         <span class="triage-save-status" :class="{ visible: saveStatus }">{{ saveStatus }}</span>
       </div>
-      <h2 class="triage-detail-title">{{ task.content }}</h2>
+      <h2
+        v-if="!editingTitle"
+        class="triage-detail-title triage-detail-title-editable"
+        @click="startEditTitle"
+      >{{ task.content }}</h2>
+      <textarea
+        v-else
+        ref="titleInputEl"
+        v-model="titleDraft"
+        class="triage-detail-title triage-title-input"
+        rows="2"
+        @blur="saveTitle"
+        @keydown.meta.enter.prevent="titleInputEl?.blur()"
+        @keydown.escape.prevent="cancelTitle"
+      ></textarea>
       <textarea
         v-model="draft.notes"
         class="triage-notes"
@@ -75,7 +89,7 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useBoardStore } from '../stores/board.js'
 import { useTaskTriage, URGENCY_OPTS, LEVEL_OPTS, TIME_OPTS, capitalize } from '../composables/useTaskTriage.js'
 
@@ -89,4 +103,28 @@ const { draft, saveStatus, initDraft } = useTaskTriage()
 const projectName = computed(() => store.displayProjects.find(p => p.id === props.task.project_id)?.name ?? '')
 
 watch(() => props.task, (task) => { if (task) initDraft(task) }, { immediate: true })
+
+// ── Title editing ──
+const editingTitle = ref(false)
+const titleDraft = ref('')
+const titleInputEl = ref(null)
+
+async function startEditTitle() {
+  titleDraft.value = props.task.content
+  editingTitle.value = true
+  await nextTick()
+  titleInputEl.value?.focus()
+  titleInputEl.value?.select()
+}
+
+async function saveTitle() {
+  editingTitle.value = false
+  const name = titleDraft.value.trim()
+  if (!name || name === props.task.content) return
+  await store.updateTaskTriage(props.task.id, { content: name })
+}
+
+function cancelTitle() {
+  editingTitle.value = false
+}
 </script>

@@ -2130,6 +2130,16 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   line-height: 1.2;
   letter-spacing: -0.02em;
 }
+.triage-detail-title-editable { cursor: text; }
+.triage-title-input {
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 0;
+  font-family: var(--font);
+}
 .triage-notes {
   display: block;
   width: 100%;
