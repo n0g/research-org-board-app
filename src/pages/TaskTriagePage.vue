@@ -168,6 +168,7 @@ const selectedIndex = computed(() =>
 function selectTask(task) {
   if (window.innerWidth < 768) {
     store.triageTaskIds = filteredTasks.value.map(t => t.id)
+    store.triageCurrentId = task.id
     f7.views.main.router.navigate(`/tasks/${task.id}/`, { transition: 'f7-push' })
   } else {
     selectedTask.value = task

@@ -11,11 +11,11 @@
           Tasks
         </button>
         <div class="task-nav-bar">
-          <button class="task-nav-btn" :disabled="!prevTaskId" aria-label="Previous task" @click="goPrev">
+          <button class="task-nav-btn" :disabled="!prevId" aria-label="Previous task" @click="goPrev">
             <span class="material-symbols-outlined">chevron_left</span>
           </button>
-          <span class="task-nav-count">{{ taskIndex + 1 }} / {{ taskIds.length }}</span>
-          <button class="task-nav-btn" :disabled="!nextTaskId" aria-label="Next task" @click="goNext">
+          <span class="task-nav-count">{{ currentIndex + 1 }} / {{ taskIds.length }}</span>
+          <button class="task-nav-btn" :disabled="!nextId" aria-label="Next task" @click="goNext">
             <span class="material-symbols-outlined">chevron_right</span>
           </button>
         </div>
@@ -48,23 +48,29 @@ const props = defineProps({
 })
 
 const store = useBoardStore()
-const taskId = computed(() => props.f7route.params.id)
-const task = computed(() => store.tasks.find(t => t.id === taskId.value) ?? null)
 
-// Ordered task IDs from the triage list (set when navigating here from TaskTriagePage)
+// On entry, seed triageCurrentId from the URL param
+const urlTaskId = computed(() => props.f7route.params.id)
+
+// Ordered task list from the triage page (set before navigating here)
 const taskIds = computed(() =>
   store.triageTaskIds.length ? store.triageTaskIds : store.tasks.filter(t => !t.is_completed).map(t => t.id)
 )
-const taskIndex = computed(() => taskIds.value.indexOf(taskId.value))
-const prevTaskId = computed(() => taskIndex.value > 0 ? taskIds.value[taskIndex.value - 1] : null)
-const nextTaskId = computed(() => taskIndex.value < taskIds.value.length - 1 ? taskIds.value[taskIndex.value + 1] : null)
+
+// Current task ID — driven by store so next/prev can update it without router involvement
+const currentId = computed(() => store.triageCurrentId || urlTaskId.value)
+const currentIndex = computed(() => taskIds.value.indexOf(currentId.value))
+const prevId = computed(() => currentIndex.value > 0 ? taskIds.value[currentIndex.value - 1] : null)
+const nextId = computed(() => currentIndex.value < taskIds.value.length - 1 ? taskIds.value[currentIndex.value + 1] : null)
+
+const task = computed(() => store.tasks.find(t => t.id === currentId.value) ?? null)
 
 function goNext() {
-  if (nextTaskId.value) f7.views.main.router.navigate(`/tasks/${nextTaskId.value}/`, { reloadCurrent: true })
+  if (nextId.value) store.triageCurrentId = nextId.value
   else goBack()
 }
 function goPrev() {
-  if (prevTaskId.value) f7.views.main.router.navigate(`/tasks/${prevTaskId.value}/`, { reloadCurrent: true })
+  if (prevId.value) store.triageCurrentId = prevId.value
 }
 
 // ── Swipe gesture ──
@@ -79,13 +85,14 @@ function onTouchStart(e) {
 function onTouchEnd(e) {
   const dx = e.changedTouches[0].clientX - swipeX
   const dy = e.changedTouches[0].clientY - swipeY
-  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 2) {
+  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
     if (dx < 0) goNext()
     else goPrev()
   }
 }
 
 onMounted(async () => {
+  store.triageCurrentId = urlTaskId.value
   store.initStages()
   await store.loadIfStale()
 })
