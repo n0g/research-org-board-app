@@ -1997,6 +1997,10 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   background: var(--bg-surface);
   flex-shrink: 0;
 }
+.triage-list-collapsed .triage-tabs { padding-left: 52px; }
+@media (max-width: 767px) {
+  .triage-tabs { padding-top: calc(12px + env(safe-area-inset-top)); }
+}
 .triage-list-body {
   flex: 1;
   overflow-y: auto;

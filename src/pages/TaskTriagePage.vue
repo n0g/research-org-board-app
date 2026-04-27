@@ -41,7 +41,7 @@
         </button>
 
         <!-- Left: task list -->
-        <div class="triage-list">
+        <div class="triage-list" :class="{ 'triage-list-collapsed': sidebarCollapsed }">
           <div class="triage-tabs">
             <div class="seg-ctrl">
               <button
