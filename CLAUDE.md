@@ -280,8 +280,19 @@ A "+" action that creates a new sub-project under "Research". Requires `POST /pr
 ### Global quick-add task (small effort)
 Add a task to any project from anywhere without opening the detail page.
 
+### Inbox capture (small–medium effort)
+Surface Todoist's Inbox (tasks with no project assigned) in the task triage page. The triage page currently only shows tasks from Research sub-projects; showing inbox tasks alongside them closes the GTD capture loop — you can quickly dump tasks into Todoist from anywhere, then come here to triage and optionally reassign them to a project. Implementation: fetch tasks without a `project_id` filter (or identify Todoist's built-in Inbox project ID), show them as a special "Inbox" entry in the sidebar project list, and allow reassigning a task to a Research sub-project from the detail panel.
+
 ### Urgent/high-priority task indicators (small–medium effort)
 Surface urgent or high-priority tasks on the project card and/or in the project detail task list. Todoist tasks have a `priority` field (1=normal, 2=medium, 3=high, 4=urgent). Options: a badge or dot on the card when any task has priority ≥ 3, color-coded priority indicators on individual task rows in the detail view, or both.
+
+### Task triage workflow improvements (small–medium effort each)
+The intended workflow is: triage all tasks (set urgency + time), then execute by quadrant — quick tasks first, then schedule important/non-urgent ones, then work through urgent ones. Four improvements to support this flow:
+
+1. **Auto-advance after completing** — when a task is marked done, automatically select the next task in the filtered list. Eliminates the click-back-to-list step and keeps the execution phase moving forward.
+2. **Keyboard navigation** — `J`/`K` or arrow keys to move between tasks in the list without touching the mouse. Useful on desktop during both triage and execution phases.
+3. **"Not yet triaged" filter** — a new tab showing tasks with no urgency or time estimate set. Gives a clear queue to work through during triage; when it's empty, triage is done.
+4. **Visual triage status in the list** — style tasks differently based on whether they've been triaged (have urgency/time set) vs. not. Makes triage progress visible at a glance without opening each task.
 
 ## Key localStorage Keys
 
