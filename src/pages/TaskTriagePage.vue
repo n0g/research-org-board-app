@@ -88,6 +88,12 @@
               <header class="triage-detail-header">
                 <div class="triage-project-badge">{{ projectName(selectedTask) }}</div>
                 <h2 class="triage-detail-title">{{ selectedTask.content }}</h2>
+                <textarea
+                  v-model="draft.notes"
+                  class="triage-notes"
+                  placeholder="Add notes…"
+                  rows="3"
+                ></textarea>
               </header>
 
               <div class="triage-fields">
@@ -195,13 +201,13 @@ const URGENCY_OPTS = [
   { val: 'high', label: 'High' },
 ]
 const LEVEL_OPTS = ['low', 'med', 'high']
-const TIME_OPTS = ['1h', '2h', '4h', '8h']
+const TIME_OPTS = ['15m', '30m', '1h', '2h']
 const TRIAGE_PREFIXES = ['importance::', 'time::', 'delegatable::']
 
 const tab = ref('all')
 const selectedTask = ref(null)
 const saving = ref(false)
-const draft = ref({ urgency: 'low', importance: null, time: null, delegatable: null, deadline: '' })
+const draft = ref({ urgency: 'low', importance: null, time: null, delegatable: null, deadline: '', notes: '' })
 const projectsOpen = ref(true)
 const activeProjectId = ref(null)
 
@@ -288,6 +294,7 @@ function selectTask(task) {
     time: getLabel(task, 'time::'),
     delegatable: getLabel(task, 'delegatable::'),
     deadline: task.due?.date ?? '',
+    notes: task.description ?? '',
   }
 }
 
@@ -306,6 +313,7 @@ async function saveChanges() {
       priority: priorityFromUrgency(draft.value.urgency),
       labels: [...baseLabels, ...triageLabels],
       dueDate: draft.value.deadline || null,
+      description: draft.value.notes,
     })
   } finally {
     saving.value = false

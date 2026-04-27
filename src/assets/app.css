@@ -2095,6 +2095,23 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   line-height: 1.2;
   letter-spacing: -0.02em;
 }
+.triage-notes {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px 12px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  resize: vertical;
+  min-height: 72px;
+  outline: none;
+}
+.triage-notes:focus { border-color: var(--accent); }
+.triage-notes::placeholder { color: var(--text3); }
 
 /* Triage fields */
 .triage-fields { display: flex; flex-direction: column; gap: 28px; }

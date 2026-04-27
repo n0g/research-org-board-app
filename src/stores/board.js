@@ -306,10 +306,11 @@ export const useBoardStore = defineStore('board', () => {
     }
   }
 
-  async function updateTaskTriage(taskId, { priority, labels, dueDate }) {
+  async function updateTaskTriage(taskId, { priority, labels, dueDate, description }) {
     const body = {}
     if (priority !== undefined) body.priority = priority
     if (labels !== undefined) body.labels = labels
+    if (description !== undefined) body.description = description
     if (dueDate !== undefined) {
       if (dueDate) body.due_date = dueDate
       else body.due_string = 'no due date'
@@ -319,6 +320,7 @@ export const useBoardStore = defineStore('board', () => {
     if (task) {
       if (priority !== undefined) task.priority = priority
       if (labels !== undefined) task.labels = labels
+      if (description !== undefined) task.description = description
       if (dueDate !== undefined) task.due = dueDate ? { date: dueDate } : null
     }
   }
