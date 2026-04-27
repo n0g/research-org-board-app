@@ -149,7 +149,7 @@
                   </div>
 
                   <!-- Day columns -->
-                  <div class="cal-days">
+                  <div ref="calDaysEl" class="cal-days">
                     <div
                       v-for="day in weekDays"
                       :key="isoDate(day)"
@@ -177,7 +177,8 @@
                         class="cal-event"
                         :class="{ 'cal-event-moving': draggingCalEvent?.id === ev.id }"
                         :style="eventStyle(ev)"
-                        :title="ev.summary"
+                        draggable="false"
+                        @dragstart.prevent
                         @pointerdown.stop="onCalEventPointerDown($event, ev)"
                       >
                         <div class="cal-event-title">{{ ev.summary }}</div>
@@ -318,6 +319,7 @@ function getMonday(d) {
 
 const weekStart = ref(getMonday(new Date()))
 const calBodyEl = ref(null)
+const calDaysEl = ref(null)
 
 const weekDays = computed(() =>
   Array.from({ length: 7 }, (_, i) => {
@@ -522,23 +524,33 @@ function onCalEventPointerDown(e, ev) {
   _startDrag(e, ev.summary)
 }
 
+function _slotFromPointer(e) {
+  const daysEl = calDaysEl.value
+  const scrollEl = calBodyEl.value
+  if (!daysEl || !scrollEl) return null
+  const rect = daysEl.getBoundingClientRect()
+  if (e.clientX < rect.left || e.clientX > rect.right ||
+      e.clientY < rect.top  || e.clientY > rect.bottom) return null
+  const colWidth = rect.width / 7
+  const dayIndex = Math.min(6, Math.max(0, Math.floor((e.clientX - rect.left) / colWidth)))
+  const yInContent = (e.clientY - rect.top) + scrollEl.scrollTop
+  const slotIndex = Math.floor(yInContent / SLOT_HEIGHT)
+  const totalSlots = (END_HOUR - START_HOUR) * 2
+  if (slotIndex < 0 || slotIndex >= totalSlots) return null
+  return {
+    dateStr: isoDate(weekDays.value[dayIndex]),
+    hour: START_HOUR + Math.floor(slotIndex / 2),
+    minute: (slotIndex % 2) * 30,
+  }
+}
+
 function onPointerMove(e) {
   if (!draggingTask.value && !draggingCalEvent.value) return
   if (ghostEl) {
     ghostEl.style.left = `${e.clientX + 14}px`
     ghostEl.style.top = `${e.clientY - 10}px`
   }
-  const els = document.elementsFromPoint(e.clientX, e.clientY)
-  const slotEl = els.find(el => el.dataset.date)
-  if (slotEl) {
-    hoveredSlot.value = {
-      dateStr: slotEl.dataset.date,
-      hour: parseInt(slotEl.dataset.hour),
-      minute: parseInt(slotEl.dataset.minute),
-    }
-  } else {
-    hoveredSlot.value = null
-  }
+  hoveredSlot.value = _slotFromPointer(e)
 }
 
 async function onPointerUp() {
