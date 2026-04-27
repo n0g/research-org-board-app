@@ -9,6 +9,7 @@ import { ref, watch, onMounted, nextTick } from 'vue'
 import routes from './routes.js'
 import { useBoardStore } from './stores/board.js'
 import { useReviewsStore } from './stores/reviews.js'
+import { useCalendarStore } from './stores/calendar.js'
 import { useSettingsStore } from './stores/settings.js'
 import { useTheme } from './composables/useTheme.js'
 import { useAccentColor } from './composables/useAccentColor.js'
@@ -18,6 +19,7 @@ useAccentColor()
 
 const store = useBoardStore()
 const reviewsStore = useReviewsStore()
+const calStore = useCalendarStore()
 const settingsStore = useSettingsStore()
 const initialUrl = store.token ? '/board/' : '/'
 
@@ -39,14 +41,20 @@ watch(() => reviewsStore.proxyUrl, (url) => {
   settingsStore.save(store.token, 'hotcrp_proxy', url)
 })
 
+watch(() => calStore.selectedCalendarId, (id) => {
+  if (!settingsLoaded.value || !store.token) return
+  settingsStore.save(store.token, 'gcal_calendar_id', id)
+})
+
 onMounted(async () => {
   if (!store.token) { settingsLoaded.value = true; return }
 
   const settings = await settingsStore.load(store.token)
 
-  if (settings.stages?.length)  store.saveStages(settings.stages)
-  if (settings.hotcrp_sites)    reviewsStore.setSites(settings.hotcrp_sites)
-  if (settings.hotcrp_proxy)    reviewsStore.saveProxy(settings.hotcrp_proxy)
+  if (settings.stages?.length)      store.saveStages(settings.stages)
+  if (settings.hotcrp_sites)        reviewsStore.setSites(settings.hotcrp_sites)
+  if (settings.hotcrp_proxy)        reviewsStore.saveProxy(settings.hotcrp_proxy)
+  if (settings.gcal_calendar_id)    calStore.saveCalendarId(settings.gcal_calendar_id)
 
   // Let Vue flush reactive updates so watch callbacks fire while settingsLoaded=false
   await nextTick()
@@ -59,6 +67,8 @@ onMounted(async () => {
     settingsStore.save(store.token, 'hotcrp_sites', reviewsStore.sites)
   if (!settings.hotcrp_proxy && reviewsStore.proxyUrl)
     settingsStore.save(store.token, 'hotcrp_proxy', reviewsStore.proxyUrl)
+  if (!settings.gcal_calendar_id && calStore.selectedCalendarId && calStore.selectedCalendarId !== 'primary')
+    settingsStore.save(store.token, 'gcal_calendar_id', calStore.selectedCalendarId)
 })
 
 const f7params = {
