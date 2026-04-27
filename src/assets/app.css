@@ -2359,6 +2359,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 }
 .cal-not-connected .material-symbols-outlined { font-size: 52px; color: var(--text3); }
 .cal-not-connected p { font-size: 15px; margin: 0; color: var(--text2); }
+.cal-connect-error { color: var(--danger, #e53e3e) !important; font-size: 13px !important; }
 
 /* Week navigation bar */
 .cal-nav {

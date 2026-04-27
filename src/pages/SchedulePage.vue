@@ -45,8 +45,10 @@
           <!-- Mobile: not-connected notice -->
           <div v-if="!calStore.isConnected" class="cal-mobile-notice">
             <span class="material-symbols-outlined">calendar_today</span>
-            <span>Connect Google Calendar in Settings to schedule tasks</span>
-            <button class="btn sm primary" @click="goSettings">Settings</button>
+            <span>{{ calStore.clientId ? 'Calendar session expired' : 'Connect Google Calendar to schedule tasks' }}</span>
+            <button class="btn sm primary" @click="calStore.clientId ? calStore.connect() : goSettings()">
+              {{ calStore.clientId ? 'Reconnect' : 'Settings' }}
+            </button>
           </div>
           <div class="triage-tabs">
             <div class="seg-ctrl">
@@ -93,8 +95,12 @@
           <template v-if="!calStore.isConnected">
             <div class="cal-not-connected">
               <span class="material-symbols-outlined">calendar_today</span>
-              <p>Connect Google Calendar to schedule tasks</p>
-              <button class="btn primary" @click="goSettings">Open Settings</button>
+              <p>{{ calStore.clientId ? 'Session expired — reconnect to continue' : 'Connect Google Calendar to schedule tasks' }}</p>
+              <p v-if="calStore.connectError" class="cal-connect-error">{{ calStore.connectError }}</p>
+              <button class="btn primary" @click="calStore.clientId ? calStore.connect() : goSettings()">
+                {{ calStore.clientId ? 'Reconnect' : 'Open Settings' }}
+              </button>
+              <button v-if="calStore.clientId" class="btn" style="margin-top: 8px" @click="goSettings">Settings</button>
             </div>
           </template>
           <template v-else>
@@ -250,7 +256,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useCalendarStore } from '../stores/calendar.js'
@@ -617,16 +623,21 @@ function goBoard() { f7.views.main.router.navigate('/board/', { clearPreviousHis
 function goTasks() { f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true }) }
 function goSettings() { f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true }) }
 
+watch(() => calStore.isConnected, async (connected) => {
+  if (connected) {
+    calStore.loadWeekEvents(weekStart.value)
+    await nextTick()
+    if (calBodyEl.value) calBodyEl.value.scrollTop = SLOT_HEIGHT * 2
+  }
+})
+
 onMounted(async () => {
   store.initStages()
   await store.loadIfStale()
   if (calStore.isConnected) {
     calStore.loadWeekEvents(weekStart.value)
     await nextTick()
-    if (calBodyEl.value) {
-      // scroll to 8am = 2 slots from start (7am)
-      calBodyEl.value.scrollTop = SLOT_HEIGHT * 2
-    }
+    if (calBodyEl.value) calBodyEl.value.scrollTop = SLOT_HEIGHT * 2
   }
 })
 </script>
