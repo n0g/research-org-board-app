@@ -140,7 +140,7 @@ const filteredTasks = computed(() => {
   switch (tab.value) {
     case 'important': return tasks.filter(t => getLabel(t, 'importance::') === 'high')
     case 'quick': return tasks.filter(t => getLabel(t, 'time::') === '15m')
-    case 'urgent': return tasks.filter(t => (t.priority ?? 4) === 1)
+    case 'urgent': return tasks.filter(t => (t.priority ?? 1) === 4)
     default: return tasks
   }
 })

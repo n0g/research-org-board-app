@@ -23,11 +23,11 @@ export function getLabel(task, prefix) {
 }
 
 export function getUrgencyLabel(task) {
-  const p = task.priority ?? 4
-  if (p === 1) return 'Urgent'
-  if (p === 2) return 'High'
-  if (p === 3) return 'Med'
-  return 'Low'
+  const p = task.priority ?? 1
+  if (p === 4) return 'Urgent'
+  if (p === 3) return 'High'
+  if (p === 2) return 'Med'
+  return null
 }
 
 export function getImportance(task) {
@@ -40,17 +40,17 @@ export function getTime(task) {
 }
 
 export function urgencyFromPriority(p) {
-  if (p === 1) return 'urgent'
-  if (p === 2) return 'high'
-  if (p === 3) return 'med'
+  if (p === 4) return 'urgent'
+  if (p === 3) return 'high'
+  if (p === 2) return 'med'
   return 'low'
 }
 
 export function priorityFromUrgency(u) {
-  if (u === 'urgent') return 1
-  if (u === 'high') return 2
-  if (u === 'med') return 3
-  return 4
+  if (u === 'urgent') return 4
+  if (u === 'high') return 3
+  if (u === 'med') return 2
+  return 1
 }
 
 export function formatDeadline(dateStr) {
