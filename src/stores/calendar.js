@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
+const BAKED_CLIENT_ID = import.meta.env.VITE_GCAL_CLIENT_ID || ''
+
 export const useCalendarStore = defineStore('calendar', () => {
-  const clientId = ref(localStorage.getItem('rb_gcal_client_id') || '')
+  const clientId = ref(BAKED_CLIENT_ID || localStorage.getItem('rb_gcal_client_id') || '')
   const accessToken = ref(localStorage.getItem('rb_gcal_token') || '')
   const tokenExpiry = ref(parseInt(localStorage.getItem('rb_gcal_token_expiry') || '0'))
   const events = ref([])

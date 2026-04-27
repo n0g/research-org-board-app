@@ -184,23 +184,26 @@
           <div class="settings-section">
             <div class="settings-section-title">Google Calendar</div>
             <template v-if="!calStore.isConnected">
-              <p class="settings-hint">
-                Connect to schedule tasks to your Google Calendar from the Schedule page.<br>
-                Requires an OAuth 2.0 Client ID from Google Cloud Console — enable the
-                Calendar API, create a Web application credential, and add this app's URL
-                to Authorized JavaScript origins.
-              </p>
-              <input
-                type="text"
-                v-model="gcalClientIdDraft"
-                placeholder="Paste your Google Client ID (…apps.googleusercontent.com)"
-                aria-label="Google OAuth Client ID"
-                @keydown.enter.prevent="saveGcalClientId"
-              >
+              <p class="settings-hint">Connect to schedule tasks to your Google Calendar from the Schedule page.</p>
+              <template v-if="!hasBakedClientId">
+                <p class="settings-hint">
+                  No Client ID configured — set <code class="inline-code">VITE_GCAL_CLIENT_ID</code> at build time,
+                  or enter one manually below.
+                </p>
+                <input
+                  type="text"
+                  v-model="gcalClientIdDraft"
+                  placeholder="Paste your Google Client ID (…apps.googleusercontent.com)"
+                  aria-label="Google OAuth Client ID"
+                  @keydown.enter.prevent="saveGcalClientId"
+                >
+                <div class="settings-actions" style="margin-top: 8px">
+                  <button class="btn sm" @click="saveGcalClientId">Save ID</button>
+                </div>
+              </template>
               <div v-if="calStore.connectError" class="error-msg" role="alert" style="margin-top: 8px">{{ calStore.connectError }}</div>
               <div class="settings-actions" style="margin-top: 8px">
-                <button class="btn sm" @click="saveGcalClientId">Save ID</button>
-                <button class="btn sm primary" :disabled="!calStore.clientId" @click="calStore.connect()">Connect</button>
+                <button class="btn sm primary" :disabled="!calStore.clientId" @click="calStore.connect()">Connect Google Calendar</button>
               </div>
             </template>
             <template v-else>
@@ -256,6 +259,7 @@ const reviewsStore = useReviewsStore()
 const calStore = useCalendarStore()
 
 // ── Google Calendar ──
+const hasBakedClientId = !!import.meta.env.VITE_GCAL_CLIENT_ID
 const gcalClientIdDraft = ref(calStore.clientId)
 function saveGcalClientId() { calStore.saveClientId(gcalClientIdDraft.value) }
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
