@@ -199,6 +199,7 @@ const URGENCY_OPTS = [
   { val: 'low', label: 'Low' },
   { val: 'med', label: 'Med' },
   { val: 'high', label: 'High' },
+  { val: 'urgent', label: 'Urgent' },
 ]
 const LEVEL_OPTS = ['low', 'med', 'high']
 const TIME_OPTS = ['15m', '30m', '1h', '2h']
@@ -232,8 +233,8 @@ const filteredTasks = computed(() => {
     : allTasks.value
   switch (tab.value) {
     case 'important': return tasks.filter(t => getLabel(t, 'importance::') === 'high')
-    case 'quick': return tasks.filter(t => ['1h', '2h'].includes(getLabel(t, 'time::')))
-    case 'urgent': return tasks.filter(t => (t.priority ?? 4) <= 2)
+    case 'quick': return tasks.filter(t => getLabel(t, 'time::') === '15m')
+    case 'urgent': return tasks.filter(t => (t.priority ?? 4) === 1)
     default: return tasks
   }
 })
@@ -249,10 +250,10 @@ function getLabel(task, prefix) {
 
 function getUrgencyLabel(task) {
   const p = task.priority ?? 4
+  if (p === 1) return 'Urgent'
   if (p === 2) return 'High'
   if (p === 3) return 'Med'
-  if (p === 4) return 'Low'
-  return null
+  return 'Low'
 }
 
 function getImportance(task) {
@@ -265,12 +266,14 @@ function getTime(task) {
 }
 
 function urgencyFromPriority(p) {
+  if (p === 1) return 'urgent'
   if (p === 2) return 'high'
   if (p === 3) return 'med'
   return 'low'
 }
 
 function priorityFromUrgency(u) {
+  if (u === 'urgent') return 1
   if (u === 'high') return 2
   if (u === 'med') return 3
   return 4
