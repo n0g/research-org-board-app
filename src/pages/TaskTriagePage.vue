@@ -83,7 +83,18 @@
 
         <!-- Right: task detail -->
         <div class="triage-detail">
-          <TaskDetailPanel v-if="selectedTask" :task="selectedTask" @completed="selectedTask = null" />
+          <template v-if="selectedTask">
+            <div class="task-nav-bar">
+              <button class="task-nav-btn" :disabled="selectedIndex <= 0" aria-label="Previous task" @click="goPrev">
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <span class="task-nav-count">{{ selectedIndex + 1 }} / {{ filteredTasks.length }}</span>
+              <button class="task-nav-btn" :disabled="selectedIndex >= filteredTasks.length - 1" aria-label="Next task" @click="goNext">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+            <TaskDetailPanel :task="selectedTask" @completed="onCompleted" />
+          </template>
           <div v-else class="triage-no-selection">
             <span class="material-symbols-outlined">checklist</span>
             <p>Select a task to triage</p>
@@ -102,7 +113,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useSidebar } from '../composables/useSidebar.js'
@@ -149,16 +160,42 @@ function projectName(task) {
   return store.displayProjects.find(p => p.id === task.project_id)?.name ?? ''
 }
 
-// ── Selection ──
+// ── Selection & navigation ──
+const selectedIndex = computed(() =>
+  selectedTask.value ? filteredTasks.value.findIndex(t => t.id === selectedTask.value.id) : -1
+)
+
 function selectTask(task) {
   if (window.innerWidth < 768) {
+    store.triageTaskIds = filteredTasks.value.map(t => t.id)
     f7.views.main.router.navigate(`/tasks/${task.id}/`, { transition: 'f7-push' })
   } else {
     selectedTask.value = task
   }
 }
 
-// ── Navigation ──
+function goNext() {
+  const i = selectedIndex.value
+  if (i >= 0 && i < filteredTasks.value.length - 1) selectedTask.value = filteredTasks.value[i + 1]
+}
+
+function goPrev() {
+  const i = selectedIndex.value
+  if (i > 0) selectedTask.value = filteredTasks.value[i - 1]
+}
+
+function onCompleted() {
+  const i = selectedIndex.value
+  selectedTask.value = filteredTasks.value[i + 1] ?? filteredTasks.value[i - 1] ?? null
+}
+
+function handleKey(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return
+  if (e.key === 'ArrowRight') goNext()
+  else if (e.key === 'ArrowLeft') goPrev()
+}
+
+// ── Page navigation ──
 function goBoard() { f7.views.main.router.navigate('/board/', { clearPreviousHistory: true }) }
 function goSchedule() { f7.views.main.router.navigate('/schedule/', { clearPreviousHistory: true }) }
 function goSettings() { f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true }) }
@@ -166,5 +203,10 @@ function goSettings() { f7.views.main.router.navigate('/settings/', { clearPrevi
 onMounted(async () => {
   store.initStages()
   await store.loadIfStale()
+  document.addEventListener('keydown', handleKey)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', handleKey)
 })
 </script>
