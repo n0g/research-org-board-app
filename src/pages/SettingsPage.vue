@@ -180,6 +180,42 @@
 
           <div class="settings-divider"></div>
 
+          <!-- ── Google Calendar ── -->
+          <div class="settings-section">
+            <div class="settings-section-title">Google Calendar</div>
+            <template v-if="!calStore.isConnected">
+              <p class="settings-hint">
+                Connect to schedule tasks to your Google Calendar from the Schedule page.<br>
+                Requires an OAuth 2.0 Client ID from Google Cloud Console — enable the
+                Calendar API, create a Web application credential, and add this app's URL
+                to Authorized JavaScript origins.
+              </p>
+              <input
+                type="text"
+                v-model="gcalClientIdDraft"
+                placeholder="Paste your Google Client ID (…apps.googleusercontent.com)"
+                aria-label="Google OAuth Client ID"
+                @keydown.enter.prevent="saveGcalClientId"
+              >
+              <div v-if="calStore.connectError" class="error-msg" role="alert" style="margin-top: 8px">{{ calStore.connectError }}</div>
+              <div class="settings-actions" style="margin-top: 8px">
+                <button class="btn sm" @click="saveGcalClientId">Save ID</button>
+                <button class="btn sm primary" :disabled="!calStore.clientId" @click="calStore.connect()">Connect</button>
+              </div>
+            </template>
+            <template v-else>
+              <div class="settings-row">
+                <span class="settings-row-label">
+                  <span class="gcal-connected-dot"></span>
+                  Connected to Google Calendar
+                </span>
+                <button class="btn sm danger" @click="calStore.disconnect()">Disconnect</button>
+              </div>
+            </template>
+          </div>
+
+          <div class="settings-divider"></div>
+
           <!-- ── Account ── -->
           <div class="settings-section">
             <div class="settings-section-title">Account</div>
@@ -206,6 +242,7 @@ import { ref, watch, onMounted } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useReviewsStore } from '../stores/reviews.js'
+import { useCalendarStore } from '../stores/calendar.js'
 import { useSidebar } from '../composables/useSidebar.js'
 import { useTheme } from '../composables/useTheme.js'
 import { useAccentColor } from '../composables/useAccentColor.js'
@@ -216,6 +253,11 @@ import AppSidebar from '../components/AppSidebar.vue'
 
 const boardStore = useBoardStore()
 const reviewsStore = useReviewsStore()
+const calStore = useCalendarStore()
+
+// ── Google Calendar ──
+const gcalClientIdDraft = ref(calStore.clientId)
+function saveGcalClientId() { calStore.saveClientId(gcalClientIdDraft.value) }
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
 const { setTheme, themePref } = useTheme()
 const { accentColor, setColor: setAccentColor } = useAccentColor()

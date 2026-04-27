@@ -8,6 +8,7 @@ import NewProjectPage from './pages/NewProjectPage.vue'
 import SettingsPage from './pages/SettingsPage.vue'
 import TaskTriagePage from './pages/TaskTriagePage.vue'
 import TaskDetailPage from './pages/TaskDetailPage.vue'
+import SchedulePage from './pages/SchedulePage.vue'
 
 export default [
   { path: '/', component: TokenPage },
@@ -20,5 +21,6 @@ export default [
   { path: '/project/:id/', component: ProjectDetailPage },
   { path: '/tasks/', component: TaskTriagePage },
   { path: '/tasks/:id/', component: TaskDetailPage },
+  { path: '/schedule/', component: SchedulePage },
   { path: '/settings/', component: SettingsPage },
 ]

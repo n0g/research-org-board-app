@@ -2257,3 +2257,314 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* ─────────────────────────────────────────
+   Schedule Page
+───────────────────────────────────────── */
+.schedule-page,
+.schedule-page .page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+.schedule-page .page-content { flex: 1; overflow: hidden; padding: 0 !important; }
+
+.schedule-screen {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.schedule-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Left pane: task list */
+.schedule-list {
+  width: 280px;
+  min-width: 280px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.schedule-list-collapsed .triage-tabs { padding-left: 52px; }
+
+/* Task rows are draggable */
+.schedule-task-row {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.schedule-task-row:hover { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.schedule-task-dragging { opacity: 0.4; cursor: grabbing; }
+
+/* Right pane: calendar */
+.schedule-cal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* Not-connected state */
+.cal-not-connected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 100%;
+  color: var(--text2);
+  text-align: center;
+  padding: 32px;
+}
+.cal-not-connected .material-symbols-outlined { font-size: 52px; color: var(--text3); }
+.cal-not-connected p { font-size: 15px; margin: 0; color: var(--text2); }
+
+/* Week navigation bar */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.cal-nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  line-height: 1;
+}
+.cal-nav-btn:hover { background: var(--bg-surface); }
+.cal-nav-btn .material-symbols-outlined { font-size: 20px; }
+
+.cal-nav-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+}
+
+.cal-today-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text2);
+  font-family: var(--font);
+}
+.cal-today-btn:hover { background: var(--bg-surface); }
+
+.cal-loading-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.7;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+/* Calendar week container */
+.cal-week {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Day header row */
+.cal-header {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+  flex-shrink: 0;
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.cal-gutter { width: 52px; flex-shrink: 0; }
+
+.cal-day-head {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0 6px;
+  border-left: 1px solid var(--border);
+}
+.cal-day-name {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text3);
+}
+.cal-day-num {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text);
+  margin-top: 2px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.cal-day-head.cal-today .cal-day-num {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.cal-day-head.cal-today .cal-day-name { color: var(--accent); }
+
+/* Scrollable body */
+.cal-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.cal-inner {
+  display: flex;
+}
+
+/* Time labels column */
+.cal-time-col {
+  width: 52px;
+  flex-shrink: 0;
+}
+
+.cal-time-cell {
+  height: 40px;
+  position: relative;
+}
+
+.cal-time-label {
+  position: absolute;
+  top: -7px;
+  right: 8px;
+  font-size: 10px;
+  color: var(--text3);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Day columns */
+.cal-days {
+  flex: 1;
+  display: flex;
+}
+
+.cal-day-col {
+  flex: 1;
+  position: relative;
+  border-left: 1px solid var(--border);
+  min-width: 0;
+}
+.cal-day-col.cal-today { background: color-mix(in srgb, var(--accent) 4%, transparent); }
+
+/* Time slot cells */
+.cal-slot {
+  height: 40px;
+  box-sizing: border-box;
+}
+.cal-slot.cal-slot-hour { border-top: 1px solid var(--border); }
+.cal-slot:not(.cal-slot-hour) { border-top: 1px dashed color-mix(in srgb, var(--border) 50%, transparent); }
+.cal-slot.cal-slot-hover { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+
+/* Calendar events */
+.cal-event {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  background: var(--accent);
+  border-radius: 4px;
+  padding: 3px 6px;
+  overflow: hidden;
+  z-index: 2;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.cal-event-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.cal-event-time {
+  font-size: 10px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.2;
+}
+
+/* Drop preview */
+.cal-drop-preview {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  border: 2px dashed var(--accent);
+  border-radius: 4px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Drag ghost */
+.cal-drag-ghost {
+  position: fixed;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-family: var(--font);
+  color: var(--text);
+  pointer-events: none;
+  z-index: 9999;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+
+/* Google Calendar connected indicator */
+.gcal-connected-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34A853;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* Mobile: hide calendar, show task list only */
+@media (max-width: 767px) {
+  .schedule-list { width: 100%; border-right: none; min-width: 0; }
+  .schedule-cal { display: none; }
+  .schedule-list .triage-tabs { padding-top: calc(12px + env(safe-area-inset-top)); }
+}

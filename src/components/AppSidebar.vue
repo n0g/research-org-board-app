@@ -48,10 +48,15 @@
         <span class="sidebar-label">Tasks</span>
       </button>
 
-      <div class="sidebar-nav-item sidebar-nav-disabled" title="Schedule (coming soon)">
+      <button
+        class="sidebar-nav-item"
+        :class="currentPage === 'schedule' ? 'sidebar-nav-active' : ''"
+        title="Schedule"
+        @click="currentPage !== 'schedule' && goSchedule()"
+      >
         <span class="material-symbols-outlined" aria-hidden="true">calendar_today</span>
         <span class="sidebar-label">Schedule</span>
-      </div>
+      </button>
     </nav>
 
     <!-- Custom filters slot (e.g. Reviews page conferences) — hides default collaborators/venues -->
@@ -160,6 +165,10 @@ function goTasks() {
 
 function goReviews() {
   f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true })
+}
+
+function goSchedule() {
+  f7.views.main.router.navigate('/schedule/', { clearPreviousHistory: true })
 }
 
 function goSettings() {
