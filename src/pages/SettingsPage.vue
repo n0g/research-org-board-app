@@ -223,11 +223,11 @@
                   @focus="calStore.fetchCalendarList()"
                 >
                   <option
-                    v-if="!calStore.calendarList.length"
+                    v-if="!calStore.writableCalendars.length"
                     :value="calStore.selectedCalendarId"
                   >{{ calStore.selectedCalendarId }}</option>
                   <option
-                    v-for="cal in calStore.calendarList"
+                    v-for="cal in calStore.writableCalendars"
                     :key="cal.id"
                     :value="cal.id"
                   >{{ cal.summary }}</option>

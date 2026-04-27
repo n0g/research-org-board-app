@@ -335,6 +335,7 @@ function eventStyle(ev) {
   return {
     top: `${(startMins / 30) * SLOT_HEIGHT}px`,
     height: `${(duration / 30) * SLOT_HEIGHT - 2}px`,
+    background: ev._calColor || 'var(--accent)',
   }
 }
 
