@@ -290,10 +290,6 @@ html[data-theme="dark"] .sidebar-nav-active {
   background: var(--accent-bg) !important;
   color: var(--accent) !important;
 }
-html[data-theme="dark"] .sidebar-filter-active {
-  background: rgba(255,159,10,0.15) !important;
-  color: #FF9F0A !important;
-}
 
 /* Sidebar sections */
 .sidebar-section-header {
