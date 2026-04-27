@@ -2096,7 +2096,10 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 .triage-detail-inner {
   max-width: 540px;
   margin: 0 auto;
-  padding: 48px;
+  padding: 32px 24px;
+}
+@media (max-width: 767px) {
+  .task-detail-main .triage-detail-inner { padding: 0; }
 }
 .triage-detail-header { margin-bottom: 40px; }
 .triage-detail-header-top {
