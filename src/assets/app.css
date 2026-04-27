@@ -1391,7 +1391,7 @@ html[data-theme="light"] .project-tasks { background: #faf9fe; }
 .project-tasks::-webkit-scrollbar { width: 4px; }
 .project-tasks::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 @media (max-width: 767px) {
-  .project-tasks { overflow-y: visible; flex: none; min-height: 100vh; padding: 24px 20px calc(80px + env(safe-area-inset-bottom)); background: var(--bg); }
+  .project-tasks { overflow-y: visible; flex: none; min-height: 60vh; padding: 24px 20px calc(80px + env(safe-area-inset-bottom)); background: var(--bg); }
 }
 
 .tasks-header { margin-bottom: 24px; }
