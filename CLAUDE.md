@@ -280,6 +280,9 @@ A "+" action that creates a new sub-project under "Research". Requires `POST /pr
 ### Global quick-add task (small effort)
 Add a task to any project from anywhere without opening the detail page.
 
+### Urgent/high-priority task indicators (small–medium effort)
+Surface urgent or high-priority tasks on the project card and/or in the project detail task list. Todoist tasks have a `priority` field (1=normal, 2=medium, 3=high, 4=urgent). Options: a badge or dot on the card when any task has priority ≥ 3, color-coded priority indicators on individual task rows in the detail view, or both.
+
 ## Key localStorage Keys
 
 | Key                      | Value                                   |
