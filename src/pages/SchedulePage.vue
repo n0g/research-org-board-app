@@ -42,6 +42,12 @@
 
         <!-- Left: task list -->
         <div class="schedule-list" :class="{ 'schedule-list-collapsed': sidebarCollapsed }">
+          <!-- Mobile: not-connected notice -->
+          <div v-if="!calStore.isConnected" class="cal-mobile-notice">
+            <span class="material-symbols-outlined">calendar_today</span>
+            <span>Connect Google Calendar in Settings to schedule tasks</span>
+            <button class="btn sm primary" @click="goSettings">Settings</button>
+          </div>
           <div class="triage-tabs">
             <div class="seg-ctrl">
               <button
@@ -193,6 +199,45 @@
         </div>
       </div>
     </div>
+
+    <!-- Tap-to-schedule sheet (mobile) -->
+    <teleport to="body">
+      <div v-if="sheetOpen" class="sched-sheet-backdrop" @click.self="closeSheet">
+        <div class="sched-sheet">
+          <div class="sched-sheet-header">
+            <span class="sched-sheet-title">Schedule Task</span>
+            <button class="sched-sheet-close" aria-label="Close" @click="closeSheet">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div class="sched-sheet-task">{{ sheetTask?.content }}</div>
+          <div class="sched-sheet-fields">
+            <label class="sched-field">
+              <span class="sched-field-label">Date</span>
+              <input type="date" v-model="sheetDate" class="sched-field-input">
+            </label>
+            <label class="sched-field">
+              <span class="sched-field-label">Time</span>
+              <input type="time" v-model="sheetTime" class="sched-field-input">
+            </label>
+            <label class="sched-field">
+              <span class="sched-field-label">Duration</span>
+              <select v-model.number="sheetDuration" class="sched-field-input">
+                <option :value="15">15 min</option>
+                <option :value="30">30 min</option>
+                <option :value="60">1 hour</option>
+                <option :value="90">1.5 hours</option>
+                <option :value="120">2 hours</option>
+              </select>
+            </label>
+          </div>
+          <div class="sched-sheet-actions">
+            <button class="btn" @click="closeSheet">Cancel</button>
+            <button class="btn primary" @click="confirmSheet">Schedule</button>
+          </div>
+        </div>
+      </div>
+    </teleport>
 
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
       <button class="tab-btn" @click="goBoard"><span class="material-symbols-outlined">dashboard</span>Board</button>
@@ -356,6 +401,56 @@ function eventTimeStr(ev) {
   return new Date(ev.start.dateTime).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
 }
 
+// ── Tap-to-schedule sheet ──
+const sheetOpen = ref(false)
+const sheetTask = ref(null)
+const sheetDate = ref('')
+const sheetTime = ref('')
+const sheetDuration = ref(60)
+
+function _nextHalfHour() {
+  const now = new Date()
+  now.setSeconds(0, 0)
+  now.setMinutes(now.getMinutes() < 30 ? 30 : 60)
+  return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+}
+
+function openSheet(task) {
+  sheetTask.value = task
+  const existing = calStore.scheduledByTaskId.get(task.id)?.[0]
+  if (existing?.start?.dateTime) {
+    const d = new Date(existing.start.dateTime)
+    sheetDate.value = isoDate(d)
+    sheetTime.value = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+    const dur = existing.end?.dateTime
+      ? Math.round((new Date(existing.end.dateTime) - d) / 60000)
+      : taskDurationMinutes(task)
+    sheetDuration.value = dur
+  } else {
+    sheetDate.value = isoDate(new Date())
+    sheetTime.value = _nextHalfHour()
+    sheetDuration.value = taskDurationMinutes(task)
+  }
+  sheetOpen.value = true
+}
+
+function closeSheet() { sheetOpen.value = false }
+
+async function confirmSheet() {
+  const task = sheetTask.value
+  if (!task || !sheetDate.value || !sheetTime.value) return
+  closeSheet()
+  const [year, month, day] = sheetDate.value.split('-').map(Number)
+  const [hour, minute] = sheetTime.value.split(':').map(Number)
+  const existing = calStore.scheduledByTaskId.get(task.id) || []
+  await Promise.allSettled(existing.map(ev => calStore.deleteEvent(ev.id, ev._calId)))
+  try {
+    await calStore.createEvent(task.content, new Date(year, month - 1, day), hour, minute, sheetDuration.value, task.id)
+  } catch (err) {
+    console.error('Failed to schedule:', err)
+  }
+}
+
 // ── Drag and drop ──
 const draggingTask = ref(null)
 const draggingCalEvent = ref(null)
@@ -409,8 +504,13 @@ function _startDrag(e, label) {
 }
 
 function onTaskPointerDown(e, task) {
-  if (e.button !== 0) return
   e.preventDefault()
+  if (e.pointerType === 'touch') {
+    if (calStore.isConnected) openSheet(task)
+    else goSettings()
+    return
+  }
+  if (e.button !== 0) return
   draggingTask.value = task
   _startDrag(e, task.content)
 }
@@ -423,7 +523,7 @@ function onCalEventPointerDown(e, ev) {
 }
 
 function onPointerMove(e) {
-  if (!draggingTask.value) return
+  if (!draggingTask.value && !draggingCalEvent.value) return
   if (ghostEl) {
     ghostEl.style.left = `${e.clientX + 14}px`
     ghostEl.style.top = `${e.clientY - 10}px`
