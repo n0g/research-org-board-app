@@ -86,7 +86,10 @@
           <template v-if="selectedTask">
             <div class="triage-detail-inner">
               <header class="triage-detail-header">
-                <div class="triage-project-badge">{{ projectName(selectedTask) }}</div>
+                <div class="triage-detail-header-top">
+                  <div class="triage-project-badge">{{ projectName(selectedTask) }}</div>
+                  <span class="triage-save-status" :class="{ visible: saveStatus }">{{ saveStatus }}</span>
+                </div>
                 <h2 class="triage-detail-title">{{ selectedTask.content }}</h2>
                 <textarea
                   v-model="draft.notes"
@@ -153,11 +156,6 @@
                   >
                 </div>
 
-                <div class="triage-actions">
-                  <button class="btn primary triage-save-btn" :disabled="saving" @click="saveChanges">
-                    {{ saving ? 'Saving…' : 'Save Changes' }}
-                  </button>
-                </div>
               </div>
             </div>
           </template>
@@ -179,7 +177,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useSidebar } from '../composables/useSidebar.js'
@@ -207,10 +205,25 @@ const TRIAGE_PREFIXES = ['importance::', 'time::', 'delegatable::']
 
 const tab = ref('all')
 const selectedTask = ref(null)
-const saving = ref(false)
 const draft = ref({ urgency: 'low', importance: null, time: null, delegatable: null, deadline: '', notes: '' })
 const projectsOpen = ref(true)
 const activeProjectId = ref(null)
+const saveStatus = ref('')
+
+let saveTimer = null
+let statusTimer = null
+let skipNextWatch = false
+
+watch(draft, () => {
+  if (!selectedTask.value || skipNextWatch) { skipNextWatch = false; return }
+  clearTimeout(saveTimer)
+  saveTimer = setTimeout(saveChanges, 800)
+}, { deep: true })
+
+onUnmounted(() => {
+  clearTimeout(saveTimer)
+  clearTimeout(statusTimer)
+})
 
 function toggleProject(id) {
   activeProjectId.value = activeProjectId.value === id ? null : id
@@ -290,6 +303,8 @@ function capitalize(s) {
 
 // ── Selection ──
 function selectTask(task) {
+  clearTimeout(saveTimer)
+  skipNextWatch = true
   selectedTask.value = task
   draft.value = {
     urgency: urgencyFromPriority(task.priority ?? 4),
@@ -299,12 +314,13 @@ function selectTask(task) {
     deadline: task.due?.date ?? '',
     notes: task.description ?? '',
   }
+  saveStatus.value = ''
 }
 
 // ── Save ──
 async function saveChanges() {
-  if (!selectedTask.value || saving.value) return
-  saving.value = true
+  if (!selectedTask.value) return
+  saveStatus.value = 'Saving…'
   try {
     const task = selectedTask.value
     const baseLabels = (task.labels || []).filter(l => !TRIAGE_PREFIXES.some(p => l.startsWith(p)))
@@ -318,8 +334,11 @@ async function saveChanges() {
       dueDate: draft.value.deadline || null,
       description: draft.value.notes,
     })
-  } finally {
-    saving.value = false
+    saveStatus.value = 'Saved'
+    clearTimeout(statusTimer)
+    statusTimer = setTimeout(() => { saveStatus.value = '' }, 2000)
+  } catch {
+    saveStatus.value = 'Error saving'
   }
 }
 
