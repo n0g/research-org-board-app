@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { GCAL_CLIENT_ID } from '../config.js'
 
-const BAKED_CLIENT_ID = import.meta.env.VITE_GCAL_CLIENT_ID || ''
+const BAKED_CLIENT_ID = import.meta.env.VITE_GCAL_CLIENT_ID || GCAL_CLIENT_ID
 const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly'
 
 export const useCalendarStore = defineStore('calendar', () => {
