@@ -82,9 +82,20 @@
                   </span>
                   <span v-if="getTime(task)" class="triage-tag triage-tag-dim">{{ getTime(task) }}</span>
                 </div>
-                <span v-if="scheduledLabel(task)" class="triage-tag triage-tag-scheduled">
-                  <span class="material-symbols-outlined">event</span>{{ scheduledLabel(task) }}
-                </span>
+                <div class="schedule-task-right">
+                  <span v-if="scheduledLabel(task)" class="triage-tag triage-tag-scheduled" :class="{ 'triage-tag-overdue': isOverdue(task) }">
+                    <span class="material-symbols-outlined">event</span>{{ scheduledLabel(task) }}
+                  </span>
+                  <button
+                    v-if="isOverdue(task)"
+                    class="schedule-complete-btn"
+                    title="Mark complete"
+                    @pointerdown.stop
+                    @click.stop="store.completeTask(task.id)"
+                  >
+                    <span class="material-symbols-outlined">check_circle</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -275,6 +286,10 @@ const filteredTasks = computed(() => {
 
 function projectName(task) {
   return store.displayProjects.find(p => p.id === task.project_id)?.name ?? ''
+}
+
+function isOverdue(task) {
+  return !!(task.due?.datetime && new Date(task.due.datetime) < new Date())
 }
 
 function scheduledLabel(task) {
