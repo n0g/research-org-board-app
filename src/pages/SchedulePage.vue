@@ -519,12 +519,12 @@ function _startDrag(e, label) {
 
 function onTaskPointerDown(e, task) {
   e.preventDefault()
-  if (e.pointerType === 'touch') {
+  if (e.pointerType === 'touch' && window.innerWidth < 768) {
     if (calStore.isConnected) openSheet(task)
     else goSettings()
     return
   }
-  if (e.button !== 0) return
+  if (e.pointerType === 'mouse' && e.button !== 0) return
   draggingTask.value = task
   _startDrag(e, task.content)
 }

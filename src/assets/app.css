@@ -2400,17 +2400,17 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 
 .cal-today-btn {
   background: none;
-  border: 1px solid var(--border);
+  border: none;
   border-radius: 6px;
-  padding: 3px 8px;
+  padding: 4px 6px;
   font-size: 11px;
   cursor: pointer;
-  color: var(--text2);
+  color: var(--text3);
   font-family: var(--font);
   flex-shrink: 0;
   white-space: nowrap;
 }
-.cal-today-btn:hover { background: var(--bg-surface); }
+.cal-today-btn:hover { background: var(--bg-surface); color: var(--text2); }
 
 .cal-loading-dot {
   width: 6px;
