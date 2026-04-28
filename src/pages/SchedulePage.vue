@@ -439,13 +439,35 @@ function _startDrag(e, label) {
 
 function onTaskPointerDown(e, task) {
   if (e.pointerType === 'touch' && window.innerWidth < 768) {
-    e.preventDefault()
-    if (calStore.isConnected) {
-      store.pendingScheduleTask = task
-      f7.views.main.router.navigate('/schedule/place/')
-    } else {
-      goSettings()
+    const startX = e.clientX
+    const startY = e.clientY
+
+    function onMoveDecide(me) {
+      const dx = me.clientX - startX
+      const dy = me.clientY - startY
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return
+      document.removeEventListener('pointermove', onMoveDecide)
+      document.removeEventListener('pointerup', onUpTap)
     }
+
+    function onUpTap(ue) {
+      document.removeEventListener('pointermove', onMoveDecide)
+      document.removeEventListener('pointerup', onUpTap)
+      const dx = ue.clientX - startX
+      const dy = ue.clientY - startY
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) {
+        // genuine tap — navigate
+        if (calStore.isConnected) {
+          store.pendingScheduleTask = task
+          f7.views.main.router.navigate('/schedule/place/')
+        } else {
+          goSettings()
+        }
+      }
+    }
+
+    document.addEventListener('pointermove', onMoveDecide)
+    document.addEventListener('pointerup', onUpTap)
     return
   }
   if (e.pointerType === 'mouse' && e.button !== 0) return

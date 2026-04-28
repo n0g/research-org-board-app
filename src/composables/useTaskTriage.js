@@ -4,9 +4,9 @@ import { parseLocalDate } from '../lib/helpers.js'
 
 export const TABS = [
   { key: 'all', label: 'All' },
-  { key: 'important', label: 'Important' },
   { key: 'quick', label: 'Quick' },
   { key: 'urgent', label: 'Urgent' },
+  { key: 'important', label: 'Important' },
 ]
 export const URGENCY_OPTS = [
   { val: 'low', label: 'Low' },
