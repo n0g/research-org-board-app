@@ -197,6 +197,12 @@ export const useBoardStore = defineStore('board', () => {
     if (task) task.due = dateVal ? { date: dateVal } : null
   }
 
+  async function updateTaskDueDatetime(taskId, isoDatetime) {
+    await api(token.value, `/tasks/${taskId}`, 'POST', { due_datetime: isoDatetime })
+    const task = tasks.value.find(t => t.id === taskId)
+    if (task) task.due = { ...(task.due ?? {}), datetime: isoDatetime, date: isoDatetime.slice(0, 10) }
+  }
+
   async function updateStatusText(taskId, content) {
     await api(token.value, `/tasks/${taskId}`, 'POST', { content })
     const task = tasks.value.find(t => t.id === taskId)
@@ -391,7 +397,7 @@ export const useBoardStore = defineStore('board', () => {
     allCollaborators, allVenues,
     initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,
     projectStage, projectMeta, projectTasks, projectDeadline,
-    moveStage, completeTask, quickAddTask, updateTaskDue, updateStatusText,
+    moveStage, completeTask, quickAddTask, updateTaskDue, updateTaskDueDatetime, updateStatusText,
     updateVenue, setDeadlineDate, addCollaborator, removeCollaborator, renameProject,
     projectDeadlineTaskBase, projectDeadlineTaskObj,
     projectSummaryTask, updateSummary, projectSubmissionTask, updateSubmissionUrl,

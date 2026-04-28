@@ -241,11 +241,19 @@ function toggleProject(id) {
 
 const allTasks = computed(() => {
   const projectSet = new Set(store.displayProjects.map(p => p.id))
-  return store.tasks.filter(t =>
+  const tasks = store.tasks.filter(t =>
     !t.is_completed &&
     projectSet.has(t.project_id) &&
     !store.excludedSectionIds.has(t.section_id)
   )
+  return tasks.sort((a, b) => {
+    const aDt = a.due?.datetime ? new Date(a.due.datetime).getTime() : null
+    const bDt = b.due?.datetime ? new Date(b.due.datetime).getTime() : null
+    if (aDt && bDt) return aDt - bDt
+    if (aDt) return -1
+    if (bDt) return 1
+    return 0
+  })
 })
 
 const projectsWithTasks = computed(() => {
@@ -565,6 +573,7 @@ async function onPointerUp() {
     const existing = calStore.scheduledByTaskId.get(task.id) || []
     await Promise.allSettled(existing.map(ev => calStore.deleteEvent(ev.id, ev._calId)))
     try {
+      const start = new Date(year, month - 1, day, slot.hour, slot.minute, 0, 0)
       await calStore.createEvent(
         task.content,
         new Date(year, month - 1, day),
@@ -573,6 +582,7 @@ async function onPointerUp() {
         taskDurationMinutes(task),
         task.id
       )
+      await store.updateTaskDueDatetime(task.id, start.toISOString())
     } catch (err) {
       console.error('Failed to create event:', err)
     }
@@ -607,6 +617,23 @@ watch(() => calStore.isConnected, async (connected) => {
     calStore.loadWeekEvents(weekStart.value)
     await nextTick()
     if (calBodyEl.value) calBodyEl.value.scrollTop = SLOT_HEIGHT * 2
+  }
+})
+
+// Sync calendar → Todoist: if a scheduled event's start time doesn't match
+// the task's due datetime, update the task so other parts of the app stay in sync.
+watch(() => calStore.scheduledByTaskId, async (map) => {
+  for (const [taskId, evs] of map) {
+    if (!evs.length) continue
+    const ev = evs[0]
+    if (!ev.start?.dateTime) continue
+    const task = store.tasks.find(t => t.id === taskId)
+    if (!task) continue
+    const calDt = new Date(ev.start.dateTime).toISOString()
+    const taskDt = task.due?.datetime ? new Date(task.due.datetime).toISOString() : null
+    if (calDt !== taskDt) {
+      await store.updateTaskDueDatetime(taskId, calDt)
+    }
   }
 })
 

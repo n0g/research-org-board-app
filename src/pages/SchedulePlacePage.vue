@@ -224,7 +224,9 @@ async function scheduleAt(day, slot) {
   await Promise.allSettled(existing.map(ev => calStore.deleteEvent(ev.id, ev._calId)))
   try {
     const [year, month, dayN] = isoDate(day).split('-').map(Number)
+    const start = new Date(year, month - 1, dayN, slot.hour, slot.minute, 0, 0)
     await calStore.createEvent(task.content, new Date(year, month - 1, dayN), slot.hour, slot.minute, taskDuration(), task.id)
+    await store.updateTaskDueDatetime(task.id, start.toISOString())
   } catch (err) {
     console.error('Failed to schedule:', err)
   }
