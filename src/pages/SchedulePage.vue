@@ -258,10 +258,10 @@ const allTasks = computed(() => {
     !store.excludedSectionIds.has(t.section_id)
   )
   return tasks.sort((a, b) => {
-    const aEv = calStore.scheduledByTaskId.get(a.id)?.[0]
-    const bEv = calStore.scheduledByTaskId.get(b.id)?.[0]
-    const aDt = aEv?.start?.dateTime ? new Date(aEv.start.dateTime).getTime() : null
-    const bDt = bEv?.start?.dateTime ? new Date(bEv.start.dateTime).getTime() : null
+    const aLine = (a.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
+    const bLine = (b.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
+    const aDt = aLine?.match(/\(([^)]+)\)$/)?.[1] ? new Date(aLine.match(/\(([^)]+)\)$/)[1]).getTime() : null
+    const bDt = bLine?.match(/\(([^)]+)\)$/)?.[1] ? new Date(bLine.match(/\(([^)]+)\)$/)[1]).getTime() : null
     if (aDt && bDt) return aDt - bDt
     if (aDt) return -1
     if (bDt) return 1
@@ -290,17 +290,26 @@ function projectName(task) {
   return store.displayProjects.find(p => p.id === task.project_id)?.name ?? ''
 }
 
-function isOverdue(task) {
+function scheduledIso(task) {
   const ev = calStore.scheduledByTaskId.get(task.id)?.[0]
-  return !!(ev?.start?.dateTime && new Date(ev.start.dateTime) < new Date())
+  if (ev?.start?.dateTime) return new Date(ev.start.dateTime).toISOString()
+  const line = (task.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
+  const m = line?.match(/\(([^)]+)\)$/)
+  return m ? m[1] : null
+}
+
+function isOverdue(task) {
+  const iso = scheduledIso(task)
+  return !!(iso && new Date(iso) < new Date())
 }
 
 function scheduledLabel(task) {
   const ev = calStore.scheduledByTaskId.get(task.id)?.[0]
-  if (!ev) return null
-  const start = new Date(ev.start.dateTime || ev.start.date)
+  const iso = scheduledIso(task)
+  if (!iso && !ev) return null
+  const start = ev ? new Date(ev.start.dateTime || ev.start.date) : new Date(iso)
   const datePart = start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-  if (!ev.start.dateTime) return datePart
+  if (ev && !ev.start.dateTime) return datePart
   const h = start.getHours(), m = start.getMinutes()
   const h12 = h % 12 || 12
   const period = h >= 12 ? 'pm' : 'am'
