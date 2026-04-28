@@ -197,10 +197,21 @@ export const useBoardStore = defineStore('board', () => {
     if (task) task.due = dateVal ? { date: dateVal } : null
   }
 
-  async function updateTaskDueDatetime(taskId, isoDatetime) {
-    await api(token.value, `/tasks/${taskId}`, 'POST', { due_datetime: isoDatetime })
+  async function saveScheduledTime(taskId, isoDatetime) {
     const task = tasks.value.find(t => t.id === taskId)
-    if (task) task.due = { ...(task.due ?? {}), datetime: isoDatetime, date: isoDatetime.slice(0, 10) }
+    if (!task) return
+    const d = new Date(isoDatetime)
+    const readable = d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) +
+      ' at ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+    const scheduledLine = `📅 Scheduled: ${readable} (${isoDatetime})`
+    const filtered = (task.description || '').split('\n').filter(l => !l.startsWith('📅 Scheduled:'))
+    const trimmed = filtered.join('\n').trimEnd()
+    const newDesc = trimmed ? `${trimmed}\n${scheduledLine}` : scheduledLine
+    const labels = [...(task.labels || [])]
+    if (!labels.includes('scheduled')) labels.push('scheduled')
+    await api(token.value, `/tasks/${taskId}`, 'POST', { description: newDesc, labels })
+    task.description = newDesc
+    task.labels = labels
   }
 
   async function updateStatusText(taskId, content) {
@@ -397,7 +408,7 @@ export const useBoardStore = defineStore('board', () => {
     allCollaborators, allVenues,
     initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,
     projectStage, projectMeta, projectTasks, projectDeadline,
-    moveStage, completeTask, quickAddTask, updateTaskDue, updateTaskDueDatetime, updateStatusText,
+    moveStage, completeTask, quickAddTask, updateTaskDue, saveScheduledTime, updateStatusText,
     updateVenue, setDeadlineDate, addCollaborator, removeCollaborator, renameProject,
     projectDeadlineTaskBase, projectDeadlineTaskObj,
     projectSummaryTask, updateSummary, projectSubmissionTask, updateSubmissionUrl,

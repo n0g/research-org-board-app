@@ -258,8 +258,10 @@ const allTasks = computed(() => {
     !store.excludedSectionIds.has(t.section_id)
   )
   return tasks.sort((a, b) => {
-    const aDt = a.due?.datetime ? new Date(a.due.datetime).getTime() : null
-    const bDt = b.due?.datetime ? new Date(b.due.datetime).getTime() : null
+    const aEv = calStore.scheduledByTaskId.get(a.id)?.[0]
+    const bEv = calStore.scheduledByTaskId.get(b.id)?.[0]
+    const aDt = aEv?.start?.dateTime ? new Date(aEv.start.dateTime).getTime() : null
+    const bDt = bEv?.start?.dateTime ? new Date(bEv.start.dateTime).getTime() : null
     if (aDt && bDt) return aDt - bDt
     if (aDt) return -1
     if (bDt) return 1
@@ -289,7 +291,8 @@ function projectName(task) {
 }
 
 function isOverdue(task) {
-  return !!(task.due?.datetime && new Date(task.due.datetime) < new Date())
+  const ev = calStore.scheduledByTaskId.get(task.id)?.[0]
+  return !!(ev?.start?.dateTime && new Date(ev.start.dateTime) < new Date())
 }
 
 function scheduledLabel(task) {
@@ -597,7 +600,7 @@ async function onPointerUp() {
         taskDurationMinutes(task),
         task.id
       )
-      await store.updateTaskDueDatetime(task.id, start.toISOString())
+      await store.saveScheduledTime(task.id, start.toISOString())
     } catch (err) {
       console.error('Failed to create event:', err)
     }
@@ -635,8 +638,8 @@ watch(() => calStore.isConnected, async (connected) => {
   }
 })
 
-// Sync calendar → Todoist: if a scheduled event's start time doesn't match
-// the task's due datetime, update the task so other parts of the app stay in sync.
+// Sync calendar → Todoist description: if a scheduled event's start time doesn't
+// match the ISO stored in the task description, update it.
 watch(() => calStore.scheduledByTaskId, async (map) => {
   for (const [taskId, evs] of map) {
     if (!evs.length) continue
@@ -644,10 +647,12 @@ watch(() => calStore.scheduledByTaskId, async (map) => {
     if (!ev.start?.dateTime) continue
     const task = store.tasks.find(t => t.id === taskId)
     if (!task) continue
-    const calDt = new Date(ev.start.dateTime).toISOString()
-    const taskDt = task.due?.datetime ? new Date(task.due.datetime).toISOString() : null
-    if (calDt !== taskDt) {
-      await store.updateTaskDueDatetime(taskId, calDt)
+    const calIso = new Date(ev.start.dateTime).toISOString()
+    const descLine = (task.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
+    const m = descLine?.match(/\(([^)]+)\)$/)
+    const savedIso = m ? m[1] : null
+    if (calIso !== savedIso) {
+      await store.saveScheduledTime(taskId, calIso)
     }
   }
 })
