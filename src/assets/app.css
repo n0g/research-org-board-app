@@ -2672,81 +2672,42 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   .cal-mobile-notice { display: flex; }
 }
 
-/* Tap-to-schedule bottom sheet */
-.sched-sheet-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 9990;
-  display: flex;
-  align-items: flex-end;
-}
-.sched-sheet {
-  width: 100%;
-  background: var(--bg);
-  border-radius: 16px 16px 0 0;
-  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
-}
-.sched-sheet-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-.sched-sheet-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text);
-}
-.sched-sheet-close {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text3);
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  border-radius: 6px;
-}
-.sched-sheet-close:hover { background: var(--bg-surface); }
-.sched-sheet-task {
-  font-size: 13px;
-  color: var(--text2);
-  margin-bottom: 20px;
-  padding: 10px 12px;
-  background: var(--bg-surface);
-  border-radius: 8px;
-  line-height: 1.4;
-}
-.sched-sheet-fields {
+/* Schedule place page */
+.schedule-place-page .page-content { padding: 0 !important; }
+.place-screen {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
+  height: 100%;
+  background: var(--bg);
 }
-.sched-field {
+.place-topbar {
   display: flex;
   align-items: center;
-  gap: 12px;
-}
-.sched-field-label {
-  font-size: 13px;
-  color: var(--text2);
-  width: 60px;
+  gap: 8px;
+  padding: calc(env(safe-area-inset-top) + 8px) 16px 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
   flex-shrink: 0;
 }
-.sched-field-input {
-  flex: 1;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 14px;
+.place-topbar .back-btn { margin-bottom: 0; flex-shrink: 0; }
+.place-task-label {
+  font-size: 13px;
+  font-weight: 600;
   color: var(--text);
-  font-family: var(--font);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
 }
-.sched-sheet-actions {
+.place-cal-week {
+  flex: 1;
+  overflow: hidden;
   display: flex;
-  gap: 10px;
+  flex-direction: column;
 }
-.sched-sheet-actions .btn { flex: 1; text-align: center; }
+.place-slot {
+  cursor: pointer;
+}
+.place-slot:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.place-slot:active { background: color-mix(in srgb, var(--accent) 22%, transparent); }

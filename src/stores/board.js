@@ -28,6 +28,7 @@ export const useBoardStore = defineStore('board', () => {
   const cardDragging = ref(false)
   const triageTaskIds = ref([])
   const triageCurrentId = ref(null)
+  const pendingScheduleTask = ref(null)
   const labels = ref([])
   const activeFilter = ref(null) // { type: 'person'|'venue', value: string } | null
 
@@ -385,7 +386,7 @@ export const useBoardStore = defineStore('board', () => {
   }
 
   return {
-    token, stages, projects, tasks, loading, lastUpdated, cardDragging, triageTaskIds, triageCurrentId, labels,
+    token, stages, projects, tasks, loading, lastUpdated, cardDragging, triageTaskIds, triageCurrentId, pendingScheduleTask, labels,
     activeFilter, stageLabels, displayProjects, excludedSectionIds, deadlineSectionIds,
     allCollaborators, allVenues,
     initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,
