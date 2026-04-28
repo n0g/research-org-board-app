@@ -42,14 +42,6 @@
 
         <!-- Left: task list -->
         <div class="schedule-list" :class="{ 'schedule-list-collapsed': sidebarCollapsed }">
-          <!-- Mobile: not-connected notice -->
-          <div v-if="!calStore.isConnected" class="cal-mobile-notice">
-            <span class="material-symbols-outlined">calendar_today</span>
-            <span>{{ calStore.clientId ? 'Calendar session expired' : 'Connect Google Calendar to schedule tasks' }}</span>
-            <button class="btn sm primary" @click="calStore.clientId ? calStore.connect() : goSettings()">
-              {{ calStore.clientId ? 'Reconnect' : 'Settings' }}
-            </button>
-          </div>
           <div class="triage-tabs">
             <div class="seg-ctrl">
               <button
@@ -62,6 +54,13 @@
             </div>
           </div>
           <div class="triage-list-body">
+            <div v-if="!calStore.isConnected" class="cal-mobile-notice">
+              <span class="material-symbols-outlined">calendar_today</span>
+              <span>{{ calStore.clientId ? 'Calendar session expired' : 'Connect Google Calendar to schedule tasks' }}</span>
+              <button class="btn sm primary" @click="calStore.clientId ? calStore.connect() : goSettings()">
+                {{ calStore.clientId ? 'Reconnect' : 'Settings' }}
+              </button>
+            </div>
             <div v-if="!filteredTasks.length" class="triage-empty-list">No tasks</div>
             <div
               v-for="task in filteredTasks"
