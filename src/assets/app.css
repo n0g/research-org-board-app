@@ -2673,7 +2673,8 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 }
 
 /* Schedule place page */
-.schedule-place-page .page-content { padding: 0 !important; }
+.schedule-place-page .page-content { padding: 0 !important; overflow: hidden !important; height: 100% !important; }
+.schedule-place-page .cal-nav { padding-top: 8px; }
 .place-screen {
   display: flex;
   flex-direction: column;

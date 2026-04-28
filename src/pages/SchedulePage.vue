@@ -3,7 +3,7 @@
     <div class="schedule-screen">
       <AppSidebar current-page="schedule">
         <template #filters>
-          <template v-if="store.displayProjects.length">
+          <template v-if="projectsWithTasks.length">
             <div class="sidebar-section-header" @click="projectsOpen = !projectsOpen">
               <span class="sidebar-section-label">Projects</span>
               <span
@@ -14,7 +14,7 @@
             </div>
             <template v-if="projectsOpen">
               <button
-                v-for="project in store.displayProjects"
+                v-for="project in projectsWithTasks"
                 :key="project.id"
                 class="sidebar-nav-item"
                 :class="{ 'sidebar-filter-active': activeProjectId === project.id }"
@@ -246,6 +246,11 @@ const allTasks = computed(() => {
     projectSet.has(t.project_id) &&
     !store.excludedSectionIds.has(t.section_id)
   )
+})
+
+const projectsWithTasks = computed(() => {
+  const ids = new Set(allTasks.value.map(t => t.project_id))
+  return store.displayProjects.filter(p => ids.has(p.id))
 })
 
 const filteredTasks = computed(() => {

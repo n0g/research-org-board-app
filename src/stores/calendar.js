@@ -14,6 +14,7 @@ export const useCalendarStore = defineStore('calendar', () => {
   const events = ref([])
   const loading = ref(false)
   const connectError = ref('')
+  let _refreshTimer = null
 
   const isConnected = computed(() => !!accessToken.value && Date.now() < tokenExpiry.value)
 
@@ -44,6 +45,15 @@ export const useCalendarStore = defineStore('calendar', () => {
     tokenExpiry.value = expiry
     localStorage.setItem('rb_gcal_token', token)
     localStorage.setItem('rb_gcal_token_expiry', String(expiry))
+    _scheduleRefresh()
+  }
+
+  function _scheduleRefresh() {
+    if (_refreshTimer) clearTimeout(_refreshTimer)
+    const msUntilRefresh = tokenExpiry.value - Date.now() - 5 * 60 * 1000
+    if (msUntilRefresh > 0) {
+      _refreshTimer = setTimeout(() => _silentRefresh(), msUntilRefresh)
+    }
   }
 
   function _initClient(callback) {
@@ -219,6 +229,18 @@ export const useCalendarStore = defineStore('calendar', () => {
     const idx = events.value.findIndex(ev => ev.id === eventId)
     if (idx !== -1) events.value[idx] = { ...events.value[idx], ...updated }
     return updated
+  }
+
+  // Proactive refresh: schedule on startup if we already have a stored token
+  _scheduleRefresh()
+
+  // Refresh on app focus in case the token expired while the app was in the background
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && accessToken.value && !isConnected.value) {
+        _silentRefresh()
+      }
+    })
   }
 
   return {
