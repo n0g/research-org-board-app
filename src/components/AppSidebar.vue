@@ -30,16 +30,6 @@
 
       <button
         class="sidebar-nav-item"
-        :class="currentPage === 'reviews' ? 'sidebar-nav-active' : ''"
-        title="Reviews"
-        @click="currentPage !== 'reviews' && goReviews()"
-      >
-        <span class="material-symbols-outlined" aria-hidden="true">grading</span>
-        <span class="sidebar-label">Reviews</span>
-      </button>
-
-      <button
-        class="sidebar-nav-item"
         :class="currentPage === 'tasks' ? 'sidebar-nav-active' : ''"
         title="Tasks"
         @click="currentPage !== 'tasks' && goTasks()"
@@ -161,10 +151,6 @@ function goBoard() {
 
 function goTasks() {
   f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true })
-}
-
-function goReviews() {
-  f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true })
 }
 
 function goSchedule() {
