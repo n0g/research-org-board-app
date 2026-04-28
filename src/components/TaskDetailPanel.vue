@@ -92,11 +92,21 @@
 
       <div class="triage-field">
         <label class="triage-field-label">Deadline</label>
-        <input
-          class="meta-date-visible"
-          type="date"
-          v-model="draft.deadline"
-        >
+        <div class="deadline-input-row">
+          <input
+            class="meta-date-visible"
+            type="date"
+            v-model="draft.deadline"
+          >
+          <button
+            v-if="draft.deadline"
+            class="deadline-clear-btn"
+            title="Remove deadline"
+            @click="draft.deadline = ''"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
       </div>
 
       <div class="triage-complete-row">

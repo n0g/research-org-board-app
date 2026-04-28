@@ -2221,6 +2221,16 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 /* Triage fields */
 .triage-fields { display: flex; flex-direction: column; gap: 28px; }
 .triage-field {}
+.deadline-input-row { display: flex; align-items: center; gap: 6px; }
+.deadline-input-row .meta-date-visible { flex: 1; }
+.deadline-clear-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; flex-shrink: 0;
+  background: none; border: none; cursor: pointer; padding: 0;
+  color: var(--text3); border-radius: 50%;
+}
+.deadline-clear-btn:hover { color: var(--text); background: var(--bg-surface); }
+.deadline-clear-btn .material-symbols-outlined { font-size: 16px; }
 .triage-field-label {
   display: block;
   font-size: 11px;
