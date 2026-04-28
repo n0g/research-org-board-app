@@ -93,7 +93,7 @@ export function useTaskTriage() {
       time: getLabel(task, 'time::'),
       delegatable: getLabel(task, 'delegatable::'),
       deadline: task.due?.date ?? '',
-      notes: task.description ?? '',
+      notes: (task.description ?? '').split('\n').filter(l => !l.startsWith('📅 Scheduled:')).join('\n').trimEnd(),
     }
     saveStatus.value = ''
   }

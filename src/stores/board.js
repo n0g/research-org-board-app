@@ -330,7 +330,16 @@ export const useBoardStore = defineStore('board', () => {
     const body = {}
     if (priority !== undefined) body.priority = priority
     if (labels !== undefined) body.labels = labels
-    if (description !== undefined) body.description = description
+    if (description !== undefined) {
+      // Preserve the 📅 Scheduled: line — it's managed by the scheduler, not the notes editor
+      const task = tasks.value.find(t => t.id === taskId)
+      const schedLine = task
+        ? (task.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
+        : null
+      const userLines = description.split('\n').filter(l => !l.startsWith('📅 Scheduled:'))
+      const trimmed = userLines.join('\n').trimEnd()
+      body.description = schedLine ? (trimmed ? `${trimmed}\n${schedLine}` : schedLine) : description
+    }
     if (content !== undefined) body.content = content
     if (dueDate !== undefined) {
       if (dueDate) body.due_date = dueDate
@@ -341,7 +350,7 @@ export const useBoardStore = defineStore('board', () => {
     if (task) {
       if (priority !== undefined) task.priority = priority
       if (labels !== undefined) task.labels = labels
-      if (description !== undefined) task.description = description
+      if (description !== undefined) task.description = body.description
       if (content !== undefined) task.content = content
       if (dueDate !== undefined) task.due = dueDate ? { date: dueDate } : null
     }
