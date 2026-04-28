@@ -520,13 +520,41 @@ function _startDrag(e, label) {
 }
 
 function onTaskPointerDown(e, task) {
-  e.preventDefault()
   if (e.pointerType === 'touch' && window.innerWidth < 768) {
     if (calStore.isConnected) openSheet(task)
     else goSettings()
     return
   }
   if (e.pointerType === 'mouse' && e.button !== 0) return
+
+  if (e.pointerType === 'touch') {
+    // iPad: wait for directional intent — horizontal = drag, vertical = scroll
+    const startX = e.clientX
+    const startY = e.clientY
+
+    function onMoveDecide(me) {
+      const dx = me.clientX - startX
+      const dy = me.clientY - startY
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return
+      document.removeEventListener('pointermove', onMoveDecide)
+      document.removeEventListener('pointerup', onUpCancel)
+      if (Math.abs(dx) >= Math.abs(dy)) {
+        draggingTask.value = task
+        _startDrag(me, task.content)
+        hoveredSlot.value = _slotFromPointer(me)
+      }
+      // vertical → browser scroll takes over, nothing to do
+    }
+    function onUpCancel() {
+      document.removeEventListener('pointermove', onMoveDecide)
+      document.removeEventListener('pointerup', onUpCancel)
+    }
+    document.addEventListener('pointermove', onMoveDecide)
+    document.addEventListener('pointerup', onUpCancel)
+    return
+  }
+
+  e.preventDefault()
   draggingTask.value = task
   _startDrag(e, task.content)
 }

@@ -2335,7 +2335,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 .schedule-task-row {
   cursor: grab;
   user-select: none;
-  touch-action: none;
+  touch-action: pan-y;
 }
 .schedule-task-row:hover { background: color-mix(in srgb, var(--accent) 6%, transparent); }
 .schedule-task-dragging { opacity: 0.4; cursor: grabbing; }
