@@ -989,7 +989,7 @@ html[data-theme="dark"] .theme-seg-btn.active {
   background: #ffffff;
   border-right: 1px solid var(--border);
   overflow-y: auto;
-  padding: calc(20px + env(safe-area-inset-top)) 32px 32px;
+  padding: calc(26px + env(safe-area-inset-top)) 32px 32px;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -2048,7 +2048,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   .triage-tabs { padding-top: calc(12px + env(safe-area-inset-top)); }
 }
 @media (min-width: 768px) {
-  .triage-tabs { padding-top: calc(env(safe-area-inset-top) + 20px); }
+  .triage-tabs { padding-top: calc(env(safe-area-inset-top) + 18px); }
 }
 .triage-list-body {
   flex: 1;
