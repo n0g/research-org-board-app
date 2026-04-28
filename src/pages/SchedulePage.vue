@@ -181,7 +181,7 @@
                         v-for="ev in timedDayEvents(day)"
                         :key="ev.id"
                         class="cal-event"
-                        :class="{ 'cal-event-moving': draggingCalEvent?.id === ev.id }"
+                        :class="{ 'cal-event-moving': draggingCalEvent?.id === ev.id, 'cal-event-readonly': ev._calId !== calStore.selectedCalendarId }"
                         :style="eventStyle(ev)"
                         draggable="false"
                         @dragstart.prevent
@@ -531,6 +531,7 @@ function onTaskPointerDown(e, task) {
 
 function onCalEventPointerDown(e, ev) {
   if (e.button !== 0) return
+  if (ev._calId !== calStore.selectedCalendarId) return
   e.preventDefault()
   draggingCalEvent.value = ev
   _startDrag(e, ev.summary)
@@ -541,18 +542,21 @@ function _slotFromPointer(e) {
   const scrollEl = calBodyEl.value
   if (!daysEl || !scrollEl) return null
   const rect = daysEl.getBoundingClientRect()
+  const scrollRect = scrollEl.getBoundingClientRect()
+  // bounds check against the visible scroll container, not the full (clipped) cal-days element
   if (e.clientX < rect.left || e.clientX > rect.right ||
-      e.clientY < rect.top  || e.clientY > rect.bottom) return null
+      e.clientY < scrollRect.top || e.clientY > scrollRect.bottom) return null
   const colWidth = rect.width / 7
   const dayIndex = Math.min(6, Math.max(0, Math.floor((e.clientX - rect.left) / colWidth)))
-  const yInContent = (e.clientY - rect.top) + scrollEl.scrollTop
-  const slotIndex = Math.floor(yInContent / SLOT_HEIGHT)
-  const totalSlots = (END_HOUR - START_HOUR) * 2
-  if (slotIndex < 0 || slotIndex >= totalSlots) return null
+  // getBoundingClientRect already reflects scroll — do NOT add scrollTop again
+  const yInContent = e.clientY - rect.top
+  const quarterSlot = Math.floor(yInContent / (SLOT_HEIGHT / 2))
+  const totalQuarterSlots = (END_HOUR - START_HOUR) * 4
+  if (quarterSlot < 0 || quarterSlot >= totalQuarterSlots) return null
   return {
     dateStr: isoDate(weekDays.value[dayIndex]),
-    hour: START_HOUR + Math.floor(slotIndex / 2),
-    minute: (slotIndex % 2) * 30,
+    hour: START_HOUR + Math.floor(quarterSlot / 4),
+    minute: (quarterSlot % 4) * 15,
   }
 }
 

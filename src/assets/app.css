@@ -2569,6 +2569,9 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   opacity: 0.3;
   pointer-events: none;
 }
+.cal-event-readonly {
+  cursor: default;
+}
 .cal-event-title {
   font-size: 11px;
   font-weight: 500;
