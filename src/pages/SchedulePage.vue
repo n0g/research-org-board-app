@@ -109,11 +109,11 @@
               <button class="cal-nav-btn" title="Previous week" @click="prevWeek">
                 <span class="material-symbols-outlined">chevron_left</span>
               </button>
+              <span class="cal-nav-label">{{ weekLabel }}</span>
               <button class="cal-nav-btn" title="Next week" @click="nextWeek">
                 <span class="material-symbols-outlined">chevron_right</span>
               </button>
               <button class="cal-today-btn" @click="goToday">Today</button>
-              <span class="cal-nav-label">{{ weekLabel }}</span>
               <span v-if="calStore.loading" class="cal-loading-dot"></span>
             </div>
 
