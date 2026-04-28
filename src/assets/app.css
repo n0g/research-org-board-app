@@ -2092,6 +2092,8 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   color: var(--text);
   margin-bottom: 6px;
   line-height: 1.3;
+  overflow-wrap: break-word;
+  min-width: 0;
 }
 .triage-task-meta {
   display: flex;
