@@ -15,7 +15,7 @@
         </button>
 
         <!-- Left metadata pane -->
-        <section class="project-meta">
+        <section class="project-meta" :class="{ 'project-meta-collapsed': sidebarCollapsed }">
           <button class="back-btn" @click="goBack">
             <span class="material-symbols-outlined">arrow_back</span>
             Board

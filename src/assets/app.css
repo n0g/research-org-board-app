@@ -989,12 +989,13 @@ html[data-theme="dark"] .theme-seg-btn.active {
   background: #ffffff;
   border-right: 1px solid var(--border);
   overflow-y: auto;
-  padding: calc(32px + env(safe-area-inset-top)) 32px 32px;
+  padding: calc(20px + env(safe-area-inset-top)) 32px 32px;
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 html[data-theme="dark"] .project-meta { background: var(--bg2); }
+.project-meta-collapsed { padding-left: 52px; }
 .project-meta::-webkit-scrollbar { width: 4px; }
 .project-meta::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
