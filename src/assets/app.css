@@ -2047,6 +2047,9 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 @media (max-width: 767px) {
   .triage-tabs { padding-top: calc(12px + env(safe-area-inset-top)); }
 }
+@media (min-width: 768px) {
+  .triage-tabs { padding-top: calc(env(safe-area-inset-top) + 20px); }
+}
 .triage-list-body {
   flex: 1;
   overflow-y: auto;
@@ -2649,7 +2652,6 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 @media (max-width: 767px) {
   .schedule-list { width: 100%; border-right: none; min-width: 0; }
   .schedule-cal { display: none; }
-  .schedule-list .triage-tabs { padding-top: calc(12px + env(safe-area-inset-top)); }
 }
 
 /* Mobile not-connected notice */
