@@ -434,6 +434,7 @@ function _startDrag(e, label) {
 
 function onTaskPointerDown(e, task) {
   if (e.pointerType === 'touch' && window.innerWidth < 768) {
+    e.preventDefault()
     if (calStore.isConnected) {
       store.pendingScheduleTask = task
       f7.views.main.router.navigate('/schedule/place/')
