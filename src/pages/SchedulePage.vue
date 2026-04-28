@@ -109,11 +109,11 @@
               <button class="cal-nav-btn" title="Previous week" @click="prevWeek">
                 <span class="material-symbols-outlined">chevron_left</span>
               </button>
-              <span class="cal-nav-label">{{ weekLabel }}</span>
               <button class="cal-nav-btn" title="Next week" @click="nextWeek">
                 <span class="material-symbols-outlined">chevron_right</span>
               </button>
               <button class="cal-today-btn" @click="goToday">Today</button>
+              <span class="cal-nav-label">{{ weekLabel }}</span>
               <span v-if="calStore.loading" class="cal-loading-dot"></span>
             </div>
 
@@ -359,7 +359,9 @@ const weekLabel = computed(() => {
   return `${startStr} – ${endStr}, ${year}`
 })
 
-function isoDate(d) { return d.toISOString().slice(0, 10) }
+function isoDate(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+}
 function isToday(d) { return isoDate(d) === isoDate(new Date()) }
 function dayName(d) { return d.toLocaleDateString(undefined, { weekday: 'short' }) }
 
