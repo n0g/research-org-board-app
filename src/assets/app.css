@@ -2053,6 +2053,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 .triage-list-body {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: none;
 }
 .triage-list-body::-webkit-scrollbar { display: none; }
