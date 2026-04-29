@@ -2220,16 +2220,17 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 /* Triage fields */
 .triage-fields { display: flex; flex-direction: column; gap: 28px; }
 .triage-field {}
-.deadline-input-row { display: flex; align-items: center; gap: 6px; }
-.deadline-input-row .meta-date-visible { flex: 1; }
+.deadline-input-row { position: relative; }
+.deadline-input-row .meta-date-visible { width: 100%; padding-right: 28px; }
 .deadline-clear-btn {
   display: flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px; flex-shrink: 0;
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  width: 22px; height: 22px;
   background: none; border: none; cursor: pointer; padding: 0;
   color: var(--text3); border-radius: 50%;
 }
 .deadline-clear-btn:hover { color: var(--text); background: var(--bg-surface); }
-.deadline-clear-btn .material-symbols-outlined { font-size: 16px; }
+.deadline-clear-btn .material-symbols-outlined { font-size: 14px; }
 .triage-field-label {
   display: block;
   font-size: 11px;
