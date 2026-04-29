@@ -30,7 +30,19 @@ export function matchSiteForUrl(sites, submissionUrl) {
 
 async function _hotcrpGet(siteUrl, token, proxyUrl, path) {
   const base = siteUrl.replace(/\/+$/, '')
-  const hotcrpUrl = `${base}${path}`
+  try {
+    return await _hotcrpFetch(`${base}${path}`, token, proxyUrl)
+  } catch (err) {
+    // Some HotCRP instances (e.g. PETS) use api.php/function instead of api/function
+    if (err.message?.includes('function not found')) {
+      const phpPath = path.replace(/^\/api\//, '/api.php/')
+      return _hotcrpFetch(`${base}${phpPath}`, token, proxyUrl)
+    }
+    throw err
+  }
+}
+
+async function _hotcrpFetch(hotcrpUrl, token, proxyUrl) {
 
   // Pass token as query param to the Worker so it adds Authorization server-side,
   // avoiding CORS preflight caused by custom request headers from the browser.
