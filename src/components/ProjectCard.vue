@@ -35,6 +35,11 @@
     <!-- Status -->
     <div v-if="statusText" class="card-status">{{ statusText }}</div>
 
+    <!-- Scheduled hours dots -->
+    <div v-if="scheduledDots > 0" class="card-schedule-dots">
+      <span v-for="i in scheduledDots" :key="i" class="card-schedule-dot"></span>
+    </div>
+
     <!-- Bottom row: people + date -->
     <div class="card-bottom">
       <div class="card-people">
@@ -59,6 +64,27 @@ import { useBoardStore } from '../stores/board.js'
 import { useReviewsStore } from '../stores/reviews.js'
 import { VENUES, stripPersonPrefix, isPersonLabel, nearestDue, dueStatus, formatDate } from '../lib/helpers.js'
 
+function getWeekRange() {
+  const now = new Date()
+  const dow = now.getDay()
+  const monday = new Date(now)
+  monday.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1))
+  monday.setHours(0, 0, 0, 0)
+  const sunday = new Date(monday)
+  sunday.setDate(monday.getDate() + 6)
+  sunday.setHours(23, 59, 59, 999)
+  return { monday, sunday }
+}
+
+function taskHours(task) {
+  const label = (task.labels || []).find(l => l.startsWith('time::'))?.slice(5)
+  if (label === '15m') return 0.25
+  if (label === '30m') return 0.5
+  if (label === '1h') return 1
+  if (label === '2h') return 2
+  return 1
+}
+
 const props = defineProps({
   project: { type: Object, required: true },
   stage: { type: Object, default: null },
@@ -76,6 +102,20 @@ const stageLabelSet = computed(() => new Set(store.stageLabels))
 const tasks = computed(() => store.projectTasks(props.project.id))
 const meta = computed(() => store.projectMeta(props.project.id))
 const deadline = computed(() => store.projectDeadline(props.project.id))
+
+const scheduledDots = computed(() => {
+  const { monday, sunday } = getWeekRange()
+  const allTasks = store.tasks.filter(t => t.project_id === props.project.id && !t.is_completed)
+  let hours = 0
+  for (const task of allTasks) {
+    const line = (task.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
+    const m = line?.match(/\(([^)]+)\)$/)
+    if (!m) continue
+    const dt = new Date(m[1])
+    if (dt >= monday && dt <= sunday) hours += taskHours(task)
+  }
+  return Math.min(Math.round(hours), 10)
+})
 
 const statusText = computed(() => stageInfo.value?.task.content ?? '')
 const personLabels = computed(() => {
