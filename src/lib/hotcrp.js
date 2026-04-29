@@ -16,7 +16,7 @@ export async function fetchPaperStatus(siteUrl, paperId, token, proxyUrl = '') {
 }
 
 export function extractPaperId(submissionUrl) {
-  const pathMatch = submissionUrl.match(/\/paper\/(\d+)/)
+  const pathMatch = submissionUrl.match(/\/paper(?:\.php)?\/(\d+)/)
   if (pathMatch) return pathMatch[1]
   const queryMatch = submissionUrl.match(/[?&]p=(\d+)/)
   if (queryMatch) return queryMatch[1]
