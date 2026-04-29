@@ -9,7 +9,6 @@ export async function fetchReviewPapers(siteUrl, token, proxyUrl = '') {
 
 export async function fetchPaperStatus(siteUrl, paperId, token, proxyUrl = '') {
   const data = await _hotcrpGet(siteUrl, token, proxyUrl, `/api/papers?q=${paperId}`)
-  // Response can be array, { papers: [...] }, or a single paper object
   if (Array.isArray(data)) return data[0] ?? null
   if (data.papers) return data.papers[0] ?? null
   return data.pid ? data : null
@@ -28,6 +27,15 @@ export function matchSiteForUrl(sites, submissionUrl) {
   return sites.find(s => submissionUrl.startsWith(s.url)) ?? null
 }
 
+function _normalizeError(err) {
+  const msg = err.message || ''
+  if (/function not found|api function missing/i.test(msg)) return new Error('Paper status not available on this HotCRP version')
+  if (/bad request/i.test(msg) || msg === 'HTTP 400') return new Error('Request not supported — this HotCRP version may not support this feature')
+  if (msg === 'HTTP 401') return new Error('Unauthorized — check your API token')
+  if (msg === 'HTTP 403') return new Error('Access denied — check your API token')
+  return err
+}
+
 async function _hotcrpGet(siteUrl, token, proxyUrl, path) {
   const base = siteUrl.replace(/\/+$/, '')
   try {
@@ -35,10 +43,14 @@ async function _hotcrpGet(siteUrl, token, proxyUrl, path) {
   } catch (err) {
     // Some HotCRP instances (e.g. PETS) use api.php/function instead of api/function
     if (err.message?.includes('function not found')) {
-      const phpPath = path.replace(/^\/api\//, '/api.php/')
-      return _hotcrpFetch(`${base}${phpPath}`, token, proxyUrl)
+      try {
+        const phpPath = path.replace(/^\/api\//, '/api.php/')
+        return await _hotcrpFetch(`${base}${phpPath}`, token, proxyUrl)
+      } catch (retryErr) {
+        throw _normalizeError(retryErr)
+      }
     }
-    throw err
+    throw _normalizeError(err)
   }
 }
 
