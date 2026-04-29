@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { api, apiAll } from '../lib/todoist.js'
+import { useCalendarStore } from './calendar.js'
 import {
   DEFAULT_STAGES,
   VENUES,
@@ -340,7 +341,9 @@ export const useBoardStore = defineStore('board', () => {
       const trimmed = userLines.join('\n').trimEnd()
       body.description = schedLine ? (trimmed ? `${trimmed}\n${schedLine}` : schedLine) : description
     }
-    if (content !== undefined) body.content = content
+    if (content !== undefined) {
+      body.content = content
+    }
     if (dueDate !== undefined) {
       if (dueDate) body.due_date = dueDate
       else body.due_string = 'no due date'
@@ -351,7 +354,11 @@ export const useBoardStore = defineStore('board', () => {
       if (priority !== undefined) task.priority = priority
       if (labels !== undefined) task.labels = labels
       if (description !== undefined) task.description = body.description
-      if (content !== undefined) task.content = content
+      if (content !== undefined) {
+        task.content = content
+        const calStore = useCalendarStore()
+        if (calStore.isConnected) calStore.updateEventTitle(taskId, content).catch(() => {})
+      }
       if (dueDate !== undefined) task.due = dueDate ? { date: dueDate } : null
     }
   }

@@ -648,8 +648,9 @@ watch(() => calStore.isConnected, async (connected) => {
   }
 })
 
-// Sync calendar → Todoist description: if a scheduled event's start time doesn't
-// match the ISO stored in the task description, update it.
+// Sync calendar ↔ Todoist: reconcile scheduled time and title on calendar load.
+// Time: calendar is always source of truth (user rescheduled in Google Calendar).
+// Title: last-write-wins via updated timestamps; 5s threshold ignores same-write jitter.
 watch(() => calStore.scheduledByTaskId, async (map) => {
   for (const [taskId, evs] of map) {
     if (!evs.length) continue
@@ -657,12 +658,23 @@ watch(() => calStore.scheduledByTaskId, async (map) => {
     if (!ev.start?.dateTime) continue
     const task = store.tasks.find(t => t.id === taskId)
     if (!task) continue
+
     const calIso = new Date(ev.start.dateTime).toISOString()
     const descLine = (task.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
     const m = descLine?.match(/\(([^)]+)\)$/)
     const savedIso = m ? m[1] : null
     if (calIso !== savedIso) {
       await store.saveScheduledTime(taskId, calIso)
+    }
+
+    if (ev.summary && ev.summary !== task.content) {
+      const calUpdated = ev.updated ? new Date(ev.updated).getTime() : 0
+      const taskUpdated = task.updated_at ? new Date(task.updated_at).getTime() : 0
+      if (calUpdated > taskUpdated + 5000) {
+        await store.updateTaskTriage(taskId, { content: ev.summary })
+      } else if (taskUpdated > calUpdated + 5000) {
+        await calStore.updateEventTitle(taskId, task.content)
+      }
     }
   }
 })

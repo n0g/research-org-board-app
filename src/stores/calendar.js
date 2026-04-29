@@ -231,6 +231,25 @@ export const useCalendarStore = defineStore('calendar', () => {
     return updated
   }
 
+  async function updateEventTitle(taskId, title) {
+    if (!await _ensureToken()) return
+    const evs = scheduledByTaskId.value.get(String(taskId))
+    if (!evs?.length) return
+    const ev = evs[0]
+    const res = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(ev._calId)}/events/${ev.id}`,
+      {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${accessToken.value}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ summary: title }),
+      }
+    )
+    if (!res.ok) return
+    const updated = await res.json()
+    const idx = events.value.findIndex(e => e.id === ev.id)
+    if (idx !== -1) events.value[idx] = { ...events.value[idx], ...updated }
+  }
+
   // Proactive refresh: schedule on startup if we already have a stored token
   _scheduleRefresh()
 
@@ -247,6 +266,6 @@ export const useCalendarStore = defineStore('calendar', () => {
     clientId, events, loading, connectError, selectedCalendarId, calendarList, writableCalendars,
     isConnected, scheduledByTaskId,
     saveClientId, saveCalendarId, connect, disconnect,
-    loadWeekEvents, createEvent, deleteEvent, updateEvent, fetchCalendarList,
+    loadWeekEvents, createEvent, deleteEvent, updateEvent, updateEventTitle, fetchCalendarList,
   }
 })
