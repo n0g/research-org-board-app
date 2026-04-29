@@ -24,12 +24,11 @@
     </div>
 
     <!-- Venue badge -->
-    <div v-if="meta.venue || scheduledDots > 0" class="card-venue-badge">
-      <span v-if="meta.venue" class="card-venue-dot"></span>
-      <span v-if="meta.venue" class="card-venue-name">{{ meta.venue }}</span>
-      <div v-if="scheduledDots > 0" class="card-schedule-dots">
-        <span v-for="i in scheduledDots" :key="i" class="card-schedule-dot"></span>
-      </div>
+    <div v-if="scheduledDots >= 1" class="card-schedule-bar"></div>
+
+    <div v-if="meta.venue" class="card-venue-badge">
+      <span class="card-venue-dot"></span>
+      <span class="card-venue-name">{{ meta.venue }}</span>
     </div>
 
     <!-- Title -->

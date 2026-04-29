@@ -636,8 +636,11 @@ html[data-theme="light"] .card { background: #ffffff; }
 }
 
 /* Card bottom row */
-.card-schedule-dots { display: flex; gap: 3px; align-items: center; margin-left: 4px; }
-.card-schedule-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.4; flex-shrink: 0; }
+.card-schedule-bar {
+  position: absolute; left: 0; top: 12px; bottom: 12px;
+  width: 3px; border-radius: 0 2px 2px 0;
+  background: var(--accent); opacity: 0.7;
+}
 
 .card-bottom {
   display: flex;
