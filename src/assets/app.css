@@ -984,7 +984,7 @@ html[data-theme="dark"] .theme-seg-btn.active {
 
 /* Left metadata pane */
 .project-meta {
-  width: 460px;
+  width: 430px;
   flex-shrink: 0;
   background: #ffffff;
   border-right: 1px solid var(--border);
