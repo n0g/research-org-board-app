@@ -1320,13 +1320,11 @@ html[data-theme="dark"] .popup-dropdown {
   border: 1.5px dashed var(--border2);
   background: transparent;
   color: var(--text3);
-  font-size: 14px;
-  line-height: 1;
-  font-family: var(--font);
   cursor: pointer;
   transition: border-color 0.1s, color 0.1s;
   flex-shrink: 0;
 }
+.collab-add-pill .material-symbols-outlined { font-size: 14px; }
 .collab-add-pill:hover { border-color: var(--text2); color: var(--text2); }
 .collab-combo-wrapper { position: relative; }
 .collab-combo-input {

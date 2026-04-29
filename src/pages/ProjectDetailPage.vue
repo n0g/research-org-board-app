@@ -46,7 +46,7 @@
                 {{ person }}
                 <button class="collab-chip-remove" :aria-label="`Remove ${person}`" @click.stop="removeCollab(person)">×</button>
               </span>
-              <button v-if="!addingCollab" class="collab-add-pill" @click.stop="startAddCollab">+</button>
+              <button v-if="!addingCollab" class="collab-add-pill" @click.stop="startAddCollab"><span class="material-symbols-outlined">add</span></button>
               <div v-else ref="collabWrapperEl" class="collab-combo-wrapper">
                 <input
                   ref="collabInputEl"
@@ -138,14 +138,24 @@
             <!-- Deadline (right) -->
             <div class="meta-section">
               <div class="meta-label">Deadline</div>
-              <input
-                class="meta-date-visible"
-                :class="deadlineDateClass"
-                type="date"
-                :value="deadlineDateValue"
-                @change="onDeadlineChange"
-                @keydown.enter.prevent="($event.target).blur()"
-              >
+              <div class="deadline-input-row">
+                <input
+                  class="meta-date-visible"
+                  :class="deadlineDateClass"
+                  type="date"
+                  :value="deadlineDateValue"
+                  @change="onDeadlineChange"
+                  @keydown.enter.prevent="($event.target).blur()"
+                >
+                <button
+                  v-if="deadlineDateValue"
+                  class="deadline-clear-btn"
+                  title="Remove deadline"
+                  @click="store.setDeadlineDate(projectId, '').catch(console.error)"
+                >
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </div>
             </div>
           </div>
 
