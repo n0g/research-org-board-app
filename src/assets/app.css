@@ -1365,11 +1365,10 @@ html[data-theme="dark"] .popup-dropdown {
   border-radius: 50%;
   background: transparent;
   color: var(--text3);
-  font-size: 14px;
-  line-height: 1;
   cursor: pointer;
   transition: background 0.1s, color 0.1s;
 }
+.collab-chip-remove .material-symbols-outlined { font-size: 12px; }
 .collab-chip-remove:hover { background: var(--border); color: var(--text); }
 
 

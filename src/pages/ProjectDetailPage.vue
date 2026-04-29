@@ -44,7 +44,7 @@
               <span v-for="person in personLabels" :key="person" class="collab-chip">
                 <span class="material-symbols-outlined">person</span>
                 {{ person }}
-                <button class="collab-chip-remove" :aria-label="`Remove ${person}`" @click.stop="removeCollab(person)">×</button>
+                <button class="collab-chip-remove" :aria-label="`Remove ${person}`" @click.stop="removeCollab(person)"><span class="material-symbols-outlined">close</span></button>
               </span>
               <button v-if="!addingCollab" class="collab-add-pill" @click.stop="startAddCollab"><span class="material-symbols-outlined">add</span></button>
               <div v-else ref="collabWrapperEl" class="collab-combo-wrapper">
