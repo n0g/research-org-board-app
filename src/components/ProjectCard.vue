@@ -20,6 +20,11 @@
         :class="`card-submission-${submissionStatusKey}`"
         :title="submissionStatus"
       ><span class="material-symbols-outlined">{{ submissionStatusIcon }}</span></span>
+      <span
+        v-else-if="submissionError"
+        class="card-submission-unavailable"
+        title="Status unavailable"
+      >?</span>
       <div v-if="isStale && !isOnIce" class="card-stale-indicator" :aria-label="`Stale: ${staleWeeks}w`">!</div>
     </div>
 
@@ -135,6 +140,7 @@ const staleWeeks = computed(() => staleDays.value ? Math.floor(staleDays.value /
 
 // Submission status badge
 const submissionStatus = computed(() => reviewsStore.submissionStatuses[props.project.id]?.status ?? null)
+const submissionError = computed(() => reviewsStore.submissionStatuses[props.project.id]?.error ?? null)
 const submissionStatusKey = computed(() => {
   const s = (submissionStatus.value || '').toLowerCase()
   if (s.includes('accept')) return 'accepted'

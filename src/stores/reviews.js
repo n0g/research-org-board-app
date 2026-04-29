@@ -91,7 +91,12 @@ export const useReviewsStore = defineStore('reviews', () => {
             [id]: { status: paper.status || (paper.submitted ? 'submitted' : 'not submitted'), fetchedAt: Date.now() },
           }
         }
-      } catch { /* silently skip — don't break board on API errors */ }
+      } catch (err) {
+        submissionStatuses.value = {
+          ...submissionStatuses.value,
+          [id]: { status: null, error: err.message || 'Status unavailable', fetchedAt: Date.now() },
+        }
+      }
     }))
   }
 

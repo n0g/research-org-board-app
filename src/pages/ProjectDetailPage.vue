@@ -194,7 +194,12 @@
                 <span class="material-symbols-outlined spin-icon">refresh</span>
                 Checking…
               </div>
-              <div v-else-if="submissionStatusError" class="submission-status-error">{{ submissionStatusError }}</div>
+              <div v-else-if="submissionStatusError" class="submission-status-chips">
+                <span class="sub-chip sub-chip-gray" :title="submissionStatusError">
+                  <span class="material-symbols-outlined">help</span>
+                  Status unavailable
+                </span>
+              </div>
               <div v-else-if="submissionStatusData" class="submission-status-chips">
                 <span class="sub-chip" :class="statusChipClass(submissionStatusData.status)">
                   <span class="material-symbols-outlined">{{ statusChipIcon(submissionStatusData.status) }}</span>

@@ -572,6 +572,16 @@ html[data-theme="light"] .card { background: #ffffff; }
   line-height: 1;
 }
 .card-submission-icon .material-symbols-outlined { font-size: 14px; line-height: 1; display: block; }
+.card-submission-unavailable {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  color: var(--text3);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  line-height: 1.4;
+}
 .card-submission-submitted { color: var(--blue); }
 .card-submission-accepted  { color: var(--green); }
 .card-submission-rejected  { color: var(--red); }
