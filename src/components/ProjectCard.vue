@@ -24,7 +24,7 @@
     </div>
 
     <!-- Venue badge -->
-    <div v-if="scheduledDots >= 1" class="card-schedule-bar"></div>
+    <div v-if="scheduledTaskTime >= 1" class="card-schedule-bar"></div>
 
     <div v-if="meta.venue" class="card-venue-badge">
       <span class="card-venue-dot"></span>
@@ -100,7 +100,7 @@ const tasks = computed(() => store.projectTasks(props.project.id))
 const meta = computed(() => store.projectMeta(props.project.id))
 const deadline = computed(() => store.projectDeadline(props.project.id))
 
-const scheduledDots = computed(() => {
+const scheduledTaskTime = computed(() => {
   const { monday, sunday } = getWeekRange()
   const allTasks = store.tasks.filter(t => t.project_id === props.project.id && !t.is_completed)
   let hours = 0
@@ -111,7 +111,7 @@ const scheduledDots = computed(() => {
     const dt = new Date(m[1])
     if (dt >= monday && dt <= sunday) hours += taskHours(task)
   }
-  return Math.min(Math.round(hours), 10)
+  return hours
 })
 
 const statusText = computed(() => stageInfo.value?.task.content ?? '')
