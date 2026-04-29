@@ -41,16 +41,22 @@ async function _hotcrpGet(siteUrl, token, proxyUrl, path) {
   try {
     return await _hotcrpFetch(`${base}${path}`, token, proxyUrl)
   } catch (err) {
-    // Some HotCRP instances (e.g. PETS) use api.php/function instead of api/function
-    if (err.message?.includes('function not found')) {
+    if (!/function not found/i.test(err.message)) throw _normalizeError(err)
+    // Retry 1: some instances use api.php/ prefix instead of api/
+    const phpPath = path.replace(/^\/api\//, '/api.php/')
+    try {
+      return await _hotcrpFetch(`${base}${phpPath}`, token, proxyUrl)
+    } catch (retryErr) {
+      if (!/function not found/i.test(retryErr.message)) throw _normalizeError(retryErr)
+      // Retry 2: HotCRP v3 uses singular 'paper' instead of 'papers'
+      const singularPath = phpPath.replace('/papers', '/paper')
+      if (singularPath === phpPath) throw _normalizeError(retryErr)
       try {
-        const phpPath = path.replace(/^\/api\//, '/api.php/')
-        return await _hotcrpFetch(`${base}${phpPath}`, token, proxyUrl)
-      } catch (retryErr) {
-        throw _normalizeError(retryErr)
+        return await _hotcrpFetch(`${base}${singularPath}`, token, proxyUrl)
+      } catch (finalErr) {
+        throw _normalizeError(finalErr)
       }
     }
-    throw _normalizeError(err)
   }
 }
 
