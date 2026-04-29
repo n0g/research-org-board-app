@@ -551,7 +551,7 @@ html[data-theme="light"] .board { background: #ffffff; }
 }
 html[data-theme="light"] .card { background: #ffffff; }
 .card:hover { border-color: var(--border2); box-shadow: var(--shadow-card-hover); }
-.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.card:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .card.dragging {
   opacity: 0.4;
   cursor: grabbing;
