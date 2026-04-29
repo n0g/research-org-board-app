@@ -1651,6 +1651,7 @@ html[data-theme="light"] .token-box a { color: #3b82f6; }
   font-family: var(--font);
 }
 .stage-row .del:hover { color: var(--red); border-color: rgba(239,68,68,0.30); background: rgba(239,68,68,0.06); }
+.stage-row .del .material-symbols-outlined { font-size: 16px; }
 
 .section-label {
   font-size: 11px;
@@ -1971,6 +1972,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   font-family: var(--font);
 }
 .site-row .del:hover { color: var(--red); border-color: rgba(239,68,68,0.30); background: rgba(239,68,68,0.06); }
+.site-row .del .material-symbols-outlined { font-size: 16px; }
 
 /* ── UTILITIES ── */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }

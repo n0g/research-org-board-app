@@ -96,7 +96,7 @@
                   v-model="row.label"
                   class="stage-label-input"
                 >
-                <button class="del" :aria-label="'Remove stage ' + row.name" @click="stageRows.splice(i, 1)">×</button>
+                <button class="del" :aria-label="'Remove stage ' + row.name" @click="stageRows.splice(i, 1)"><span class="material-symbols-outlined">close</span></button>
               </div>
             </div>
 
@@ -142,7 +142,7 @@
                   <div class="site-name-text">{{ site.name }}</div>
                   <div class="site-url-text">{{ site.url }}</div>
                 </div>
-                <button class="del" :aria-label="'Remove ' + site.name" @click="reviewsStore.removeSite(site.id)">×</button>
+                <button class="del" :aria-label="'Remove ' + site.name" @click="reviewsStore.removeSite(site.id)"><span class="material-symbols-outlined">close</span></button>
               </div>
             </div>
 
