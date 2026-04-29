@@ -3,7 +3,7 @@
     <header class="triage-detail-header">
       <div class="triage-detail-header-top">
         <div class="triage-project-badge">{{ projectName }}</div>
-        <span class="triage-save-status" :class="{ visible: saveStatus }">{{ saveStatus }}</span>
+        <span class="triage-save-status" :class="{ visible: saveStatus }" role="status" aria-live="polite">{{ saveStatus }}</span>
       </div>
       <h2
         v-if="!editingTitle"
@@ -44,8 +44,8 @@
 
     <div class="triage-fields">
       <div class="triage-field">
-        <label class="triage-field-label">Urgency</label>
-        <div class="seg-ctrl">
+        <label id="label-urgency" class="triage-field-label">Urgency</label>
+        <div class="seg-ctrl" role="group" aria-labelledby="label-urgency">
           <button
             v-for="u in URGENCY_OPTS"
             :key="u.val"
@@ -57,8 +57,8 @@
       </div>
 
       <div class="triage-field">
-        <label class="triage-field-label">Importance</label>
-        <div class="seg-ctrl">
+        <label id="label-importance" class="triage-field-label">Importance</label>
+        <div class="seg-ctrl" role="group" aria-labelledby="label-importance">
           <button
             v-for="lvl in LEVEL_OPTS"
             :key="lvl"
@@ -70,8 +70,8 @@
       </div>
 
       <div class="triage-field">
-        <label class="triage-field-label">Estimated Time</label>
-        <div class="seg-ctrl">
+        <label id="label-time" class="triage-field-label">Estimated Time</label>
+        <div class="seg-ctrl" role="group" aria-labelledby="label-time">
           <button
             v-for="t in TIME_OPTS"
             :key="t"
@@ -83,17 +83,18 @@
       </div>
 
       <div class="triage-field">
-        <label class="triage-field-label">Delegatable</label>
-        <div class="seg-ctrl triage-seg-narrow">
+        <label id="label-delegatable" class="triage-field-label">Delegatable</label>
+        <div class="seg-ctrl triage-seg-narrow" role="group" aria-labelledby="label-delegatable">
           <button class="seg-btn" :class="{ active: draft.delegatable === 'no' }" @click="draft.delegatable = 'no'">No</button>
           <button class="seg-btn" :class="{ active: draft.delegatable === 'yes' }" @click="draft.delegatable = 'yes'">Yes</button>
         </div>
       </div>
 
       <div class="triage-field">
-        <label class="triage-field-label">Deadline</label>
+        <label for="task-deadline" class="triage-field-label">Deadline</label>
         <div class="deadline-input-row">
           <input
+            id="task-deadline"
             class="meta-date-visible"
             type="date"
             v-model="draft.deadline"
@@ -101,10 +102,10 @@
           <button
             v-if="draft.deadline"
             class="deadline-clear-btn"
-            title="Remove deadline"
+            aria-label="Clear deadline"
             @click="draft.deadline = ''"
           >
-            <span class="material-symbols-outlined">close</span>
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
           </button>
         </div>
       </div>

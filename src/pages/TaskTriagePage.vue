@@ -4,14 +4,14 @@
       <AppSidebar current-page="tasks">
         <template #filters>
           <template v-if="projectsWithTasks.length">
-            <div class="sidebar-section-header" @click="projectsOpen = !projectsOpen">
+            <button class="sidebar-section-header" :aria-expanded="projectsOpen" @click="projectsOpen = !projectsOpen">
               <span class="sidebar-section-label">Projects</span>
               <span
                 class="material-symbols-outlined sidebar-section-chevron"
                 :class="{ open: projectsOpen }"
                 aria-hidden="true"
               >keyboard_arrow_down</span>
-            </div>
+            </button>
             <template v-if="projectsOpen">
               <button
                 v-for="project in projectsWithTasks"
@@ -43,11 +43,13 @@
         <!-- Left: task list -->
         <div class="triage-list" :class="{ 'triage-list-collapsed': sidebarCollapsed }">
           <div class="triage-tabs">
-            <div class="seg-ctrl">
+            <div class="seg-ctrl" role="tablist" aria-label="Task filter">
               <button
                 v-for="t in TABS"
                 :key="t.key"
                 class="seg-btn"
+                role="tab"
+                :aria-selected="tab === t.key"
                 :class="{ active: tab === t.key }"
                 @click="tab = t.key"
               >{{ t.label }}</button>

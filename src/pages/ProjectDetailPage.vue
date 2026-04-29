@@ -95,15 +95,22 @@
           <div class="meta-section">
             <div class="meta-label">Pipeline Stage</div>
             <div ref="stageWrapperEl" class="popup-wrapper">
-              <button class="popup-btn" @click.stop="stagePopupOpen = !stagePopupOpen">
+              <button
+                class="popup-btn"
+                aria-haspopup="listbox"
+                :aria-expanded="stagePopupOpen"
+                @click.stop="stagePopupOpen = !stagePopupOpen"
+              >
                 <span>{{ stageObj?.name ?? 'Unassigned' }}</span>
-                <span class="material-symbols-outlined popup-chevron">expand_more</span>
+                <span class="material-symbols-outlined popup-chevron" aria-hidden="true">expand_more</span>
               </button>
-              <div v-if="stagePopupOpen" class="popup-dropdown">
+              <div v-if="stagePopupOpen" class="popup-dropdown" role="listbox" :aria-label="'Pipeline stage: ' + (stageObj?.name ?? 'Unassigned')">
                 <button
                   v-for="stage in store.stages"
                   :key="stage.label"
                   class="popup-option"
+                  role="option"
+                  :aria-selected="stageInfo?.label === stage.label"
                   :class="{ selected: stageInfo?.label === stage.label }"
                   @click="selectStage(stage)"
                 >{{ stage.name }}</button>

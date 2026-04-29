@@ -12,7 +12,7 @@
   --border2: #94a3b8;
   --text: #1a1b1f;
   --text2: #5d5e60;
-  --text3: #a1a1aa;
+  --text3: #6b6b70;
   --count-bg: #e9e7ed;
   --count-text: #4c4546;
   --accent: #a855f7;
@@ -60,7 +60,7 @@ html[data-theme="dark"] {
   --border2: rgba(84,84,88,0.90);
   --text: #FFFFFF;
   --text2: rgba(235,235,245,0.60);
-  --text3: rgba(235,235,245,0.30);
+  --text3: rgba(235,235,245,0.50);
   --count-bg: rgba(84,84,88,0.35);
   --count-text: rgba(235,235,245,0.60);
   --accent: #a855f7;
@@ -291,8 +291,12 @@ html[data-theme="dark"] .sidebar-nav-active {
 .sidebar-section-header {
   display: flex;
   align-items: center;
+  width: 100%;
   padding: 14px 16px 4px;
+  background: none;
+  border: none;
   cursor: pointer;
+  text-align: left;
 }
 .sidebar-section-label {
   font-size: 11px;

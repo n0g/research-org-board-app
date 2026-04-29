@@ -15,18 +15,16 @@
 
     <!-- Nav items -->
     <nav class="sidebar-nav">
-      <div
+      <button
         class="sidebar-nav-item"
         :class="currentPage === 'board' ? 'sidebar-nav-active' : ''"
-        :role="currentPage === 'board' ? 'presentation' : 'button'"
-        :tabindex="currentPage === 'board' ? -1 : 0"
+        :aria-current="currentPage === 'board' ? 'page' : undefined"
         title="Board"
         @click="currentPage !== 'board' && goBoard()"
-        @keydown.enter.prevent="currentPage !== 'board' && goBoard()"
       >
         <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
         <span class="sidebar-label">Board</span>
-      </div>
+      </button>
 
       <button
         class="sidebar-nav-item"
@@ -54,8 +52,9 @@
 
     <!-- Collaborators section -->
     <template v-if="!$slots.filters && store.allCollaborators.length">
-      <div
+      <button
         class="sidebar-section-header"
+        :aria-expanded="collabOpen"
         @click="collabOpen = !collabOpen"
       >
         <span class="sidebar-section-label">Collaborators</span>
@@ -64,7 +63,7 @@
           :class="{ open: collabOpen }"
           aria-hidden="true"
         >keyboard_arrow_down</span>
-      </div>
+      </button>
       <template v-if="collabOpen">
         <button
           v-for="person in store.allCollaborators"
@@ -82,8 +81,9 @@
 
     <!-- Venues section -->
     <template v-if="!$slots.filters && store.allVenues.length">
-      <div
+      <button
         class="sidebar-section-header"
+        :aria-expanded="venuesOpen"
         @click="venuesOpen = !venuesOpen"
       >
         <span class="sidebar-section-label">Venues</span>
@@ -92,7 +92,7 @@
           :class="{ open: venuesOpen }"
           aria-hidden="true"
         >keyboard_arrow_down</span>
-      </div>
+      </button>
       <template v-if="venuesOpen">
         <button
           v-for="venue in store.allVenues"
