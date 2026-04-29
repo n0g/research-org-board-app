@@ -439,7 +439,10 @@ function cancelSummary() { editingSummary.value = false }
 // ── Submission URL (Todoist 📌 Submission section) ──
 const submissionUrl = computed(() => {
   const t = store.projectSubmissionTask(projectId.value)
-  return t?.content?.trim() || ''
+  const raw = t?.content?.trim() || ''
+  // Todoist may auto-format the URL as a markdown link: [title](url)
+  const mdMatch = raw.match(/\[.*?\]\((https?:\/\/[^)]+)\)/)
+  return mdMatch ? mdMatch[1] : raw
 })
 const editingSubmission = ref(false)
 const submissionDraft = ref('')
