@@ -57,6 +57,42 @@
       </div>
 
       <div class="triage-field">
+        <label class="triage-field-label">People</label>
+        <div class="collab-chips">
+          <span v-for="name in draft.people" :key="name" class="collab-chip">
+            <span class="material-symbols-outlined">person</span>
+            {{ name }}
+            <button class="collab-chip-remove" :aria-label="'Remove ' + name" @click="removePerson(name)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </span>
+          <button v-if="!addingPerson" class="collab-add-pill" @click.stop="startAddPerson">
+            <span class="material-symbols-outlined">add</span>
+          </button>
+          <div v-else ref="personWrapperEl" class="collab-combo-wrapper">
+            <input
+              ref="personInputEl"
+              v-model="personQuery"
+              class="collab-combo-input"
+              placeholder="Name…"
+              autocomplete="off"
+              @keydown.enter.prevent="commitPerson(personQuery)"
+              @keydown.escape.prevent="cancelAddPerson"
+            >
+            <div v-if="filteredPeople.length" class="popup-dropdown">
+              <button
+                v-for="c in filteredPeople"
+                :key="c"
+                class="popup-option"
+                @mousedown.prevent
+                @click="commitPerson(c)"
+              >{{ c }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="triage-field">
         <label for="task-deadline" class="triage-field-label">Deadline</label>
         <div class="deadline-input-row">
           <input
@@ -107,42 +143,6 @@
         <div class="seg-ctrl triage-seg-narrow" role="group" aria-labelledby="label-delegatable">
           <button class="seg-btn" :class="{ active: draft.delegatable === 'no' }" @click="draft.delegatable = 'no'">No</button>
           <button class="seg-btn" :class="{ active: draft.delegatable === 'yes' }" @click="draft.delegatable = 'yes'">Yes</button>
-        </div>
-      </div>
-
-      <div class="triage-field">
-        <label class="triage-field-label">People</label>
-        <div class="collab-chips">
-          <span v-for="name in draft.people" :key="name" class="collab-chip">
-            <span class="material-symbols-outlined">person</span>
-            {{ name }}
-            <button class="collab-chip-remove" :aria-label="'Remove ' + name" @click="removePerson(name)">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </span>
-          <button v-if="!addingPerson" class="collab-add-pill" @click.stop="startAddPerson">
-            <span class="material-symbols-outlined">add</span>
-          </button>
-          <div v-else ref="personWrapperEl" class="collab-combo-wrapper">
-            <input
-              ref="personInputEl"
-              v-model="personQuery"
-              class="collab-combo-input"
-              placeholder="Name…"
-              autocomplete="off"
-              @keydown.enter.prevent="commitPerson(personQuery)"
-              @keydown.escape.prevent="cancelAddPerson"
-            >
-            <div v-if="filteredPeople.length" class="popup-dropdown">
-              <button
-                v-for="c in filteredPeople"
-                :key="c"
-                class="popup-option"
-                @mousedown.prevent
-                @click="commitPerson(c)"
-              >{{ c }}</button>
-            </div>
-          </div>
         </div>
       </div>
 
