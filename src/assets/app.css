@@ -2479,7 +2479,6 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 /* Day header row */
 .cal-header {
   display: flex;
-  border-bottom: 2px solid var(--border);
   flex-shrink: 0;
   background: var(--bg);
   position: sticky;
@@ -2496,7 +2495,6 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   flex-direction: column;
   align-items: center;
   padding: 8px 0 6px;
-  border-left: 1px solid var(--border);
 }
 .cal-day-name {
   font-size: 10px;
