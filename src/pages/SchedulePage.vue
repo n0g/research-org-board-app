@@ -597,9 +597,8 @@ async function onPointerUp() {
   const [year, month, day] = slot.dateStr.split('-').map(Number)
 
   if (task) {
-    // Delete any existing events for this task, then create a fresh one
-    const existing = calStore.scheduledByTaskId.get(task.id) || []
-    await Promise.allSettled(existing.map(ev => calStore.deleteEvent(ev.id, ev._calId)))
+    // Delete any existing events for this task across all weeks, then create a fresh one
+    await calStore.deleteAllByTaskId(task.id)
     try {
       const start = new Date(year, month - 1, day, slot.hour, slot.minute, 0, 0)
       await calStore.createEvent(

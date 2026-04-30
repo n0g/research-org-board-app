@@ -231,6 +231,27 @@ export const useCalendarStore = defineStore('calendar', () => {
     return updated
   }
 
+  async function deleteAllByTaskId(taskId) {
+    if (!await _ensureToken()) return
+    const cals = calendarList.value.length
+      ? calendarList.value.filter(c => c.accessRole === 'writer' || c.accessRole === 'owner')
+      : [{ id: selectedCalendarId.value }]
+    await Promise.allSettled(cals.map(async cal => {
+      const params = new URLSearchParams({
+        privateExtendedProperty: `todoist_task_id=${taskId}`,
+        singleEvents: 'true',
+        maxResults: '50',
+      })
+      const res = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal.id)}/events?${params}`,
+        { headers: { Authorization: `Bearer ${accessToken.value}` } }
+      )
+      if (!res.ok) return
+      const data = await res.json()
+      await Promise.allSettled((data.items || []).map(ev => deleteEvent(ev.id, cal.id)))
+    }))
+  }
+
   async function updateEventTitle(taskId, title) {
     if (!await _ensureToken()) return
     const evs = scheduledByTaskId.value.get(String(taskId))
@@ -266,6 +287,6 @@ export const useCalendarStore = defineStore('calendar', () => {
     clientId, events, loading, connectError, selectedCalendarId, calendarList, writableCalendars,
     isConnected, scheduledByTaskId,
     saveClientId, saveCalendarId, connect, disconnect,
-    loadWeekEvents, createEvent, deleteEvent, updateEvent, updateEventTitle, fetchCalendarList,
+    loadWeekEvents, createEvent, deleteEvent, deleteAllByTaskId, updateEvent, updateEventTitle, fetchCalendarList,
   }
 })

@@ -220,8 +220,7 @@ function goToday() {
 async function scheduleAt(day, slot) {
   const task = store.pendingScheduleTask
   if (!task) return
-  const existing = calStore.scheduledByTaskId.get(task.id) || []
-  await Promise.allSettled(existing.map(ev => calStore.deleteEvent(ev.id, ev._calId)))
+  await calStore.deleteAllByTaskId(task.id)
   try {
     const [year, month, dayN] = isoDate(day).split('-').map(Number)
     const start = new Date(year, month - 1, dayN, slot.hour, slot.minute, 0, 0)
