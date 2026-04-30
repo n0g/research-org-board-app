@@ -56,14 +56,18 @@
                   autocomplete="off"
                   @keydown.enter.prevent="commitCollab(collabQuery)"
                   @keydown.escape.prevent="cancelAddCollab"
+                  @keydown.down.prevent="focusCollabOption(0)"
                 >
                 <div v-if="filteredCollabs.length" class="popup-dropdown">
                   <button
-                    v-for="c in filteredCollabs"
+                    v-for="(c, idx) in filteredCollabs"
                     :key="c"
                     class="popup-option"
                     @mousedown.prevent
                     @click="commitCollab(c)"
+                    @keydown.down.prevent="focusCollabOption(idx + 1)"
+                    @keydown.up.prevent="idx === 0 ? collabInputEl?.focus() : focusCollabOption(idx - 1)"
+                    @keydown.escape.prevent="cancelAddCollab"
                   >{{ c }}</button>
                 </div>
               </div>
@@ -551,6 +555,11 @@ const filteredCollabs = computed(() => {
     .filter(c => !existing.has(c) && (!q || c.toLowerCase().includes(q)))
     .slice(0, 8)
 })
+
+function focusCollabOption(idx) {
+  const opts = collabWrapperEl.value?.querySelectorAll('.popup-option')
+  if (opts && idx >= 0 && idx < opts.length) opts[idx].focus()
+}
 
 async function startAddCollab() {
   addingCollab.value = true

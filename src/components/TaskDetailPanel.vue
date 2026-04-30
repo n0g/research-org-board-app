@@ -78,14 +78,18 @@
               autocomplete="off"
               @keydown.enter.prevent="commitPerson(personQuery)"
               @keydown.escape.prevent="cancelAddPerson"
+              @keydown.down.prevent="focusPersonOption(0)"
             >
             <div v-if="filteredPeople.length" class="popup-dropdown">
               <button
-                v-for="c in filteredPeople"
+                v-for="(c, idx) in filteredPeople"
                 :key="c"
                 class="popup-option"
                 @mousedown.prevent
                 @click="commitPerson(c)"
+                @keydown.down.prevent="focusPersonOption(idx + 1)"
+                @keydown.up.prevent="idx === 0 ? personInputEl?.focus() : focusPersonOption(idx - 1)"
+                @keydown.escape.prevent="cancelAddPerson"
               >{{ c }}</button>
             </div>
           </div>
@@ -219,6 +223,11 @@ async function startAddPerson() {
   personQuery.value = ''
   await nextTick()
   personInputEl.value?.focus()
+}
+
+function focusPersonOption(idx) {
+  const opts = personWrapperEl.value?.querySelectorAll('.popup-option')
+  if (opts && idx >= 0 && idx < opts.length) opts[idx].focus()
 }
 
 function commitPerson(name) {
