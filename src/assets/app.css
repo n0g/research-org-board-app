@@ -1615,6 +1615,7 @@ html[data-theme="dark"] .overdue-badge { color: var(--red); background: rgba(255
 html[data-theme="light"] .token-box a { color: #3b82f6; }
 .token-box a:hover { text-decoration: underline; }
 .btn-row { margin-top: 12px; display: flex; gap: 8px; }
+.token-setup-status { font-size: 13px; color: var(--text3); margin-top: 8px; text-align: center; }
 .error-msg {
   color: var(--red);
   font-size: 13px;

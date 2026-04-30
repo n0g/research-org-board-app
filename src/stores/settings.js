@@ -2,7 +2,8 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api, apiAll } from '../lib/todoist.js'
 
-const SETTINGS_PROJECT = 'Research Runway Settings'
+const SETTINGS_PROJECT = 'Settings'
+const SETTINGS_PROJECT_LEGACY = 'Research Runway Settings'
 const SETTINGS_TASK = 'app-settings'
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -13,7 +14,7 @@ export const useSettingsStore = defineStore('settings', () => {
   async function _findProject(token) {
     if (_projectId.value) return _projectId.value
     const projects = await apiAll(token, '/projects')
-    const proj = projects.find(p => p.name === SETTINGS_PROJECT && !p.parent_id)
+    const proj = projects.find(p => !p.parent_id && (p.name === SETTINGS_PROJECT || p.name === SETTINGS_PROJECT_LEGACY))
     if (!proj) return null
     _projectId.value = proj.id
     return proj.id

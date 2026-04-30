@@ -24,6 +24,7 @@
             {{ busy ? 'Connecting…' : 'Connect →' }}
           </button>
         </div>
+        <div v-if="store.setupStatus" class="token-setup-status">{{ store.setupStatus }}</div>
       </div>
     </div>
   </f7-page>

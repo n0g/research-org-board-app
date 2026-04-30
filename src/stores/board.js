@@ -26,6 +26,7 @@ export const useBoardStore = defineStore('board', () => {
   const submissionSectionByProject = ref(new Map())
   const lastUpdated = ref(null)
   const loading = ref(false)
+  const setupStatus = ref('')
   const cardDragging = ref(false)
   const triageTaskIds = ref([])
   const triageCurrentId = ref(null)
@@ -88,8 +89,43 @@ export const useBoardStore = defineStore('board', () => {
     }
   }
 
+  async function runSetup(tokenVal) {
+    setupStatus.value = 'Checking Todoist structure…'
+    const allProjects = await apiAll(tokenVal, '/projects')
+
+    let research = allProjects.find(p => !p.parent_id && p.name === 'Research')
+    if (!research) {
+      setupStatus.value = 'Creating Research project…'
+      research = await api(tokenVal, '/projects', 'POST', { name: 'Research' })
+    }
+
+    const hasSettings = allProjects.some(p => !p.parent_id && p.name === 'Settings')
+    if (!hasSettings) {
+      setupStatus.value = 'Creating Settings project…'
+      await api(tokenVal, '/projects', 'POST', { name: 'Settings' })
+    }
+
+    const subProjects = allProjects.filter(p => p.parent_id === research.id)
+    if (subProjects.length) {
+      setupStatus.value = 'Checking project sections…'
+      const allSections = await apiAll(tokenVal, '/sections')
+      const REQUIRED = ['📌 Current Status', '📌 Deadlines', '📌 Summary', '📌 Submission']
+      await Promise.all(subProjects.map(async project => {
+        const existing = new Set(allSections.filter(s => s.project_id === project.id).map(s => s.name))
+        await Promise.all(
+          REQUIRED
+            .filter(name => !existing.has(name))
+            .map(name => api(tokenVal, '/sections', 'POST', { name, project_id: project.id }))
+        )
+      }))
+    }
+
+    setupStatus.value = ''
+  }
+
   async function saveToken(val) {
     await api(val, '/projects')
+    await runSetup(val)
     token.value = val
     localStorage.setItem('rb_token', val)
     if (!stages.value) {
@@ -422,6 +458,7 @@ export const useBoardStore = defineStore('board', () => {
     token, stages, projects, tasks, loading, lastUpdated, cardDragging, triageTaskIds, triageCurrentId, pendingScheduleTask, labels,
     activeFilter, stageLabels, displayProjects, excludedSectionIds, deadlineSectionIds,
     allCollaborators, allVenues,
+    setupStatus,
     initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,
     projectStage, projectMeta, projectTasks, projectDeadline,
     moveStage, completeTask, quickAddTask, updateTaskDue, saveScheduledTime, updateStatusText,
