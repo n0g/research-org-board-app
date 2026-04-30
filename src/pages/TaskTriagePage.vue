@@ -56,7 +56,7 @@
             </div>
           </div>
 
-          <div ref="taskListBodyEl" class="triage-list-body">
+          <div ref="taskListBodyEl" class="triage-list-body" role="listbox" aria-label="Tasks">
             <div v-if="!filteredTasks.length" class="triage-empty-list">No tasks</div>
             <div
               v-for="(task, idx) in filteredTasks"

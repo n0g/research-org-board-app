@@ -55,7 +55,7 @@
               >{{ t.label }}</button>
             </div>
           </div>
-          <div ref="taskListBodyEl" class="triage-list-body">
+          <div ref="taskListBodyEl" class="triage-list-body" role="listbox" aria-label="Tasks">
             <div v-if="!calStore.isConnected" class="cal-mobile-notice">
               <span class="material-symbols-outlined">calendar_today</span>
               <span>{{ calStore.clientId ? 'Calendar session expired' : 'Connect Google Calendar to schedule tasks' }}</span>

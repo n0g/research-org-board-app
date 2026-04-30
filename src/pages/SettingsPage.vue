@@ -31,20 +31,23 @@
             </div>
             <div class="settings-row">
               <span class="settings-row-label">Theme</span>
-              <div class="theme-segmented">
+              <div class="theme-segmented" role="group" aria-label="Theme">
                 <button
                   class="theme-seg-btn"
                   :class="{ active: themePref === 'auto' }"
+                  :aria-pressed="themePref === 'auto'"
                   @click="setTheme('auto')"
                 >Auto</button>
                 <button
                   class="theme-seg-btn"
                   :class="{ active: themePref === 'light' }"
+                  :aria-pressed="themePref === 'light'"
                   @click="setTheme('light')"
                 >Light</button>
                 <button
                   class="theme-seg-btn"
                   :class="{ active: themePref === 'dark' }"
+                  :aria-pressed="themePref === 'dark'"
                   @click="setTheme('dark')"
                 >Dark</button>
               </div>

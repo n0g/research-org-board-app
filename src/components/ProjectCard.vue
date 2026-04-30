@@ -25,7 +25,7 @@
         class="card-submission-unavailable"
         title="Status unavailable"
       >?</span>
-      <div v-if="isStale && !isOnIce" class="card-stale-indicator" :aria-label="`Stale: ${staleWeeks}w`">!</div>
+      <div v-if="isStale && !isOnIce" class="card-stale-indicator" role="img" :aria-label="`Stale: ${staleWeeks}w`">!</div>
     </div>
 
     <!-- Venue badge -->
