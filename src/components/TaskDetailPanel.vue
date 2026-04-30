@@ -112,25 +112,37 @@
 
       <div class="triage-field">
         <label class="triage-field-label">People</label>
-        <div class="triage-people">
-          <span
-            v-for="name in draft.people"
-            :key="name"
-            class="triage-person-chip"
-          >
+        <div class="collab-chips">
+          <span v-for="name in draft.people" :key="name" class="collab-chip">
+            <span class="material-symbols-outlined">person</span>
             {{ name }}
-            <button class="triage-person-remove" :aria-label="'Remove ' + name" @click="removePerson(name)">
-              <span class="material-symbols-outlined" aria-hidden="true">close</span>
+            <button class="collab-chip-remove" :aria-label="'Remove ' + name" @click="removePerson(name)">
+              <span class="material-symbols-outlined">close</span>
             </button>
           </span>
-          <input
-            v-model="personInput"
-            class="triage-person-input"
-            placeholder="Add person…"
-            aria-label="Add person"
-            @keydown.enter.prevent="addPerson"
-            @keydown.comma.prevent="addPerson"
-          >
+          <button v-if="!addingPerson" class="collab-add-pill" @click.stop="startAddPerson">
+            <span class="material-symbols-outlined">add</span>
+          </button>
+          <div v-else ref="personWrapperEl" class="collab-combo-wrapper">
+            <input
+              ref="personInputEl"
+              v-model="personQuery"
+              class="collab-combo-input"
+              placeholder="Name…"
+              autocomplete="off"
+              @keydown.enter.prevent="commitPerson(personQuery)"
+              @keydown.escape.prevent="cancelAddPerson"
+            >
+            <div v-if="filteredPeople.length" class="popup-dropdown">
+              <button
+                v-for="c in filteredPeople"
+                :key="c"
+                class="popup-option"
+                @mousedown.prevent
+                @click="commitPerson(c)"
+              >{{ c }}</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -145,7 +157,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { useBoardStore } from '../stores/board.js'
 import { useTaskTriage, URGENCY_OPTS, LEVEL_OPTS, TIME_OPTS, capitalize } from '../composables/useTaskTriage.js'
 
@@ -189,18 +201,49 @@ async function startEditNotes() {
 }
 
 // ── People ──
-const personInput = ref('')
+const addingPerson = ref(false)
+const personQuery = ref('')
+const personInputEl = ref(null)
+const personWrapperEl = ref(null)
 
-function addPerson() {
-  const name = personInput.value.trim()
-  if (!name || draft.value.people.includes(name)) { personInput.value = ''; return }
-  draft.value.people = [...draft.value.people, name]
-  personInput.value = ''
+const filteredPeople = computed(() => {
+  const q = personQuery.value.toLowerCase()
+  const existing = new Set(draft.value.people)
+  return store.allCollaborators
+    .filter(c => !existing.has(c) && (!q || c.toLowerCase().includes(q)))
+    .slice(0, 8)
+})
+
+async function startAddPerson() {
+  addingPerson.value = true
+  personQuery.value = ''
+  await nextTick()
+  personInputEl.value?.focus()
+}
+
+function commitPerson(name) {
+  const trimmed = name.trim()
+  if (trimmed && !draft.value.people.includes(trimmed)) {
+    draft.value.people = [...draft.value.people, trimmed]
+  }
+  cancelAddPerson()
+}
+
+function cancelAddPerson() {
+  addingPerson.value = false
+  personQuery.value = ''
 }
 
 function removePerson(name) {
   draft.value.people = draft.value.people.filter(p => p !== name)
 }
+
+function onDocClick(e) {
+  if (!personWrapperEl.value?.contains(e.target)) cancelAddPerson()
+}
+
+onMounted(() => document.addEventListener('click', onDocClick))
+onUnmounted(() => document.removeEventListener('click', onDocClick))
 
 // ── Title editing ──
 const editingTitle = ref(false)
