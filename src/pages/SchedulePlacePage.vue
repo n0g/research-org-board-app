@@ -31,8 +31,10 @@
               class="cal-day-head"
               :class="{ 'cal-today': isToday(day) }"
             >
-              <span class="cal-day-name">{{ dayName(day) }}</span>
-              <span class="cal-day-num">{{ day.getDate() }}</span>
+              <div class="cal-day-label">
+                <span class="cal-day-name">{{ dayName(day) }}</span>
+                <span class="cal-day-num">{{ day.getDate() }}</span>
+              </div>
               <div
                 v-for="ev in allDayEvents(day)"
                 :key="ev.id"
