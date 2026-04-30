@@ -56,14 +56,21 @@
             </div>
           </div>
 
-          <div class="triage-list-body">
+          <div ref="taskListBodyEl" class="triage-list-body">
             <div v-if="!filteredTasks.length" class="triage-empty-list">No tasks</div>
             <div
-              v-for="task in filteredTasks"
+              v-for="(task, idx) in filteredTasks"
               :key="task.id"
               class="triage-task-row"
               :class="{ selected: selectedTask?.id === task.id }"
+              tabindex="0"
+              role="option"
+              :aria-selected="selectedTask?.id === task.id"
               @click="selectTask(task)"
+              @keydown.enter.prevent="selectTask(task)"
+              @keydown.space.prevent="selectTask(task)"
+              @keydown.down.prevent.stop="focusTaskRow(idx + 1)"
+              @keydown.up.prevent.stop="focusTaskRow(idx - 1)"
             >
               <div class="triage-task-project">{{ projectName(task) }}</div>
               <div class="triage-task-title">{{ task.content }}</div>
@@ -126,6 +133,7 @@ import TaskDetailPanel from '../components/TaskDetailPanel.vue'
 const store = useBoardStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
 const selectedTask = ref(null)
+const taskListBodyEl = ref(null)
 
 const tab = ref('all')
 const projectsOpen = ref(true)
@@ -197,10 +205,15 @@ function onCompleted() {
   selectedTask.value = filteredTasks.value[i + 1] ?? filteredTasks.value[i - 1] ?? null
 }
 
+function focusTaskRow(idx) {
+  const rows = taskListBodyEl.value?.querySelectorAll('.triage-task-row')
+  if (rows && idx >= 0 && idx < rows.length) rows[idx].focus()
+}
+
 function handleKey(e) {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return
-  if (e.key === 'ArrowRight') goNext()
-  else if (e.key === 'ArrowLeft') goPrev()
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goNext()
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goPrev()
 }
 
 // ── Page navigation ──

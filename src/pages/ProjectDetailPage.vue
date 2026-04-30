@@ -253,7 +253,7 @@
         </section>
 
         <!-- Right tasks pane -->
-        <section class="project-tasks">
+        <section class="project-tasks" @keydown="handleTasksKey">
           <div class="tasks-header">
             <div class="tasks-title">Project Tasks</div>
             <div class="tasks-subtitle">{{ tasks.length }} open task{{ tasks.length !== 1 ? 's' : '' }}</div>
@@ -580,6 +580,23 @@ async function removeCollab(name) {
 function onDocClick(e) {
   if (!stageWrapperEl.value?.contains(e.target)) stagePopupOpen.value = false
   if (!collabWrapperEl.value?.contains(e.target)) cancelAddCollab()
+}
+
+// ── Task keyboard navigation ──
+function handleTasksKey(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return
+  const taskEl = e.target.closest('.task-item')
+  if (!taskEl) return
+  const allItems = [...document.querySelectorAll('.project-tasks .task-item')]
+  const idx = allItems.indexOf(taskEl)
+  if (idx === -1) return
+  if (e.key === 'ArrowDown' && idx < allItems.length - 1) {
+    e.preventDefault()
+    allItems[idx + 1].querySelector('[tabindex="0"]')?.focus()
+  } else if (e.key === 'ArrowUp' && idx > 0) {
+    e.preventDefault()
+    allItems[idx - 1].querySelector('[tabindex="0"]')?.focus()
+  }
 }
 
 // ── Tasks ──

@@ -55,7 +55,7 @@
               >{{ t.label }}</button>
             </div>
           </div>
-          <div class="triage-list-body">
+          <div ref="taskListBodyEl" class="triage-list-body">
             <div v-if="!calStore.isConnected" class="cal-mobile-notice">
               <span class="material-symbols-outlined">calendar_today</span>
               <span>{{ calStore.clientId ? 'Calendar session expired' : 'Connect Google Calendar to schedule tasks' }}</span>
@@ -65,11 +65,16 @@
             </div>
             <div v-if="!filteredTasks.length" class="triage-empty-list">No tasks</div>
             <div
-              v-for="task in filteredTasks"
+              v-for="(task, idx) in filteredTasks"
               :key="task.id"
               class="triage-task-row schedule-task-row"
               :class="{ 'schedule-task-dragging': draggingTask?.id === task.id }"
+              tabindex="0"
               @pointerdown="onTaskPointerDown($event, task)"
+              @keydown.enter.prevent="scheduleTaskByKey(task)"
+              @keydown.space.prevent="scheduleTaskByKey(task)"
+              @keydown.down.prevent.stop="focusTaskRow(idx + 1)"
+              @keydown.up.prevent.stop="focusTaskRow(idx - 1)"
             >
               <div class="triage-task-project">{{ projectName(task) }}</div>
               <div class="triage-task-title">{{ task.content }}</div>
@@ -241,6 +246,7 @@ import AppSidebar from '../components/AppSidebar.vue'
 const store = useBoardStore()
 const calStore = useCalendarStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
+const taskListBodyEl = ref(null)
 
 // ── Task list ──
 const tab = ref('all')
@@ -289,6 +295,20 @@ const filteredTasks = computed(() => {
 
 function projectName(task) {
   return store.displayProjects.find(p => p.id === task.project_id)?.name ?? ''
+}
+
+function focusTaskRow(idx) {
+  const rows = taskListBodyEl.value?.querySelectorAll('.schedule-task-row')
+  if (rows && idx >= 0 && idx < rows.length) rows[idx].focus()
+}
+
+function scheduleTaskByKey(task) {
+  if (calStore.isConnected) {
+    store.pendingScheduleTask = task
+    f7.views.main.router.navigate('/schedule/place/')
+  } else {
+    goSettings()
+  }
 }
 
 function scheduledIso(task) {
