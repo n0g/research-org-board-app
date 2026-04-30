@@ -44,32 +44,6 @@
 
     <div class="triage-fields">
       <div class="triage-field">
-        <label id="label-urgency" class="triage-field-label">Urgency</label>
-        <div class="seg-ctrl" role="group" aria-labelledby="label-urgency">
-          <button
-            v-for="u in URGENCY_OPTS"
-            :key="u.val"
-            class="seg-btn"
-            :class="{ active: draft.urgency === u.val }"
-            @click="draft.urgency = u.val"
-          >{{ u.label }}</button>
-        </div>
-      </div>
-
-      <div class="triage-field">
-        <label id="label-importance" class="triage-field-label">Importance</label>
-        <div class="seg-ctrl" role="group" aria-labelledby="label-importance">
-          <button
-            v-for="lvl in LEVEL_OPTS"
-            :key="lvl"
-            class="seg-btn"
-            :class="{ active: draft.importance === lvl }"
-            @click="draft.importance = lvl"
-          >{{ capitalize(lvl) }}</button>
-        </div>
-      </div>
-
-      <div class="triage-field">
         <label id="label-time" class="triage-field-label">Estimated Time</label>
         <div class="seg-ctrl" role="group" aria-labelledby="label-time">
           <button
@@ -79,14 +53,6 @@
             :class="{ active: draft.time === t }"
             @click="draft.time = t"
           >{{ t }}</button>
-        </div>
-      </div>
-
-      <div class="triage-field">
-        <label id="label-delegatable" class="triage-field-label">Delegatable</label>
-        <div class="seg-ctrl triage-seg-narrow" role="group" aria-labelledby="label-delegatable">
-          <button class="seg-btn" :class="{ active: draft.delegatable === 'no' }" @click="draft.delegatable = 'no'">No</button>
-          <button class="seg-btn" :class="{ active: draft.delegatable === 'yes' }" @click="draft.delegatable = 'yes'">Yes</button>
         </div>
       </div>
 
@@ -107,6 +73,64 @@
           >
             <span class="material-symbols-outlined" aria-hidden="true">close</span>
           </button>
+        </div>
+      </div>
+
+      <div class="triage-field">
+        <label id="label-importance" class="triage-field-label">Importance</label>
+        <div class="seg-ctrl" role="group" aria-labelledby="label-importance">
+          <button
+            v-for="lvl in LEVEL_OPTS"
+            :key="lvl"
+            class="seg-btn"
+            :class="{ active: draft.importance === lvl }"
+            @click="draft.importance = lvl"
+          >{{ capitalize(lvl) }}</button>
+        </div>
+      </div>
+
+      <div class="triage-field">
+        <label id="label-urgency" class="triage-field-label">Urgency</label>
+        <div class="seg-ctrl" role="group" aria-labelledby="label-urgency">
+          <button
+            v-for="u in URGENCY_OPTS"
+            :key="u.val"
+            class="seg-btn"
+            :class="{ active: draft.urgency === u.val }"
+            @click="draft.urgency = u.val"
+          >{{ u.label }}</button>
+        </div>
+      </div>
+
+      <div class="triage-field">
+        <label id="label-delegatable" class="triage-field-label">Delegatable</label>
+        <div class="seg-ctrl triage-seg-narrow" role="group" aria-labelledby="label-delegatable">
+          <button class="seg-btn" :class="{ active: draft.delegatable === 'no' }" @click="draft.delegatable = 'no'">No</button>
+          <button class="seg-btn" :class="{ active: draft.delegatable === 'yes' }" @click="draft.delegatable = 'yes'">Yes</button>
+        </div>
+      </div>
+
+      <div class="triage-field">
+        <label class="triage-field-label">People</label>
+        <div class="triage-people">
+          <span
+            v-for="name in draft.people"
+            :key="name"
+            class="triage-person-chip"
+          >
+            {{ name }}
+            <button class="triage-person-remove" :aria-label="'Remove ' + name" @click="removePerson(name)">
+              <span class="material-symbols-outlined" aria-hidden="true">close</span>
+            </button>
+          </span>
+          <input
+            v-model="personInput"
+            class="triage-person-input"
+            placeholder="Add person…"
+            aria-label="Add person"
+            @keydown.enter.prevent="addPerson"
+            @keydown.comma.prevent="addPerson"
+          >
         </div>
       </div>
 
@@ -162,6 +186,20 @@ async function startEditNotes() {
   editingNotes.value = true
   await nextTick()
   notesInputEl.value?.focus()
+}
+
+// ── People ──
+const personInput = ref('')
+
+function addPerson() {
+  const name = personInput.value.trim()
+  if (!name || draft.value.people.includes(name)) { personInput.value = ''; return }
+  draft.value.people = [...draft.value.people, name]
+  personInput.value = ''
+}
+
+function removePerson(name) {
+  draft.value.people = draft.value.people.filter(p => p !== name)
 }
 
 // ── Title editing ──

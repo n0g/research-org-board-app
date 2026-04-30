@@ -2241,6 +2241,30 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 /* Triage fields */
 .triage-fields { display: flex; flex-direction: column; gap: 28px; }
 .triage-field {}
+.triage-people { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.triage-person-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 500;
+  padding: 3px 6px 3px 10px;
+  border-radius: 20px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text2);
+}
+.triage-person-remove {
+  display: flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; flex-shrink: 0;
+  background: none; border: none; cursor: pointer; padding: 0;
+  color: var(--text3); border-radius: 50%;
+}
+.triage-person-remove:hover { background: var(--border); color: var(--text); }
+.triage-person-remove .material-symbols-outlined { font-size: 12px; }
+.triage-person-input {
+  flex: 1; min-width: 80px;
+  background: none; border: none; outline: none;
+  font-size: 13px; color: var(--text);
+  padding: 2px 0;
+}
+.triage-person-input::placeholder { color: var(--text3); }
 .deadline-input-row { display: flex; align-items: center; gap: 6px; }
 .deadline-input-row .meta-date-visible { flex: 1; }
 .deadline-clear-btn {

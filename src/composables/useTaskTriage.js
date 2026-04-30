@@ -16,7 +16,7 @@ export const URGENCY_OPTS = [
 ]
 export const LEVEL_OPTS = ['low', 'med', 'high']
 export const TIME_OPTS = ['15m', '30m', '1h', '2h']
-export const TRIAGE_PREFIXES = ['importance::', 'time::', 'delegatable::']
+export const TRIAGE_PREFIXES = ['importance::', 'time::', 'delegatable::', 'person::']
 
 export function getLabel(task, prefix) {
   return (task.labels || []).find(l => l.startsWith(prefix))?.slice(prefix.length) ?? null
@@ -64,7 +64,7 @@ export function capitalize(s) {
 
 export function useTaskTriage() {
   const store = useBoardStore()
-  const draft = ref({ urgency: 'low', importance: null, time: null, delegatable: null, deadline: '', notes: '' })
+  const draft = ref({ urgency: 'low', importance: null, time: null, delegatable: null, deadline: '', notes: '', people: [] })
   const saveStatus = ref('')
   const currentTask = ref(null)
 
@@ -94,6 +94,7 @@ export function useTaskTriage() {
       delegatable: getLabel(task, 'delegatable::'),
       deadline: task.due?.date ?? '',
       notes: (task.description ?? '').split('\n').filter(l => !l.startsWith('📅 Scheduled:')).join('\n').trimEnd(),
+      people: (task.labels || []).filter(l => l.startsWith('person::')).map(l => l.slice(8)),
     }
     saveStatus.value = ''
   }
@@ -108,6 +109,7 @@ export function useTaskTriage() {
       if (draft.value.importance) triageLabels.push(`importance::${draft.value.importance}`)
       if (draft.value.time) triageLabels.push(`time::${draft.value.time}`)
       if (draft.value.delegatable) triageLabels.push(`delegatable::${draft.value.delegatable}`)
+      draft.value.people.forEach(name => triageLabels.push(`person::${name}`))
       await store.updateTaskTriage(task.id, {
         priority: priorityFromUrgency(draft.value.urgency),
         labels: [...baseLabels, ...triageLabels],
