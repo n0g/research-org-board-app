@@ -88,6 +88,15 @@
               </div>
             </div>
           </div>
+          <button
+            class="filter-fab"
+            :class="{ active: showUntriaged }"
+            :aria-pressed="showUntriaged"
+            :aria-label="showUntriaged ? 'Show all tasks' : 'Show untriaged only'"
+            @click="showUntriaged = !showUntriaged"
+          >
+            <span class="material-symbols-outlined">filter_alt</span>
+          </button>
         </div>
 
         <!-- Right: task detail -->
@@ -136,6 +145,7 @@ const selectedTask = ref(null)
 const taskListBodyEl = ref(null)
 
 const tab = ref('all')
+const showUntriaged = ref(false)
 const projectsOpen = ref(true)
 const activeProjectId = ref(null)
 
@@ -163,6 +173,7 @@ const filteredTasks = computed(() => {
   let tasks = activeProjectId.value
     ? allTasks.value.filter(t => t.project_id === activeProjectId.value)
     : allTasks.value
+  if (showUntriaged.value) tasks = tasks.filter(t => !getLabel(t, 'time::'))
   switch (tab.value) {
     case 'important': return tasks.filter(t => getLabel(t, 'importance::') === 'high')
     case 'quick': return tasks.filter(t => getLabel(t, 'time::') === '15m')

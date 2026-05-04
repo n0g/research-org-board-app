@@ -105,6 +105,15 @@
               </div>
             </div>
           </div>
+          <button
+            class="filter-fab"
+            :class="{ active: showUnscheduled }"
+            :aria-pressed="showUnscheduled"
+            :aria-label="showUnscheduled ? 'Show all tasks' : 'Show unscheduled only'"
+            @click="showUnscheduled = !showUnscheduled"
+          >
+            <span class="material-symbols-outlined">filter_alt</span>
+          </button>
         </div>
 
         <!-- Right: calendar -->
@@ -252,6 +261,7 @@ const taskListBodyEl = ref(null)
 
 // ── Task list ──
 const tab = ref('all')
+const showUnscheduled = ref(false)
 const projectsOpen = ref(true)
 const activeProjectId = ref(null)
 
@@ -287,6 +297,7 @@ const filteredTasks = computed(() => {
   let tasks = activeProjectId.value
     ? allTasks.value.filter(t => t.project_id === activeProjectId.value)
     : allTasks.value
+  if (showUnscheduled.value) tasks = tasks.filter(t => !scheduledIso(t))
   switch (tab.value) {
     case 'important': return tasks.filter(t => getLabel(t, 'importance::') === 'high')
     case 'quick': return tasks.filter(t => getLabel(t, 'time::') === '15m')

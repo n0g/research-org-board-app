@@ -541,7 +541,7 @@ html[data-theme="light"] .board { background: #ffffff; }
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 16px;
+  padding: 16px 10px 10px 16px;
   cursor: grab;
   box-shadow: var(--shadow-card);
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -655,6 +655,7 @@ html[data-theme="light"] .card { background: #ffffff; }
   background: color-mix(in srgb, var(--accent) 5%, var(--bg-surface));
 }
 html[data-theme="light"] .card.card-focus { background: color-mix(in srgb, var(--accent) 5%, #ffffff); }
+html[data-theme="dark"] .card.card-focus { background: color-mix(in srgb, var(--accent) 14%, #000000); }
 
 /* Card bottom row */
 .card-bottom {
@@ -735,6 +736,30 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   opacity: 1;
 }
 .card-focus-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* ── FILTER FAB ── */
+.filter-fab {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text2);
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s, border-color 0.15s;
+  z-index: 2;
+}
+.filter-fab .material-symbols-outlined { font-size: 20px; }
+.filter-fab:hover { background: var(--bg); color: var(--text); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.filter-fab.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 2px 12px rgba(168,85,247,0.35); }
+.filter-fab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ── BUTTONS ── */
 .btn {
@@ -2104,6 +2129,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   flex-direction: column;
   overflow: hidden;
   background: var(--bg);
+  position: relative;
 }
 .triage-tabs {
   padding: 12px;
@@ -2123,6 +2149,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
+  padding-bottom: 72px;
 }
 .triage-list-body::-webkit-scrollbar { display: none; }
 .triage-empty-list {
@@ -2418,6 +2445,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   flex-direction: column;
   overflow: hidden;
   flex-shrink: 0;
+  position: relative;
 }
 
 .schedule-list-collapsed .triage-tabs { padding-left: 52px; }
