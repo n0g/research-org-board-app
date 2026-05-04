@@ -9,7 +9,7 @@
         :aria-label="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
         @click="toggleSidebar"
       >
-        <span class="material-symbols-outlined">side_navigation</span>
+        <span class="material-symbols-outlined">left_panel_close</span>
       </button>
     </div>
 
@@ -22,7 +22,7 @@
         title="Board"
         @click="currentPage !== 'board' && goBoard()"
       >
-        <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
+        <span class="material-symbols-outlined" aria-hidden="true">view_kanban</span>
         <span class="sidebar-label">Board</span>
       </button>
 

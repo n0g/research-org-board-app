@@ -12,7 +12,7 @@
           aria-label="Expand sidebar"
           @click="toggleSidebar"
         >
-          <span class="material-symbols-outlined">side_navigation</span>
+          <span class="material-symbols-outlined">left_panel_open</span>
         </button>
         <div ref="ptrIndicator" class="ptr-indicator" aria-hidden="true"></div>
 
@@ -45,7 +45,7 @@
     </div>
 
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn tab-btn-active" aria-current="page"><span class="material-symbols-outlined">dashboard</span>Board</button>
+      <button class="tab-btn tab-btn-active" aria-current="page"><span class="material-symbols-outlined">view_kanban</span>Board</button>
       <button class="tab-btn" @click="goTasks"><span class="material-symbols-outlined">checklist</span>Tasks</button>
       <button class="tab-btn" @click="goSchedule"><span class="material-symbols-outlined">calendar_today</span>Schedule</button>
       <button class="tab-btn" @click="goSettings"><span class="material-symbols-outlined">settings</span>Settings</button>

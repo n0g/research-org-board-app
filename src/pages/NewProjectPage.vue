@@ -11,7 +11,7 @@
           aria-label="Expand sidebar"
           @click="toggleSidebar"
         >
-          <span class="material-symbols-outlined">side_navigation</span>
+          <span class="material-symbols-outlined">left_panel_open</span>
         </button>
 
         <section class="project-meta">
@@ -50,7 +50,7 @@
     </div>
 
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn tab-btn-active" aria-current="page" @click="goBoard"><span class="material-symbols-outlined">dashboard</span>Board</button>
+      <button class="tab-btn tab-btn-active" aria-current="page" @click="goBoard"><span class="material-symbols-outlined">view_kanban</span>Board</button>
       <button class="tab-btn" @click="goReviews"><span class="material-symbols-outlined">grading</span>Reviews</button>
       <button class="tab-btn" @click="goSettings"><span class="material-symbols-outlined">settings</span>Settings</button>
     </f7-toolbar>
