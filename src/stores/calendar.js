@@ -283,10 +283,29 @@ export const useCalendarStore = defineStore('calendar', () => {
     })
   }
 
+  async function linkEventToTask(eventId, calId, taskId) {
+    if (!await _ensureToken()) throw new Error('Not authenticated')
+    await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${eventId}`,
+      {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${accessToken.value}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ extendedProperties: { private: { todoist_task_id: String(taskId) } } }),
+      }
+    )
+    const ev = events.value.find(e => e.id === eventId)
+    if (ev) {
+      if (!ev.extendedProperties) ev.extendedProperties = {}
+      if (!ev.extendedProperties.private) ev.extendedProperties.private = {}
+      ev.extendedProperties.private.todoist_task_id = String(taskId)
+    }
+  }
+
   return {
     clientId, events, loading, connectError, selectedCalendarId, calendarList, writableCalendars,
     isConnected, scheduledByTaskId,
     saveClientId, saveCalendarId, connect, disconnect,
     loadWeekEvents, createEvent, deleteEvent, deleteAllByTaskId, updateEvent, updateEventTitle, fetchCalendarList,
+    linkEventToTask,
   }
 })

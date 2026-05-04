@@ -2700,6 +2700,47 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 .cal-event-readonly {
   cursor: default;
 }
+.cal-event-unlinked {
+  opacity: 0.7;
+  cursor: pointer;
+  outline: 1.5px dashed rgba(255,255,255,0.65);
+  outline-offset: -2px;
+}
+.cal-event-unlinked::after {
+  content: '+';
+  position: absolute;
+  top: 1px;
+  right: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+  line-height: 1;
+}
+
+/* ── Calendar event import overlay ── */
+.import-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+}
+.import-sheet {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+.import-label { font-size: 12px; color: var(--text3); margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+.import-event-title { font-size: 16px; font-weight: 600; color: var(--text); margin: 0 0 4px; }
+.import-event-time { font-size: 13px; color: var(--text2); margin: 0 0 20px; }
+.import-actions { display: flex; gap: 8px; justify-content: flex-end; }
 .cal-event-title {
   font-size: 11px;
   font-weight: 500;

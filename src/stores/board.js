@@ -250,6 +250,22 @@ export const useBoardStore = defineStore('board', () => {
     tasks.value.push(task)
   }
 
+  async function addInboxTask(content, description) {
+    const task = await api(token.value, '/tasks', 'POST', { content })
+    if (description) {
+      await api(token.value, `/tasks/${task.id}`, 'POST', { description })
+      task.description = description
+    }
+    tasks.value.push(task)
+    return task
+  }
+
+  async function assignTaskToProject(taskId, projectId) {
+    await api(token.value, `/tasks/${taskId}`, 'POST', { project_id: projectId })
+    const task = tasks.value.find(t => t.id === taskId)
+    if (task) task.project_id = projectId
+  }
+
   async function updateTaskDue(taskId, dateVal) {
     const body = dateVal ? { due_date: dateVal } : { due_string: 'no due date' }
     await api(token.value, `/tasks/${taskId}`, 'POST', body)
@@ -490,5 +506,6 @@ export const useBoardStore = defineStore('board', () => {
     projectSummaryTask, updateSummary, projectSubmissionTask, updateSubmissionUrl,
     updateTaskTriage, createProject, deleteProject, setFilter,
     focusProjectIds, toggleFocus,
+    addInboxTask, assignTaskToProject,
   }
 })

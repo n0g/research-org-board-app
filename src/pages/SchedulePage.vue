@@ -209,7 +209,11 @@
                         v-for="ev in timedDayEvents(day)"
                         :key="ev.id"
                         class="cal-event"
-                        :class="{ 'cal-event-moving': draggingCalEvent?.id === ev.id, 'cal-event-readonly': ev._calId !== calStore.selectedCalendarId }"
+                        :class="{
+                          'cal-event-moving': draggingCalEvent?.id === ev.id,
+                          'cal-event-readonly': ev._calId !== calStore.selectedCalendarId,
+                          'cal-event-unlinked': isUnlinked(ev),
+                        }"
                         :style="eventStyle(ev)"
                         draggable="false"
                         @dragstart.prevent
@@ -235,6 +239,23 @@
       </div>
     </div>
 
+
+    <!-- Calendar event import overlay -->
+    <Teleport to="body">
+      <div v-if="importingEvent" class="import-overlay" @click.self="importingEvent = null">
+        <div class="import-sheet" role="dialog" aria-modal="true" aria-labelledby="import-title">
+          <p class="import-label">Add as task</p>
+          <p id="import-title" class="import-event-title">{{ importingEvent.summary }}</p>
+          <p class="import-event-time">{{ importEventTimeStr(importingEvent) }}</p>
+          <div class="import-actions">
+            <button class="btn" @click="importingEvent = null">Cancel</button>
+            <button class="btn primary" :disabled="importing" @click="importEventAsTask">
+              {{ importing ? 'Adding…' : 'Add as task' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
 
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
       <button class="tab-btn" @click="goBoard"><span class="material-symbols-outlined">view_kanban</span>Board</button>
@@ -460,6 +481,41 @@ const draggingCalEvent = ref(null)
 const hoveredSlot = ref(null)
 let ghostEl = null
 
+// ── Calendar event import ──
+const importingEvent = ref(null)
+const importing = ref(false)
+
+function isUnlinked(ev) {
+  return !ev.extendedProperties?.private?.todoist_task_id && ev._calId === calStore.selectedCalendarId
+}
+
+function importEventTimeStr(ev) {
+  if (!ev) return ''
+  const start = new Date(ev.start.dateTime || ev.start.date)
+  const date = start.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
+  if (!ev.start.dateTime) return date
+  const time = start.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+  return `${date} at ${time}`
+}
+
+async function importEventAsTask() {
+  if (importing.value || !importingEvent.value) return
+  importing.value = true
+  try {
+    const ev = importingEvent.value
+    const isoDatetime = ev.start.dateTime || (ev.start.date + 'T09:00:00')
+    const d = new Date(isoDatetime)
+    const readable = d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) +
+      ' at ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+    const scheduledLine = `📅 Scheduled: ${readable} (${isoDatetime})`
+    const task = await store.addInboxTask(ev.summary, scheduledLine)
+    await calStore.linkEventToTask(ev.id, ev._calId, task.id)
+    importingEvent.value = null
+  } finally {
+    importing.value = false
+  }
+}
+
 function taskDurationMinutes(task) {
   const t = getTime(task)
   if (t === '15m') return 15
@@ -583,6 +639,10 @@ function onTaskPointerDown(e, task) {
 
 function onCalEventPointerDown(e, ev) {
   if (e.button !== 0) return
+  if (isUnlinked(ev)) {
+    importingEvent.value = ev
+    return
+  }
   if (ev._calId !== calStore.selectedCalendarId) return
   e.preventDefault()
   draggingCalEvent.value = ev

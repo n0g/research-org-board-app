@@ -117,6 +117,14 @@
       </div>
 
 
+      <div v-if="isInboxTask" class="triage-field">
+        <label class="triage-field-label">Assign to project</label>
+        <select class="cal-select" @change="assignProject($event.target.value)">
+          <option value="">— Inbox —</option>
+          <option v-for="p in store.displayProjects" :key="p.id" :value="p.id">{{ p.name }}</option>
+        </select>
+      </div>
+
       <div class="triage-complete-row">
         <button class="triage-complete-btn" :disabled="completing" @click="complete">
           <span class="material-symbols-outlined">check_circle</span>
@@ -141,7 +149,13 @@ const emit = defineEmits(['completed'])
 const store = useBoardStore()
 const { draft, saveStatus, initDraft } = useTaskTriage()
 
-const projectName = computed(() => store.displayProjects.find(p => p.id === props.task.project_id)?.name ?? '')
+const projectName = computed(() => store.displayProjects.find(p => p.id === props.task.project_id)?.name ?? 'Inbox')
+const isInboxTask = computed(() => !store.displayProjects.some(p => p.id === props.task.project_id))
+
+async function assignProject(projectId) {
+  if (!projectId) return
+  await store.assignTaskToProject(props.task.id, projectId)
+}
 
 watch(() => props.task, (task) => {
   if (task) { initDraft(task); editingNotes.value = false; editingTitle.value = false }
