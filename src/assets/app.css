@@ -741,8 +741,6 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
 .bolt-focus-half .bolt-fg,
 .bolt-focus-full .bolt-fg  { display: flex; }
 .bolt-focus-half .bolt-fg  { clip-path: inset(50% 0 0 0); }
-.bolt-focus-half .bolt-bg  { opacity: 0.35; }
-.bolt-focus-full .bolt-bg  { opacity: 0.25; }
 /* Always show on touch devices; show on hover/focus on pointer devices */
 @media (hover: hover) {
   .card:hover .card-focus-btn,
