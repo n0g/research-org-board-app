@@ -181,6 +181,29 @@ export const useBoardStore = defineStore('board', () => {
     }
   }
 
+  const FOCUS_LABEL = 'sprint::focus'
+
+  const focusProjectIds = computed(() => {
+    const ids = new Set()
+    for (const p of displayProjects.value) {
+      const stage = getProjectStage(tasks.value, stageLabels.value, p.id)
+      if (stage?.task.labels?.includes(FOCUS_LABEL)) ids.add(p.id)
+    }
+    return ids
+  })
+
+  async function toggleFocus(projectId) {
+    const stage = getProjectStage(tasks.value, stageLabels.value, projectId)
+    if (!stage) return
+    const task = stage.task
+    const hasFocus = (task.labels || []).includes(FOCUS_LABEL)
+    const newLabels = hasFocus
+      ? task.labels.filter(l => l !== FOCUS_LABEL)
+      : [...(task.labels || []), FOCUS_LABEL]
+    task.labels = newLabels
+    await api(token.value, `/tasks/${task.id}`, 'POST', { labels: newLabels })
+  }
+
   function projectStage(projectId) {
     return getProjectStage(tasks.value, stageLabels.value, projectId)
   }
@@ -466,5 +489,6 @@ export const useBoardStore = defineStore('board', () => {
     projectDeadlineTaskBase, projectDeadlineTaskObj,
     projectSummaryTask, updateSummary, projectSubmissionTask, updateSubmissionUrl,
     updateTaskTriage, createProject, deleteProject, setFilter,
+    focusProjectIds, toggleFocus,
   }
 })

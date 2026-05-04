@@ -649,13 +649,14 @@ html[data-theme="light"] .card { background: #ffffff; }
   margin-bottom: 12px;
 }
 
-/* Card bottom row */
-.card-schedule-bar {
-  position: absolute; left: 0; top: 12px; bottom: 12px;
-  width: 3px; border-radius: 0 2px 2px 0;
-  background: var(--accent); opacity: 0.7;
+/* Focus card */
+.card.card-focus {
+  border-top: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--bg-surface));
 }
+html[data-theme="light"] .card.card-focus { background: color-mix(in srgb, var(--accent) 5%, #ffffff); }
 
+/* Card bottom row */
 .card-bottom {
   display: flex;
   align-items: center;
@@ -696,6 +697,44 @@ html[data-theme="dark"] .card-person-chip {
 .card-date.due-soon { color: #f97316; }
 html[data-theme="dark"] .card-date.overdue { color: var(--red); }
 html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
+
+.card-bottom-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.card-focus-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text3);
+  opacity: 0.3;
+  cursor: pointer;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+.card-focus-btn .material-symbols-outlined { font-size: 18px; }
+/* Always show on touch devices; show on hover/focus on pointer devices */
+@media (hover: hover) {
+  .card:hover .card-focus-btn,
+  .card:focus-within .card-focus-btn { opacity: 1; }
+}
+@media (hover: none) {
+  .card-focus-btn { opacity: 0.4; }
+}
+.card-focus-btn:hover { background: var(--bg-surface); opacity: 1; }
+.card-focus-btn.active {
+  color: var(--accent);
+  opacity: 1;
+}
+.card-focus-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 /* ── BUTTONS ── */
 .btn {

@@ -5,7 +5,8 @@
     :class="{
       dragging: dragging,
       stale: isStale && !isOnIce,
-      'on-ice': isOnIce
+      'on-ice': isOnIce,
+      'card-focus': isFocus,
     }"
     role="listitem"
     tabindex="0"
@@ -28,9 +29,6 @@
       <div v-if="isStale && !isOnIce" class="card-stale-indicator" role="img" :aria-label="`Stale: ${staleWeeks}w`">!</div>
     </div>
 
-    <!-- Venue badge -->
-    <div v-if="scheduledTaskTime >= 1" class="card-schedule-bar"></div>
-
     <div v-if="meta.venue" class="card-venue-badge">
       <span class="card-venue-dot"></span>
       <span class="card-venue-name">{{ meta.venue }}</span>
@@ -42,7 +40,7 @@
     <!-- Status -->
     <div v-if="statusText" class="card-status">{{ statusText }}</div>
 
-    <!-- Bottom row: people + date -->
+    <!-- Bottom row: people + date + focus -->
     <div class="card-bottom">
       <div class="card-people">
         <span
@@ -52,9 +50,21 @@
         >{{ person }}</span>
       </div>
 
-      <div v-if="deadlineDate" class="card-date" :class="deadlineDateClass">
-        <span class="material-symbols-outlined">calendar_today</span>
-        {{ deadlineFormatted }}
+      <div class="card-bottom-right">
+        <div v-if="deadlineDate" class="card-date" :class="deadlineDateClass">
+          <span class="material-symbols-outlined">calendar_today</span>
+          {{ deadlineFormatted }}
+        </div>
+        <button
+          class="card-focus-btn"
+          :class="{ active: isFocus }"
+          :aria-pressed="isFocus"
+          :aria-label="isFocus ? 'Remove focus' : 'Set as focus project'"
+          @pointerdown.stop
+          @click.stop="store.toggleFocus(project.id)"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">bolt</span>
+        </button>
       </div>
     </div>
   </div>
@@ -65,27 +75,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useBoardStore } from '../stores/board.js'
 import { useReviewsStore } from '../stores/reviews.js'
 import { VENUES, stripPersonPrefix, isPersonLabel, nearestDue, dueStatus, formatDate } from '../lib/helpers.js'
-
-function getWeekRange() {
-  const now = new Date()
-  const dow = now.getDay()
-  const monday = new Date(now)
-  monday.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1))
-  monday.setHours(0, 0, 0, 0)
-  const sunday = new Date(monday)
-  sunday.setDate(monday.getDate() + 6)
-  sunday.setHours(23, 59, 59, 999)
-  return { monday, sunday }
-}
-
-function taskHours(task) {
-  const label = (task.labels || []).find(l => l.startsWith('time::'))?.slice(5)
-  if (label === '15m') return 0.25
-  if (label === '30m') return 0.5
-  if (label === '1h') return 1
-  if (label === '2h') return 2
-  return 1
-}
 
 const props = defineProps({
   project: { type: Object, required: true },
@@ -104,20 +93,7 @@ const stageLabelSet = computed(() => new Set(store.stageLabels))
 const tasks = computed(() => store.projectTasks(props.project.id))
 const meta = computed(() => store.projectMeta(props.project.id))
 const deadline = computed(() => store.projectDeadline(props.project.id))
-
-const scheduledTaskTime = computed(() => {
-  const { monday, sunday } = getWeekRange()
-  const allTasks = store.tasks.filter(t => t.project_id === props.project.id && !t.is_completed)
-  let hours = 0
-  for (const task of allTasks) {
-    const line = (task.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
-    const m = line?.match(/\(([^)]+)\)$/)
-    if (!m) continue
-    const dt = new Date(m[1])
-    if (dt >= monday && dt <= sunday) hours += taskHours(task)
-  }
-  return hours
-})
+const isFocus = computed(() => store.focusProjectIds.has(props.project.id))
 
 const statusText = computed(() => stageInfo.value?.task.content ?? '')
 const personLabels = computed(() => {
