@@ -484,13 +484,15 @@ function dropPreviewStyle(day) {
   }
 }
 
-function _startDrag(e, label) {
-  ghostEl = document.createElement('div')
-  ghostEl.className = 'cal-drag-ghost'
-  ghostEl.textContent = label
-  ghostEl.style.left = `${e.clientX + 14}px`
-  ghostEl.style.top = `${e.clientY - 10}px`
-  document.body.appendChild(ghostEl)
+function _startDrag(e, label, isTouch = false) {
+  if (!isTouch) {
+    ghostEl = document.createElement('div')
+    ghostEl.className = 'cal-drag-ghost'
+    ghostEl.textContent = label
+    ghostEl.style.left = `${e.clientX + 14}px`
+    ghostEl.style.top = `${e.clientY - 10}px`
+    document.body.appendChild(ghostEl)
+  }
   document.addEventListener('pointermove', onPointerMove)
   document.addEventListener('pointerup', onPointerUp)
 }
@@ -531,28 +533,34 @@ function onTaskPointerDown(e, task) {
   if (e.pointerType === 'mouse' && e.button !== 0) return
 
   if (e.pointerType === 'touch') {
-    // iPad: wait for directional intent — horizontal = drag, vertical = scroll
+    // iPad: long press (350ms) to initiate drag — avoids scroll interference
     const startX = e.clientX
     const startY = e.clientY
+    let cancelled = false
 
-    function onMoveDecide(me) {
-      const dx = me.clientX - startX
-      const dy = me.clientY - startY
-      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return
-      document.removeEventListener('pointermove', onMoveDecide)
-      document.removeEventListener('pointerup', onUpCancel)
-      if (Math.abs(dx) >= Math.abs(dy)) {
-        draggingTask.value = task
-        _startDrag(me, task.content)
-        hoveredSlot.value = _slotFromPointer(me)
+    function onMoveCancel(me) {
+      if (Math.hypot(me.clientX - startX, me.clientY - startY) > 8) {
+        cancelled = true
+        clearTimeout(longPressTimer)
+        document.removeEventListener('pointermove', onMoveCancel)
+        document.removeEventListener('pointerup', onUpCancel)
       }
-      // vertical → browser scroll takes over, nothing to do
     }
     function onUpCancel() {
-      document.removeEventListener('pointermove', onMoveDecide)
+      cancelled = true
+      clearTimeout(longPressTimer)
+      document.removeEventListener('pointermove', onMoveCancel)
       document.removeEventListener('pointerup', onUpCancel)
     }
-    document.addEventListener('pointermove', onMoveDecide)
+    const longPressTimer = setTimeout(() => {
+      document.removeEventListener('pointermove', onMoveCancel)
+      document.removeEventListener('pointerup', onUpCancel)
+      if (cancelled) return
+      navigator.vibrate?.(10)
+      draggingTask.value = task
+      _startDrag(e, task.content, true)
+    }, 350)
+    document.addEventListener('pointermove', onMoveCancel)
     document.addEventListener('pointerup', onUpCancel)
     return
   }
