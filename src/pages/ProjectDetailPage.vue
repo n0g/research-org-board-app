@@ -21,21 +21,32 @@
             Board
           </button>
 
-          <h1
-            v-if="!editingTitle"
-            class="project-title project-title-editable"
-            @click="startEditTitle"
-          >{{ project?.name ?? 'Loading…' }}</h1>
-          <textarea
-            v-else
-            ref="titleInputEl"
-            v-model="titleDraft"
-            class="project-title project-title-input"
-            rows="2"
-            @blur="saveTitle"
-            @keydown.meta.enter.prevent="titleInputEl?.blur()"
-            @keydown.escape.prevent="cancelTitle"
-          ></textarea>
+          <div class="project-title-row">
+            <h1
+              v-if="!editingTitle"
+              class="project-title project-title-editable"
+              @click="startEditTitle"
+            >{{ project?.name ?? 'Loading…' }}</h1>
+            <textarea
+              v-else
+              ref="titleInputEl"
+              v-model="titleDraft"
+              class="project-title project-title-input"
+              rows="2"
+              @blur="saveTitle"
+              @keydown.meta.enter.prevent="titleInputEl?.blur()"
+              @keydown.escape.prevent="cancelTitle"
+            ></textarea>
+            <button
+              class="card-focus-btn"
+              :class="{ active: isFocus }"
+              :aria-pressed="isFocus"
+              :aria-label="isFocus ? 'Remove focus' : 'Set as focus project'"
+              @click="store.toggleFocus(projectId)"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">bolt</span>
+            </button>
+          </div>
 
           <!-- Collaborators (first after title) -->
           <div class="meta-section">
@@ -322,6 +333,7 @@ const newTaskContent = ref('')
 
 const projectId = computed(() => props.f7route.params.id)
 const project = computed(() => store.displayProjects.find(p => p.id === projectId.value) ?? null)
+const isFocus = computed(() => store.focusProjectIds.has(projectId.value))
 const stageInfo = computed(() => store.projectStage(projectId.value))
 const meta = computed(() => store.projectMeta(projectId.value))
 const tasks = computed(() => store.projectTasks(projectId.value))
