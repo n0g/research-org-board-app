@@ -49,7 +49,7 @@ export const useBoardStore = defineStore('board', () => {
       const stage = getProjectStage(tasks.value, stageLabels.value, p.id)
       if (stage) {
         (stage.task.labels || [])
-          .filter(l => !stageSet.has(l) && !venueSet.has(l.toLowerCase()))
+          .filter(l => !stageSet.has(l) && !venueSet.has(l.toLowerCase()) && isPersonLabel(l))
           .forEach(l => people.add(stripPersonPrefix(l)))
       }
     })
