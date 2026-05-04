@@ -2747,7 +2747,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.35);
-  z-index: 200;
+  z-index: 10001;
   display: flex;
   align-items: flex-end;
   padding: 16px;

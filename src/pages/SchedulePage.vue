@@ -643,7 +643,7 @@ function onTaskPointerDown(e, task) {
 }
 
 function onCalEventPointerDown(e, ev) {
-  if (e.button !== 0) return
+  if (e.pointerType === 'mouse' && e.button !== 0) return
   if (isUnlinked(ev)) {
     importingEvent.value = ev
     return
