@@ -549,30 +549,30 @@ function onTaskPointerDown(e, task) {
     const startY = e.clientY
     let cancelled = false
 
+    function cleanup() {
+      document.removeEventListener('pointermove', onMoveCancel)
+      document.removeEventListener('pointerup', onUpCancel)
+      document.removeEventListener('pointercancel', onCancel)
+    }
     function onMoveCancel(me) {
       if (Math.hypot(me.clientX - startX, me.clientY - startY) > 8) {
         cancelled = true
         clearTimeout(longPressTimer)
-        document.removeEventListener('pointermove', onMoveCancel)
-        document.removeEventListener('pointerup', onUpCancel)
+        cleanup()
       }
     }
-    function onUpCancel() {
-      cancelled = true
-      clearTimeout(longPressTimer)
-      document.removeEventListener('pointermove', onMoveCancel)
-      document.removeEventListener('pointerup', onUpCancel)
-    }
+    function onUpCancel() { cancelled = true; clearTimeout(longPressTimer); cleanup() }
+    function onCancel() { cancelled = true; clearTimeout(longPressTimer); cleanup() }
     const longPressTimer = setTimeout(() => {
-      document.removeEventListener('pointermove', onMoveCancel)
-      document.removeEventListener('pointerup', onUpCancel)
+      cleanup()
       if (cancelled) return
       navigator.vibrate?.(10)
       draggingTask.value = task
       _startDrag(e, task.content, true)
     }, 350)
-    document.addEventListener('pointermove', onMoveCancel)
+    document.addEventListener('pointermove', onMoveCancel, { passive: true })
     document.addEventListener('pointerup', onUpCancel)
+    document.addEventListener('pointercancel', onCancel)
     return
   }
 
