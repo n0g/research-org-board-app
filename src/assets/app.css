@@ -731,16 +731,16 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
 .bolt-fg {
   position: absolute;
   inset: 0;
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   font-variation-settings: 'FILL' 1;
   color: var(--accent);
+  clip-path: inset(100% 0 0 0);
   pointer-events: none;
 }
-.bolt-focus-half .bolt-fg,
-.bolt-focus-full .bolt-fg  { display: flex; }
-.bolt-focus-half .bolt-fg  { clip-path: inset(50% 0 0 0); }
+.bolt-focus-half .bolt-fg { clip-path: inset(50% 0 0 0); }
+.bolt-focus-full .bolt-fg { clip-path: inset(0 0 0 0); }
 /* Always show on touch devices; show on hover/focus on pointer devices */
 @media (hover: hover) {
   .card:hover .card-focus-btn,
