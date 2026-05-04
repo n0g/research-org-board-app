@@ -116,39 +116,6 @@
         </div>
       </div>
 
-      <div class="triage-field">
-        <label id="label-importance" class="triage-field-label">Importance</label>
-        <div class="seg-ctrl" role="group" aria-labelledby="label-importance">
-          <button
-            v-for="lvl in LEVEL_OPTS"
-            :key="lvl"
-            class="seg-btn"
-            :class="{ active: draft.importance === lvl }"
-            @click="draft.importance = lvl"
-          >{{ capitalize(lvl) }}</button>
-        </div>
-      </div>
-
-      <div class="triage-field">
-        <label id="label-urgency" class="triage-field-label">Urgency</label>
-        <div class="seg-ctrl" role="group" aria-labelledby="label-urgency">
-          <button
-            v-for="u in URGENCY_OPTS"
-            :key="u.val"
-            class="seg-btn"
-            :class="{ active: draft.urgency === u.val }"
-            @click="draft.urgency = u.val"
-          >{{ u.label }}</button>
-        </div>
-      </div>
-
-      <div class="triage-field">
-        <label id="label-delegatable" class="triage-field-label">Delegatable</label>
-        <div class="seg-ctrl triage-seg-narrow" role="group" aria-labelledby="label-delegatable">
-          <button class="seg-btn" :class="{ active: draft.delegatable === 'no' }" @click="draft.delegatable = 'no'">No</button>
-          <button class="seg-btn" :class="{ active: draft.delegatable === 'yes' }" @click="draft.delegatable = 'yes'">Yes</button>
-        </div>
-      </div>
 
       <div class="triage-complete-row">
         <button class="triage-complete-btn" :disabled="completing" @click="complete">
@@ -163,7 +130,7 @@
 <script setup>
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { useBoardStore } from '../stores/board.js'
-import { useTaskTriage, URGENCY_OPTS, LEVEL_OPTS, TIME_OPTS, capitalize } from '../composables/useTaskTriage.js'
+import { useTaskTriage, TIME_OPTS } from '../composables/useTaskTriage.js'
 
 const props = defineProps({
   task: { type: Object, required: true },
