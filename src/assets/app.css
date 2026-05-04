@@ -722,6 +722,27 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   transition: opacity 0.15s, color 0.15s, background 0.15s;
 }
 .card-focus-btn .material-symbols-outlined { font-size: 18px; }
+.bolt-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.bolt-fg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-variation-settings: 'FILL' 1;
+  color: var(--accent);
+  clip-path: inset(100% 0 0 0);
+  pointer-events: none;
+}
+.bolt-focus-half .bolt-fg { clip-path: inset(50% 0 0 0); }
+.bolt-focus-full .bolt-fg  { clip-path: inset(0 0 0 0); }
+.bolt-focus-half .bolt-bg  { opacity: 0.35; }
+.bolt-focus-full .bolt-bg  { opacity: 0.25; }
 /* Always show on touch devices; show on hover/focus on pointer devices */
 @media (hover: hover) {
   .card:hover .card-focus-btn,

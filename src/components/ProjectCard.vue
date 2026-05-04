@@ -63,7 +63,10 @@
           @pointerdown.stop
           @click.stop="store.toggleFocus(project.id)"
         >
-          <span class="material-symbols-outlined" aria-hidden="true">bolt</span>
+          <span class="bolt-icon" :class="boltFillClass" aria-hidden="true">
+            <span class="material-symbols-outlined bolt-bg">bolt</span>
+            <span class="material-symbols-outlined bolt-fg">bolt</span>
+          </span>
         </button>
       </div>
     </div>
@@ -94,6 +97,34 @@ const tasks = computed(() => store.projectTasks(props.project.id))
 const meta = computed(() => store.projectMeta(props.project.id))
 const deadline = computed(() => store.projectDeadline(props.project.id))
 const isFocus = computed(() => store.focusProjectIds.has(props.project.id))
+
+function _getMonday(d) {
+  const day = new Date(d); const dow = day.getDay()
+  day.setDate(day.getDate() + (dow === 0 ? -6 : 1 - dow)); day.setHours(0,0,0,0); return day
+}
+const scheduledHoursThisWeek = computed(() => {
+  if (!isFocus.value) return 0
+  const monday = _getMonday(new Date())
+  const sunday = new Date(monday); sunday.setDate(monday.getDate() + 7)
+  let minutes = 0
+  for (const task of store.tasks) {
+    if (task.project_id !== props.project.id || task.is_completed) continue
+    const line = (task.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
+    const m = line?.match(/\(([^)]+)\)$/)
+    if (!m) continue
+    const dt = new Date(m[1])
+    if (dt < monday || dt >= sunday) continue
+    const t = (task.labels || []).find(l => l.startsWith('time::'))?.replace('time::', '')
+    minutes += t === '15m' ? 15 : t === '30m' ? 30 : t === '2h' ? 120 : 60
+  }
+  return minutes / 60
+})
+const boltFillClass = computed(() => {
+  if (!isFocus.value) return ''
+  if (scheduledHoursThisWeek.value >= 4) return 'bolt-focus-full'
+  if (scheduledHoursThisWeek.value > 0) return 'bolt-focus-half'
+  return 'bolt-focus-empty'
+})
 
 const statusText = computed(() => stageInfo.value?.task.content ?? '')
 const personLabels = computed(() => {
