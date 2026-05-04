@@ -2737,6 +2737,10 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   max-width: 420px;
   margin: 0 auto;
 }
+@media (min-width: 768px) {
+  .import-overlay { align-items: center; padding-bottom: 16px; }
+  .import-sheet { border-radius: 12px; }
+}
 .import-label { font-size: 12px; color: var(--text3); margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.04em; }
 .import-event-title { font-size: 16px; font-weight: 600; color: var(--text); margin: 0 0 4px; }
 .import-event-time { font-size: 13px; color: var(--text2); margin: 0 0 20px; }

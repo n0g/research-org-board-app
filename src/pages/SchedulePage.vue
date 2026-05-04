@@ -486,7 +486,7 @@ const importingEvent = ref(null)
 const importing = ref(false)
 
 function isUnlinked(ev) {
-  return !ev.extendedProperties?.private?.todoist_task_id && ev._calId === calStore.selectedCalendarId
+  return !ev.extendedProperties?.private?.todoist_task_id
 }
 
 function importEventTimeStr(ev) {
