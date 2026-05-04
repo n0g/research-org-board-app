@@ -213,6 +213,7 @@
                           'cal-event-moving': draggingCalEvent?.id === ev.id,
                           'cal-event-readonly': ev._calId !== calStore.selectedCalendarId,
                           'cal-event-unlinked': isUnlinked(ev),
+                          'cal-event-other-cal': isOtherCal(ev),
                         }"
                         :style="eventStyle(ev)"
                         draggable="false"
@@ -486,7 +487,11 @@ const importingEvent = ref(null)
 const importing = ref(false)
 
 function isUnlinked(ev) {
-  return !ev.extendedProperties?.private?.todoist_task_id
+  return !ev.extendedProperties?.private?.todoist_task_id && ev._calId === calStore.selectedCalendarId
+}
+
+function isOtherCal(ev) {
+  return ev._calId !== calStore.selectedCalendarId
 }
 
 function importEventTimeStr(ev) {
