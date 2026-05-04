@@ -41,6 +41,8 @@ export const useBoardStore = defineStore('board', () => {
     return root ? projects.value.filter(p => p.parent_id === root.id) : projects.value
   })
 
+  const inboxProjectId = computed(() => projects.value.find(p => p.is_inbox_project)?.id ?? null)
+
   const allCollaborators = computed(() => {
     const stageSet = new Set(stageLabels.value)
     const venueSet = new Set(VENUES)
@@ -495,7 +497,7 @@ export const useBoardStore = defineStore('board', () => {
 
   return {
     token, stages, projects, tasks, loading, lastUpdated, cardDragging, triageTaskIds, triageCurrentId, pendingScheduleTask, labels,
-    activeFilter, stageLabels, displayProjects, excludedSectionIds, deadlineSectionIds,
+    activeFilter, stageLabels, displayProjects, inboxProjectId, excludedSectionIds, deadlineSectionIds,
     allCollaborators, allVenues,
     setupStatus,
     initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,

@@ -159,7 +159,7 @@ const allTasks = computed(() => {
   const projectSet = new Set(store.displayProjects.map(p => p.id))
   return store.tasks.filter(t =>
     !t.is_completed &&
-    projectSet.has(t.project_id) &&
+    (projectSet.has(t.project_id) || t.project_id === store.inboxProjectId) &&
     !store.excludedSectionIds.has(t.section_id)
   )
 })
