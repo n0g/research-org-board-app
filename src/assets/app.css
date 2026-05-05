@@ -728,7 +728,7 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   align-items: center;
   justify-content: center;
 }
-.bolt-fg {
+.bolt-icon .bolt-fg {
   position: absolute;
   inset: 0;
   display: flex;
@@ -741,8 +741,8 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   -webkit-mask-image: linear-gradient(to top, black 50%, transparent 50%);
   mask-image: linear-gradient(to top, black 50%, transparent 50%);
 }
-.bolt-focus-half .bolt-fg { opacity: 1; }
-.bolt-focus-full .bolt-fg { opacity: 1; -webkit-mask-image: none; mask-image: none; }
+.bolt-icon.bolt-focus-half .bolt-fg { opacity: 1; }
+.bolt-icon.bolt-focus-full .bolt-fg { opacity: 1; -webkit-mask-image: none; mask-image: none; }
 /* Always show on touch devices; show on hover/focus on pointer devices */
 @media (hover: hover) {
   .card:hover .card-focus-btn,
