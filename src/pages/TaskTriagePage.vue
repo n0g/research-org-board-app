@@ -42,20 +42,6 @@
 
         <!-- Left: task list -->
         <div class="triage-list" :class="{ 'triage-list-collapsed': sidebarCollapsed }">
-          <div class="triage-tabs">
-            <div class="seg-ctrl" role="tablist" aria-label="Task filter">
-              <button
-                v-for="t in TABS"
-                :key="t.key"
-                class="seg-btn"
-                role="tab"
-                :aria-selected="tab === t.key"
-                :class="{ active: tab === t.key }"
-                @click="tab = t.key"
-              >{{ t.label }}</button>
-            </div>
-          </div>
-
           <div ref="taskListBodyEl" class="triage-list-body" role="listbox" aria-label="Tasks">
             <div v-if="!filteredTasks.length" class="triage-empty-list">No tasks</div>
             <div
@@ -135,7 +121,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useSidebar } from '../composables/useSidebar.js'
-import { TABS, getLabel, getUrgencyLabel, getImportance, getTime, formatDeadline } from '../composables/useTaskTriage.js'
+import { getLabel, getUrgencyLabel, getImportance, getTime, formatDeadline } from '../composables/useTaskTriage.js'
 import AppSidebar from '../components/AppSidebar.vue'
 import TaskDetailPanel from '../components/TaskDetailPanel.vue'
 
@@ -144,7 +130,6 @@ const { sidebarCollapsed, toggleSidebar } = useSidebar()
 const selectedTask = ref(null)
 const taskListBodyEl = ref(null)
 
-const tab = ref('all')
 const showUntriaged = ref(false)
 const projectsOpen = ref(true)
 const activeProjectId = ref(null)
@@ -174,12 +159,7 @@ const filteredTasks = computed(() => {
     ? allTasks.value.filter(t => t.project_id === activeProjectId.value)
     : allTasks.value
   if (showUntriaged.value) tasks = tasks.filter(t => !getLabel(t, 'time::'))
-  switch (tab.value) {
-    case 'important': return tasks.filter(t => getLabel(t, 'importance::') === 'high')
-    case 'quick': return tasks.filter(t => getLabel(t, 'time::') === '15m')
-    case 'urgent': return tasks.filter(t => (t.priority ?? 1) === 4)
-    default: return tasks
-  }
+  return tasks
 })
 
 function projectName(task) {

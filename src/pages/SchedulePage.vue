@@ -273,7 +273,14 @@ import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useCalendarStore } from '../stores/calendar.js'
 import { useSidebar } from '../composables/useSidebar.js'
-import { TABS, getLabel, getUrgencyLabel, getImportance, getTime } from '../composables/useTaskTriage.js'
+import { getLabel, getUrgencyLabel, getImportance, getTime } from '../composables/useTaskTriage.js'
+
+const TABS = [
+  { key: 'all', label: 'All' },
+  { key: 'quick', label: 'Quick' },
+  { key: 'social', label: 'Social' },
+  { key: 'focus', label: 'Focus' },
+]
 import AppSidebar from '../components/AppSidebar.vue'
 
 const store = useBoardStore()
@@ -321,9 +328,9 @@ const filteredTasks = computed(() => {
     : allTasks.value
   if (showUnscheduled.value) tasks = tasks.filter(t => !scheduledIso(t))
   switch (tab.value) {
-    case 'important': return tasks.filter(t => getLabel(t, 'importance::') === 'high')
     case 'quick': return tasks.filter(t => getLabel(t, 'time::') === '15m')
-    case 'urgent': return tasks.filter(t => (t.priority ?? 1) === 4)
+    case 'social': return tasks.filter(t => (t.labels || []).some(l => l.startsWith('person::')))
+    case 'focus': return tasks.filter(t => store.focusProjectIds.has(t.project_id))
     default: return tasks
   }
 })
