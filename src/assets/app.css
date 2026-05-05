@@ -2141,6 +2141,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   flex: 1;
   display: flex;
   overflow: hidden;
+  padding-top: env(safe-area-inset-top);
 }
 
 /* Task list (left pane) */
