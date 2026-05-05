@@ -738,8 +738,8 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   color: var(--accent);
   opacity: 0;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(to top, black 50%, transparent 50%);
-  mask-image: linear-gradient(to top, black 50%, transparent 50%);
+  -webkit-mask-image: linear-gradient(to top, black 45%, transparent 45%);
+  mask-image: linear-gradient(to top, black 45%, transparent 45%);
 }
 .bolt-icon.bolt-focus-half .bolt-fg { opacity: 1; }
 .bolt-icon.bolt-focus-full .bolt-fg { opacity: 1; -webkit-mask-image: none; mask-image: none; }
