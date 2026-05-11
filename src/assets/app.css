@@ -1639,6 +1639,7 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 @media (hover: hover) {
   .task-item:hover .task-hover-actions { opacity: 1; }
 }
+.task-item:focus-within .task-hover-actions { opacity: 1; }
 .task-item {
   display: flex;
   align-items: flex-start;

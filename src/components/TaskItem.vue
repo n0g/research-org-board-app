@@ -1,6 +1,6 @@
 <template>
-  <div class="task-item-wrap">
-    <div class="task-delete-zone" aria-label="Delete task" @click="doDelete">
+  <div class="task-item-wrap" role="listitem">
+    <div class="task-delete-zone" aria-hidden="true" @click="doDelete">
       <span class="material-symbols-outlined">delete</span>
     </div>
     <div

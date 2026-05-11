@@ -293,11 +293,13 @@
 
           <div v-if="tasks.length" class="task-group-label">Tasks</div>
 
-          <TaskItem
-            v-for="task in tasks"
-            :key="task.id"
-            :task="task"
-          />
+          <div v-if="tasks.length" role="list" aria-label="Project tasks">
+            <TaskItem
+              v-for="task in tasks"
+              :key="task.id"
+              :task="task"
+            />
+          </div>
 
           <div v-if="!tasks.length" class="no-tasks">No open tasks</div>
         </section>
