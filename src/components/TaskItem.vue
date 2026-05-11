@@ -25,13 +25,23 @@
         @keydown.space.prevent="complete"
       ></div>
       <div class="task-content">
-        <div class="task-name">
+        <div v-if="!editingTitle" class="task-name" role="button" tabindex="0" @click.stop="startTitleEdit" @keydown.enter.prevent="startTitleEdit">
           <span v-if="priorityLabel" class="sr-only">{{ priorityLabel }}: </span>
           <template v-for="seg in contentSegments" :key="seg.i">
             <a v-if="seg.href" :href="seg.href" target="_blank" rel="noopener noreferrer" class="task-link" @click.stop>{{ seg.text }}</a>
             <template v-else>{{ seg.text }}</template>
           </template>
         </div>
+        <input
+          v-if="editingTitle"
+          ref="titleInputEl"
+          class="task-title-edit"
+          :value="task.content"
+          @blur="saveTitle"
+          @keydown.enter.prevent="titleInputEl?.blur()"
+          @keydown.escape.stop="editingTitle = false"
+          @click.stop
+        >
         <div
           v-if="!editingDue"
           class="task-due"
@@ -76,7 +86,9 @@ const props = defineProps({
 
 const store = useBoardStore()
 const dueInputEl = ref(null)
+const titleInputEl = ref(null)
 const editingDue = ref(false)
+const editingTitle = ref(false)
 const completing = ref(false)
 
 // ── Swipe state ──
@@ -185,6 +197,19 @@ async function saveDue() {
   editingDue.value = false
   const val = dueInputEl.value?.value ?? ''
   await store.updateTaskDue(props.task.id, val).catch(console.error)
+}
+
+function startTitleEdit() {
+  editingTitle.value = true
+  setTimeout(() => titleInputEl.value?.select(), 0)
+}
+
+async function saveTitle() {
+  editingTitle.value = false
+  const val = titleInputEl.value?.value?.trim()
+  if (val && val !== props.task.content) {
+    await store.updateStatusText(props.task.id, val).catch(console.error)
+  }
 }
 
 async function doDelete() {

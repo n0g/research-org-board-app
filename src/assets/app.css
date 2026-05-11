@@ -1680,7 +1680,20 @@ html[data-theme="dark"] .task-item { border-color: var(--border); }
 }
 
 .task-content { flex: 1; min-width: 0; }
-.task-name { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; }
+.task-name { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; cursor: text; }
+.task-title-edit {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg2);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 2px 6px;
+  outline: none;
+  width: 100%;
+  line-height: 1.4;
+}
 .task-link { color: var(--accent); text-decoration: none; }
 .task-link:hover { text-decoration: underline; }
 .task-due {
