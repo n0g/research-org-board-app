@@ -397,9 +397,11 @@ function onDragStart(e) {
   if (!wrap) return
   const taskEl = wrap.querySelector('[id^="task-"]')
   if (!taskEl) return
+  e.preventDefault()
   const id = taskEl.id.replace('task-', '')
   dragId.value = id
   dropIndex.value = tasks.value.findIndex(t => t.id === id)
+  document.body.style.userSelect = 'none'
 
   document.addEventListener('pointermove', onDragMove, { passive: true })
   document.addEventListener('pointerup', onDragEnd, { once: true })
@@ -419,6 +421,7 @@ function onDragMove(e) {
 
 async function onDragEnd() {
   document.removeEventListener('pointermove', onDragMove)
+  document.body.style.userSelect = ''
   if (!dragId.value) return
   const fromIdx = tasks.value.findIndex(t => t.id === dragId.value)
   let toIdx = dropIndex.value > fromIdx ? dropIndex.value - 1 : dropIndex.value
