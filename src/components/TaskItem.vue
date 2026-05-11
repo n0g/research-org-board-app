@@ -48,7 +48,7 @@
         <div
           v-if="!editingDue"
           class="task-due"
-          :class="dueClass"
+          :class="[dueClass, { 'task-due-empty': !task.due }]"
           role="button"
           tabindex="0"
           @click.stop="startDueEdit"

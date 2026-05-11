@@ -1739,6 +1739,10 @@ html[data-theme="dark"] .task-item { border-color: var(--border); }
   -webkit-tap-highlight-color: transparent;
 }
 .task-due:hover { color: var(--text2); }
+@media (hover: hover) {
+  .task-due-empty { opacity: 0; }
+  .task-item:hover .task-due-empty { opacity: 1; }
+}
 .task-due.overdue { color: var(--red); }
 .task-due.due-soon { color: var(--amber); }
 .task-due-edit {
