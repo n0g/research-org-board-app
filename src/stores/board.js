@@ -247,6 +247,11 @@ export const useBoardStore = defineStore('board', () => {
     tasks.value = tasks.value.filter(t => t.id !== taskId)
   }
 
+  async function deleteTask(taskId) {
+    await api(token.value, `/tasks/${taskId}`, 'DELETE')
+    tasks.value = tasks.value.filter(t => t.id !== taskId)
+  }
+
   async function quickAddTask(content, projectId) {
     const task = await api(token.value, '/tasks', 'POST', { content, project_id: projectId })
     tasks.value.push(task)
@@ -502,7 +507,7 @@ export const useBoardStore = defineStore('board', () => {
     setupStatus,
     initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,
     projectStage, projectMeta, projectTasks, projectDeadline,
-    moveStage, completeTask, quickAddTask, updateTaskDue, saveScheduledTime, updateStatusText,
+    moveStage, completeTask, deleteTask, quickAddTask, updateTaskDue, saveScheduledTime, updateStatusText,
     updateVenue, setDeadlineDate, addCollaborator, removeCollaborator, renameProject,
     projectDeadlineTaskBase, projectDeadlineTaskObj,
     projectSummaryTask, updateSummary, projectSubmissionTask, updateSubmissionUrl,
