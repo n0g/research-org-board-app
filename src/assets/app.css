@@ -1613,15 +1613,15 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 }
 .task-delete-zone {
   position: absolute;
-  inset: 0 0 0 auto;
-  width: 80px;
+  inset: 4px 4px 4px auto;
+  width: 68px;
   background: var(--red);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   cursor: pointer;
-  border-radius: 0 8px 8px 0;
+  border-radius: 8px;
 }
 .task-hover-actions {
   display: flex;
