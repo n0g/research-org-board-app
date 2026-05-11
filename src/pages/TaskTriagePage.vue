@@ -59,7 +59,12 @@
               @keydown.up.prevent.stop="focusTaskRow(idx - 1)"
             >
               <div class="triage-task-project">{{ projectName(task) }}</div>
-              <div class="triage-task-title">{{ task.content }}</div>
+              <div class="triage-task-title">
+                <template v-for="seg in parseTaskContent(task.content)" :key="seg.i">
+                  <a v-if="seg.href" :href="seg.href" target="_blank" rel="noopener noreferrer" class="task-link" @click.stop>{{ seg.text }}</a>
+                  <template v-else>{{ seg.text }}</template>
+                </template>
+              </div>
               <div class="triage-task-meta">
                 <div class="triage-task-tags">
                   <span v-if="getUrgencyLabel(task)" class="triage-tag">
@@ -122,6 +127,7 @@ import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useSidebar } from '../composables/useSidebar.js'
 import { getLabel, getUrgencyLabel, getImportance, getTime, formatDeadline } from '../composables/useTaskTriage.js'
+import { parseTaskContent } from '../lib/helpers.js'
 import AppSidebar from '../components/AppSidebar.vue'
 import TaskDetailPanel from '../components/TaskDetailPanel.vue'
 

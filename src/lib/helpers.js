@@ -1,3 +1,16 @@
+export function parseTaskContent(text) {
+  const segments = []
+  const re = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g
+  let last = 0, m, i = 0
+  while ((m = re.exec(text ?? '')) !== null) {
+    if (m.index > last) segments.push({ i: i++, text: text.slice(last, m.index) })
+    segments.push({ i: i++, text: m[1], href: m[2] })
+    last = m.index + m[0].length
+  }
+  if (last < (text ?? '').length) segments.push({ i: i++, text: text.slice(last) })
+  return segments
+}
+
 export const DEFAULT_STAGES = [
   { name: 'Planning',         label: 'stage::planning' },
   { name: 'Data Collection',  label: 'stage::data-collection' },

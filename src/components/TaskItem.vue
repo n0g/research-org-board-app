@@ -81,7 +81,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useBoardStore } from '../stores/board.js'
-import { dueStatus, formatDate } from '../lib/helpers.js'
+import { dueStatus, formatDate, parseTaskContent } from '../lib/helpers.js'
 
 const props = defineProps({
   task: { type: Object, required: true },
@@ -149,19 +149,7 @@ function onItemClick() {
 }
 
 // ── Link rendering ──
-const contentSegments = computed(() => {
-  const text = props.task.content ?? ''
-  const segments = []
-  const re = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g
-  let last = 0, m, i = 0
-  while ((m = re.exec(text)) !== null) {
-    if (m.index > last) segments.push({ i: i++, text: text.slice(last, m.index) })
-    segments.push({ i: i++, text: m[1], href: m[2] })
-    last = m.index + m[0].length
-  }
-  if (last < text.length) segments.push({ i: i++, text: text.slice(last) })
-  return segments
-})
+const contentSegments = computed(() => parseTaskContent(props.task.content))
 
 // ── Priority ──
 const priorityClass = computed(() => {
