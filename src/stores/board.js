@@ -253,21 +253,20 @@ export const useBoardStore = defineStore('board', () => {
   }
 
   async function reorderTasks(orderedTaskIds) {
-    const changed = []
     orderedTaskIds.forEach((id, idx) => {
       const task = tasks.value.find(t => t.id === id)
-      if (!task) return
-      const newOrder = idx + 1
-      if (task.order !== newOrder) {
-        task.order = newOrder
-        changed.push({ id, order: newOrder })
-      }
+      if (task) task.order = idx + 1
     })
-    if (changed.length) {
-      await Promise.all(changed.map(({ id, order }) =>
-        api(token.value, `/tasks/${id}`, 'POST', { order })
-      ))
-    }
+    const commands = [{
+      type: 'item_reorder',
+      uuid: crypto.randomUUID(),
+      args: { items: orderedTaskIds.map((id, idx) => ({ id, child_order: idx + 1 })) },
+    }]
+    await fetch('https://api.todoist.com/sync/v9/sync', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token.value}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ commands }),
+    })
   }
 
   async function quickAddTask(content, projectId) {
