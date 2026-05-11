@@ -252,6 +252,24 @@ export const useBoardStore = defineStore('board', () => {
     tasks.value = tasks.value.filter(t => t.id !== taskId)
   }
 
+  async function reorderTasks(orderedTaskIds) {
+    const changed = []
+    orderedTaskIds.forEach((id, idx) => {
+      const task = tasks.value.find(t => t.id === id)
+      if (!task) return
+      const newOrder = idx + 1
+      if (task.order !== newOrder) {
+        task.order = newOrder
+        changed.push({ id, order: newOrder })
+      }
+    })
+    if (changed.length) {
+      await Promise.all(changed.map(({ id, order }) =>
+        api(token.value, `/tasks/${id}`, 'POST', { order })
+      ))
+    }
+  }
+
   async function quickAddTask(content, projectId) {
     const task = await api(token.value, '/tasks', 'POST', { content, project_id: projectId })
     tasks.value.push(task)
@@ -507,7 +525,7 @@ export const useBoardStore = defineStore('board', () => {
     setupStatus,
     initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,
     projectStage, projectMeta, projectTasks, projectDeadline,
-    moveStage, completeTask, deleteTask, quickAddTask, updateTaskDue, saveScheduledTime, updateStatusText,
+    moveStage, completeTask, deleteTask, reorderTasks, quickAddTask, updateTaskDue, saveScheduledTime, updateStatusText,
     updateVenue, setDeadlineDate, addCollaborator, removeCollaborator, renameProject,
     projectDeadlineTaskBase, projectDeadlineTaskObj,
     projectSummaryTask, updateSummary, projectSubmissionTask, updateSubmissionUrl,

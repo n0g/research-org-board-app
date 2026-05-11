@@ -14,6 +14,9 @@
       @pointercancel="onPointerCancel"
       @click="onItemClick"
     >
+      <div class="task-handle" aria-hidden="true">
+        <span class="material-symbols-outlined">drag_indicator</span>
+      </div>
       <div
         class="task-check"
         :class="{ done: completing }"

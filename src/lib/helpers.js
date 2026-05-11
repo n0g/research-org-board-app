@@ -64,7 +64,7 @@ export function getProjectTasks(tasks, stageLabels, excludedSectionIds, projectI
       if (excludedSectionIds.has(t.section_id)) return false
       return true
     })
-    .sort((a, b) => (a.priority || 4) - (b.priority || 4))
+    .sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
 }
 
 export function getProjectDeadline(tasks, deadlineSectionIds, projectId) {

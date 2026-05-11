@@ -1688,6 +1688,30 @@ html[data-theme="dark"] .task-item { border-color: var(--border); }
 }
 
 .task-content { flex: 1; min-width: 0; }
+.task-handle {
+  display: flex;
+  align-items: center;
+  color: var(--text3);
+  cursor: grab;
+  touch-action: none;
+  flex-shrink: 0;
+  margin-top: 1px;
+  opacity: 0.35;
+}
+.task-handle:active { cursor: grabbing; }
+.task-handle .material-symbols-outlined { font-size: 20px; }
+@media (hover: hover) {
+  .task-handle { opacity: 0; }
+  .task-item:hover .task-handle { opacity: 0.4; }
+  .task-item:hover .task-handle:hover { opacity: 1; }
+}
+.task-drop-indicator {
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+  margin: 2px 0;
+}
+.is-dragging .task-item { opacity: 0.35; }
 .task-name { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; cursor: text; }
 .task-title-edit {
   font-size: 14px;
