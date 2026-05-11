@@ -1253,6 +1253,7 @@ html[data-theme="dark"] .due-soon-text { color: var(--amber); }
   word-break: break-word;
 }
 .meta-editable:hover { border-color: var(--border); background: var(--bg2); }
+.meta-editable:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
 .meta-editable.placeholder { color: var(--text3); font-style: italic; }
 .meta-textarea {
   width: 100%;
@@ -1318,6 +1319,7 @@ html[data-theme="dark"] .due-soon-text { color: var(--amber); }
   transition: color 0.12s, background 0.12s;
 }
 .submission-open-btn:hover { color: var(--accent); background: var(--accent-bg); }
+.submission-open-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .submission-open-btn .material-symbols-outlined { font-size: 18px; }
 
 /* Submission status */
@@ -1391,6 +1393,7 @@ html[data-theme="dark"] .sub-chip-red    { color: #f87171; }
   white-space: nowrap;
 }
 .popup-btn:hover { border-color: var(--text3); background: var(--bg2); }
+.popup-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .popup-chevron { font-size: 18px; color: var(--text3); }
 .popup-dropdown {
   position: absolute;
@@ -1423,6 +1426,7 @@ html[data-theme="dark"] .popup-dropdown {
   transition: background 0.08s;
 }
 .popup-option:hover { background: var(--bg2); }
+.popup-option:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .popup-option.selected { font-weight: 600; color: var(--accent); }
 
 /* Collaborator chips in detail */
@@ -1443,6 +1447,7 @@ html[data-theme="dark"] .popup-dropdown {
 }
 .collab-add-pill .material-symbols-outlined { font-size: 14px; }
 .collab-add-pill:hover { border-color: var(--text2); color: var(--text2); }
+.collab-add-pill:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .collab-combo-wrapper { position: relative; }
 .collab-combo-input {
   padding: 4px 10px;
@@ -1487,6 +1492,7 @@ html[data-theme="dark"] .popup-dropdown {
 }
 .collab-chip-remove .material-symbols-outlined { font-size: 12px; }
 .collab-chip-remove:hover { background: var(--border); color: var(--text); }
+.collab-chip-remove:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 
 .todoist-link {
@@ -2406,6 +2412,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   color: var(--text3); border-radius: 50%;
 }
 .deadline-clear-btn:hover { color: var(--text); background: var(--bg-surface); }
+.deadline-clear-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .deadline-clear-btn .material-symbols-outlined { font-size: 16px; }
 .triage-field-label {
   display: block;

@@ -95,7 +95,9 @@
               v-if="!editingStatus"
               class="meta-editable"
               :class="{ placeholder: !statusText }"
+              tabindex="0"
               @click="startEdit('status')"
+              @keydown.enter.prevent="startEdit('status')"
             >{{ statusText || 'Add a status…' }}</div>
             <textarea
               v-else
@@ -145,7 +147,9 @@
                 v-if="!editingVenue"
                 class="meta-editable"
                 :class="{ placeholder: !venueText }"
+                tabindex="0"
                 @click="startEditVenue"
+                @keydown.enter.prevent="startEditVenue"
               >{{ venueText || 'Add venue…' }}</div>
               <input
                 v-else
@@ -192,7 +196,9 @@
                 v-if="!editingSubmission"
                 class="meta-editable submission-url-text"
                 :class="{ placeholder: !submissionUrl }"
+                tabindex="0"
                 @click="startEditSubmission"
+                @keydown.enter.prevent="startEditSubmission"
               >{{ submissionUrl || 'Add submission URL…' }}</div>
               <input
                 v-else
@@ -242,7 +248,9 @@
               v-if="!editingSummary"
               class="meta-editable"
               :class="{ placeholder: !summaryText }"
+              tabindex="0"
               @click="startEdit('summary')"
+              @keydown.enter.prevent="startEdit('summary')"
             >{{ summaryText || 'Add a summary…' }}</div>
             <textarea
               v-else
