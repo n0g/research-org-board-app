@@ -1656,6 +1656,7 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
   padding: 14px 16px;
   transition: border-color 0.1s;
   cursor: default;
+  touch-action: pan-y;
 }
 html[data-theme="light"] .task-item { background: #ffffff; }
 html[data-theme="dark"] .task-item { border-color: var(--border); }
