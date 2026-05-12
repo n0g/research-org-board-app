@@ -1765,19 +1765,6 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 .task-due-right.due-soon { color: var(--amber); }
 html[data-theme="light"] .task-due-right.overdue { color: #dc2626; }
 html[data-theme="light"] .task-due-right.due-soon { color: #b45309; }
-.task-due-edit {
-  font-size: 12px;
-  background: var(--bg2);
-  border: 1px solid var(--accent);
-  color: var(--text);
-  font-family: var(--font);
-  padding: 2px 7px;
-  border-radius: 4px;
-  outline: none;
-  width: 130px;
-  flex-shrink: 0;
-  align-self: center;
-}
 
 /* Overdue badge inline */
 .overdue-badge {
@@ -1791,6 +1778,11 @@ html[data-theme="light"] .task-due-right.due-soon { color: #b45309; }
   margin-left: auto;
 }
 html[data-theme="dark"] .overdue-badge { color: var(--red); background: rgba(255,69,58,0.12); }
+
+/* ── F7 CALENDAR OVERRIDES ── */
+.cal-clear { color: var(--red) !important; }
+.calendar .toolbar .right { display: flex; gap: 4px; }
+.calendar .toolbar .link { font-size: 13px; }
 
 /* ── TOKEN SCREEN ── */
 .token-page .page-content {

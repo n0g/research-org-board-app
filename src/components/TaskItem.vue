@@ -55,7 +55,7 @@
         >
       </div>
       <div
-        v-if="task.due && !editingDue"
+        v-if="task.due"
         class="task-due-right"
         :class="dueClass"
         role="button"
@@ -68,19 +68,8 @@
         <span class="material-symbols-outlined">flag</span>
         {{ formattedDue }}
       </div>
-      <input
-        v-if="editingDue"
-        ref="dueInputEl"
-        type="date"
-        class="task-due-edit"
-        :value="task.due?.date ?? ''"
-        @blur="saveDue"
-        @keydown.enter.prevent="dueInputEl?.blur()"
-        @keydown.escape.stop="editingDue = false"
-        @click.stop
-      >
       <div class="task-hover-actions">
-        <button v-if="!task.due && !editingDue" class="task-action-btn task-action-due" aria-label="Add due date" @click.stop="startDueEdit">
+        <button v-if="!task.due" class="task-action-btn task-action-due" aria-label="Add due date" @click.stop="startDueEdit">
           <span class="material-symbols-outlined">flag</span>
           <span class="task-action-label">Due</span>
         </button>
@@ -94,7 +83,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
+import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { dueStatus, formatDate, parseTaskContent } from '../lib/helpers.js'
 
@@ -103,11 +93,10 @@ const props = defineProps({
 })
 
 const store = useBoardStore()
-const dueInputEl = ref(null)
 const titleInputEl = ref(null)
-const editingDue = ref(false)
 const editingTitle = ref(false)
 const completing = ref(false)
+let calendarInstance = null
 
 // ── Swipe state ──
 const swipeX = ref(0)
@@ -194,16 +183,73 @@ async function complete() {
   await store.completeTask(props.task.id).catch(console.error)
 }
 
-function startDueEdit() {
-  editingDue.value = true
-  setTimeout(() => dueInputEl.value?.focus(), 0)
+function startDueEdit(e) {
+  if (swipeOpen.value) { swipeX.value = 0; swipeOpen.value = false }
+  const targetEl = e?.currentTarget ?? null
+  const initial = props.task.due?.date
+    ? [new Date(props.task.due.date + 'T12:00:00')]
+    : []
+
+  calendarInstance?.destroy()
+  calendarInstance = f7.calendar.create({
+    openIn: 'auto',
+    inputEl: targetEl,
+    value: initial,
+    closeOnSelect: true,
+    toolbar: true,
+    renderToolbar() {
+      return `<div class="toolbar toolbar-top no-shadow">
+        <div class="toolbar-inner">
+          <div class="left">
+            <a href="#" class="link cal-clear">Clear</a>
+          </div>
+          <div class="right" style="gap:4px">
+            <a href="#" class="link cal-today">Today</a>
+            <a href="#" class="link cal-tomorrow">Tomorrow</a>
+            <a href="#" class="link cal-nextweek">Next week</a>
+          </div>
+        </div>
+      </div>`
+    },
+    on: {
+      open(cal) {
+        cal.el.querySelector('.cal-clear')?.addEventListener('click', ev => {
+          ev.preventDefault()
+          store.updateTaskDue(props.task.id, '').catch(console.error)
+          cal.close()
+        })
+        cal.el.querySelector('.cal-today')?.addEventListener('click', ev => {
+          ev.preventDefault(); pickQuick(cal, 0)
+        })
+        cal.el.querySelector('.cal-tomorrow')?.addEventListener('click', ev => {
+          ev.preventDefault(); pickQuick(cal, 1)
+        })
+        cal.el.querySelector('.cal-nextweek')?.addEventListener('click', ev => {
+          ev.preventDefault(); pickQuick(cal, 7)
+        })
+      },
+      change(cal, value) {
+        if (!value.length) return
+        store.updateTaskDue(props.task.id, isoDate(value[0])).catch(console.error)
+      },
+      closed(cal) { cal.destroy(); calendarInstance = null },
+    },
+  })
+  calendarInstance.open()
 }
 
-async function saveDue() {
-  editingDue.value = false
-  const val = dueInputEl.value?.value ?? ''
-  await store.updateTaskDue(props.task.id, val).catch(console.error)
+function pickQuick(cal, daysOffset) {
+  const d = new Date()
+  d.setDate(d.getDate() + daysOffset)
+  store.updateTaskDue(props.task.id, isoDate(d)).catch(console.error)
+  cal.close()
 }
+
+function isoDate(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+onBeforeUnmount(() => { calendarInstance?.destroy() })
 
 function startTitleEdit() {
   editingTitle.value = true
