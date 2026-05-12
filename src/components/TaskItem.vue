@@ -133,8 +133,8 @@ function onPointerMove(e) {
   if (!isSwiping.value) return
   const dx = e.clientX - startX
   const dy = e.clientY - startY
-  if (!dirLocked && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
-    isHoriz = Math.abs(dx) > Math.abs(dy)
+  if (!dirLocked && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
+    isHoriz = Math.abs(dx) > Math.abs(dy) * 1.5
     dirLocked = true
   }
   if (!dirLocked || !isHoriz) return
