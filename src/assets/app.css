@@ -1638,6 +1638,7 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
   border-radius: 4px 8px 8px 4px;
 }
 .task-swipe-btn .material-symbols-outlined { font-size: 20px; }
+.task-swipe-btn:not(.task-swipe-del) { font-size: 12px; font-weight: 600; }
 .task-hover-actions {
   display: flex;
   align-items: center;

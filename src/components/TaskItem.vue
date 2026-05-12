@@ -1,9 +1,7 @@
 <template>
   <div class="task-item-wrap" role="listitem">
     <div class="task-delete-zone" aria-hidden="true">
-      <button class="task-swipe-btn" @click.stop="startDueEdit">
-        <span class="material-symbols-outlined">calendar_today</span>
-      </button>
+      <button class="task-swipe-btn" @click.stop="startDueEdit">Due Date</button>
       <button class="task-swipe-btn task-swipe-del" @click.stop="doDelete">
         <span class="material-symbols-outlined">delete</span>
       </button>
@@ -39,7 +37,7 @@
             <a v-if="seg.href" :href="seg.href" target="_blank" rel="noopener noreferrer" class="task-link" @click.stop>{{ seg.text }}</a>
             <template v-else>{{ seg.text }}</template>
           </template>
-          <span v-if="task.due" class="material-symbols-outlined task-cal-badge">calendar_today</span>
+          <span v-if="(task.labels || []).includes('scheduled')" class="material-symbols-outlined task-cal-badge">calendar_today</span>
         </div>
         <input
           v-if="editingTitle"
