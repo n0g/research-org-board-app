@@ -285,22 +285,7 @@
             <div class="tasks-subtitle">{{ tasks.length }} open task{{ tasks.length !== 1 ? 's' : '' }}</div>
           </div>
 
-          <!-- Quick-add -->
-          <div class="task-quick-add">
-            <div class="task-quick-add-icon">
-              <span class="material-symbols-outlined">add</span>
-            </div>
-            <input
-              v-model="newTaskContent"
-              class="quick-add-input"
-              type="text"
-              placeholder="Add a task…"
-              @keydown.enter.prevent="addTask"
-            >
-          </div>
-
           <div
-            v-if="tasks.length"
             ref="taskListEl"
             role="list"
             aria-label="Project tasks"
@@ -311,6 +296,39 @@
               <TaskItem :task="task" :class="{ 'is-dragging': dragId === task.id }" />
             </template>
             <div v-if="dragId && dropIndex === tasks.length" class="task-drop-indicator" aria-hidden="true" />
+          </div>
+
+          <!-- Quick-add -->
+          <div class="task-quick-add-wrap">
+            <div
+              v-if="!addingTask"
+              class="task-quick-add-row"
+              role="button"
+              tabindex="0"
+              @click="startAddTask"
+              @keydown.enter.prevent="startAddTask"
+              @keydown.space.prevent="startAddTask"
+            >
+              <div class="task-quick-add-btn" aria-hidden="true">
+                <span class="material-symbols-outlined">add</span>
+              </div>
+              <span class="task-quick-add-label">Add task</span>
+            </div>
+            <div v-else class="task-quick-add-row task-quick-add-editing">
+              <div class="task-quick-add-btn" aria-hidden="true">
+                <span class="material-symbols-outlined">add</span>
+              </div>
+              <input
+                ref="quickAddInputEl"
+                v-model="newTaskContent"
+                class="quick-add-input"
+                type="text"
+                placeholder="Task name"
+                @keydown.enter.prevent="submitAddTask"
+                @keydown.escape.stop="cancelAddTask"
+                @blur="onQuickAddBlur"
+              >
+            </div>
           </div>
 
           <div v-if="!tasks.length" class="no-tasks">No open tasks</div>
@@ -347,6 +365,8 @@ const store = useBoardStore()
 const reviewsStore = useReviewsStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
 const newTaskContent = ref('')
+const addingTask = ref(false)
+const quickAddInputEl = ref(null)
 
 const projectId = computed(() => props.f7route.params.id)
 const project = computed(() => store.displayProjects.find(p => p.id === projectId.value) ?? null)
@@ -717,11 +737,30 @@ function handleTasksKey(e) {
 }
 
 // ── Tasks ──
-async function addTask() {
+function startAddTask() {
+  addingTask.value = true
+  nextTick(() => quickAddInputEl.value?.focus())
+}
+
+function cancelAddTask() {
+  addingTask.value = false
+  newTaskContent.value = ''
+}
+
+async function submitAddTask() {
   const content = newTaskContent.value.trim()
-  if (!content || !project.value) return
+  if (!content) { cancelAddTask(); return }
+  if (!project.value) return
   newTaskContent.value = ''
   await store.quickAddTask(content, project.value.id).catch(console.error)
+  nextTick(() => quickAddInputEl.value?.focus())
+}
+
+function onQuickAddBlur() {
+  const content = newTaskContent.value.trim()
+  if (content && project.value) store.quickAddTask(content, project.value.id).catch(console.error)
+  newTaskContent.value = ''
+  addingTask.value = false
 }
 
 // ── Delete project ──

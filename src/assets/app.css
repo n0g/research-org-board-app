@@ -1556,32 +1556,35 @@ html[data-theme="light"] .project-tasks { background: #faf9fe; }
 .tasks-subtitle { font-size: 13px; color: var(--text2); margin-top: 2px; }
 
 /* Quick-add in project detail */
-.task-quick-add {
+.task-quick-add-wrap {
+  border-top: 1px solid var(--border);
+}
+.task-quick-add-row {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 16px;
-  box-shadow: var(--shadow-card);
-  margin-bottom: 24px;
+  padding: 14px 16px;
+  background: var(--bg-surface);
+  cursor: pointer;
 }
-html[data-theme="light"] .task-quick-add { background: #ffffff; }
-.task-quick-add-icon {
-  width: 20px; height: 20px;
-  border: 2px solid var(--border2);
-  border-radius: 4px;
+.task-quick-add-btn {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
+  color: var(--accent);
+}
+.task-quick-add-btn .material-symbols-outlined { font-size: 14px; }
+.task-quick-add-label {
+  font-size: 14px;
   color: var(--text3);
 }
-.task-quick-add-icon .material-symbols-outlined { font-size: 12px; }
 .quick-add-input {
   flex: 1;
   background: transparent;
   border: none;
-  color: var(--text2);
+  color: var(--text);
   font-family: var(--font);
   font-size: 14px;
   outline: none;
@@ -1668,7 +1671,7 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 .task-item:focus-within .task-hover-actions { opacity: 1; }
 .task-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   background: var(--bg-surface);
   padding: 14px 16px;
