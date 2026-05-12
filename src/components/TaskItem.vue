@@ -11,6 +11,7 @@
       </button>
     </div>
     <div
+      ref="taskItemEl"
       class="task-item"
       :class="[priorityClass, { 'swipe-open': swipeOpen }]"
       :id="'task-' + task.id"
@@ -93,6 +94,7 @@ const props = defineProps({
 })
 
 const store = useBoardStore()
+const taskItemEl = ref(null)
 const titleInputEl = ref(null)
 const editingTitle = ref(false)
 const completing = ref(false)
@@ -215,7 +217,7 @@ async function complete() {
 
 function startDueEdit(e) {
   if (swipeOpen.value) { swipeX.value = 0; swipeOpen.value = false }
-  const targetEl = e?.currentTarget ?? null
+  const targetEl = taskItemEl.value ?? e?.currentTarget ?? null
   const initial = props.task.due?.date
     ? [new Date(props.task.due.date + 'T12:00:00')]
     : []
