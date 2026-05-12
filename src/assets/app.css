@@ -1667,7 +1667,6 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
   cursor: default;
   touch-action: pan-y;
 }
-html[data-theme="light"] .task-item { background: #ffffff; }
 
 .task-item.p1 { border-left: 3px solid var(--red); }
 .task-item.p2 { border-left: 3px solid var(--amber); }
