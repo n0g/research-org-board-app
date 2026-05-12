@@ -1646,15 +1646,19 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 .task-action-btn {
   background: none;
   border: none;
-  padding: 4px;
+  padding: 4px 6px;
   cursor: pointer;
   color: var(--text3);
-  border-radius: 4px;
+  border-radius: 6px;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 2px;
 }
-.task-action-btn:hover { color: var(--red); background: rgba(239,68,68,0.08); }
-.task-action-btn .material-symbols-outlined { font-size: 18px; }
+.task-action-btn .material-symbols-outlined { font-size: 16px; }
+.task-action-label { font-size: 9px; font-weight: 600; line-height: 1; }
+.task-action-due:hover { color: var(--accent); background: var(--accent-bg); }
+.task-action-delete:hover { color: var(--red); background: rgba(239,68,68,0.08); }
 @media (hover: hover) {
   .task-item:hover .task-hover-actions { opacity: 1; }
 }
@@ -1760,7 +1764,6 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 .task-due-right .material-symbols-outlined { font-size: 14px; }
 .task-due-right.overdue { color: var(--red); }
 .task-due-right.due-soon { color: var(--amber); }
-.task-add-due-btn { font-size: 12px; }
 .task-due-edit {
   font-size: 12px;
   background: var(--bg2);
