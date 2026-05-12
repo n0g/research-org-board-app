@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { api, apiAll } from '../lib/todoist.js'
+import { api, apiAll, syncCommands } from '../lib/todoist.js'
 import { useCalendarStore } from './calendar.js'
 import {
   DEFAULT_STAGES,
@@ -257,16 +257,11 @@ export const useBoardStore = defineStore('board', () => {
       const task = tasks.value.find(t => t.id === id)
       if (task) task.order = idx + 1
     })
-    const commands = [{
+    await syncCommands(token.value, [{
       type: 'item_reorder',
       uuid: crypto.randomUUID(),
       args: { items: orderedTaskIds.map((id, idx) => ({ id, child_order: idx + 1 })) },
-    }]
-    await fetch('https://api.todoist.com/sync/v9/sync', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token.value}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ commands }),
-    })
+    }])
   }
 
   async function quickAddTask(content, projectId) {

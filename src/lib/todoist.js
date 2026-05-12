@@ -1,4 +1,23 @@
 const BASE = 'https://api.todoist.com/api/v1'
+const SYNC_BASE = 'https://api.todoist.com/api/v1/sync'
+
+export async function syncCommands(token, commands) {
+  const body = new URLSearchParams({ commands: JSON.stringify(commands) })
+  const r = await fetch(SYNC_BASE, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
+  })
+  if (!r.ok) throw new Error(`Todoist Sync API ${r.status}: ${await r.text()}`)
+  const data = await r.json()
+  for (const cmd of commands) {
+    const status = data.sync_status?.[cmd.uuid]
+    if (status && typeof status === 'object' && status.error) {
+      throw new Error(`Sync command ${cmd.type} failed: ${status.error}`)
+    }
+  }
+  return data
+}
 
 export async function api(token, path, method = 'GET', body = null) {
   const opts = {
