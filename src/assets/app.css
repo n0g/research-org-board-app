@@ -1724,10 +1724,22 @@ html[data-theme="light"] .project-tasks { background: #faf9fe; }
   .task-item:hover .task-handle:hover { opacity: 1; }
 }
 .task-drop-indicator {
+  position: relative;
   height: 2px;
   background: var(--accent);
   border-radius: 1px;
   margin: 2px 0;
+}
+.task-drop-indicator::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
 }
 .is-dragging .task-item { opacity: 0.35; }
 .is-dragging .task-hover-actions { opacity: 0 !important; }
