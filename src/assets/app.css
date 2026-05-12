@@ -1556,7 +1556,7 @@ html[data-theme="light"] .project-tasks { background: #faf9fe; }
 .tasks-subtitle { font-size: 13px; color: var(--text2); margin-top: 2px; }
 
 /* Quick-add in project detail */
-.task-quick-add-wrap {
+.task-quick-add-wrap-sep {
   border-top: 1px solid var(--border);
 }
 .task-quick-add-row {

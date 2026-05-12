@@ -299,7 +299,7 @@
           </div>
 
           <!-- Quick-add -->
-          <div class="task-quick-add-wrap">
+          <div class="task-quick-add-wrap" :class="{ 'task-quick-add-wrap-sep': tasks.length }">
             <div
               v-if="!addingTask"
               class="task-quick-add-row"
@@ -333,7 +333,6 @@
             </div>
           </div>
 
-          <div v-if="!tasks.length" class="no-tasks">No open tasks</div>
         </section>
       </div>
     </div>
