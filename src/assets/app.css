@@ -1616,11 +1616,13 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
   width: 152px;
   display: flex;
   align-items: stretch;
-  gap: 6px;
+  justify-content: flex-end;
+  gap: 4px;
   padding: 0 2px;
 }
 .task-swipe-btn {
-  flex: 1;
+  flex: none;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1630,7 +1632,8 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
   cursor: pointer;
   border: none;
   border-radius: 16px;
-  padding: 0 6px;
+  padding: 0;
+  white-space: nowrap;
 }
 .task-swipe-btn:not(.task-swipe-del) { background: var(--accent); }
 .task-swipe-btn.task-swipe-del { background: var(--red); }

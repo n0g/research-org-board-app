@@ -1,11 +1,11 @@
 <template>
   <div class="task-item-wrap" role="listitem">
     <div class="task-delete-zone" aria-hidden="true">
-      <button class="task-swipe-btn" @click.stop="startDueEdit">
+      <button class="task-swipe-btn" :style="dueBtnStyle" @click.stop="startDueEdit">
         <span class="material-symbols-outlined">flag</span>
         <span class="task-swipe-label">Due</span>
       </button>
-      <button class="task-swipe-btn task-swipe-del" @click.stop="doDelete">
+      <button class="task-swipe-btn task-swipe-del" :style="delBtnStyle" @click.stop="doDelete">
         <span class="material-symbols-outlined">delete</span>
         <span class="task-swipe-label">Remove</span>
       </button>
@@ -105,6 +105,24 @@ const isSwiping = ref(false)
 let startX = 0, startY = 0, dirLocked = false, isHoriz = false
 
 const SNAP = 160
+const BTN_W = 72        // target width of each button at full reveal
+const MID = SNAP / 2    // delete reaches full size at this swipe distance
+
+function easeOut(t) { return 1 - (1 - t) * (1 - t) }
+
+const delBtnStyle = computed(() => {
+  const x = Math.abs(swipeX.value)
+  const p = easeOut(Math.min(1, x / MID))
+  const tr = isSwiping.value ? 'none' : 'width 0.25s ease, opacity 0.25s ease'
+  return { width: Math.round(BTN_W * p) + 'px', opacity: Math.min(1, p * 1.8), transition: tr }
+})
+
+const dueBtnStyle = computed(() => {
+  const x = Math.abs(swipeX.value)
+  const p = easeOut(Math.max(0, Math.min(1, (x - MID) / MID)))
+  const tr = isSwiping.value ? 'none' : 'width 0.25s ease, opacity 0.25s ease'
+  return { width: Math.round(BTN_W * p) + 'px', opacity: Math.min(1, p * 1.8), transition: tr }
+})
 
 const swipeStyle = computed(() => ({
   transform: `translateX(${swipeX.value}px)`,
