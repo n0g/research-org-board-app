@@ -1,9 +1,13 @@
 <template>
   <div class="task-item-wrap" role="listitem">
     <div class="task-delete-zone" aria-hidden="true">
-      <button class="task-swipe-btn" @click.stop="startDueEdit">Due Date</button>
+      <button class="task-swipe-btn" @click.stop="startDueEdit">
+        <span class="material-symbols-outlined">flag</span>
+        <span class="task-swipe-label">Due Date</span>
+      </button>
       <button class="task-swipe-btn task-swipe-del" @click.stop="doDelete">
         <span class="material-symbols-outlined">delete</span>
+        <span class="task-swipe-label">Remove</span>
       </button>
     </div>
     <div
