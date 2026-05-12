@@ -1787,7 +1787,15 @@ html[data-theme="dark"] .overdue-badge { color: var(--red); background: rgba(255
 .calendar .toolbar { height: 56px !important; }
 .calendar .toolbar .toolbar-inner { height: 56px !important; }
 .calendar .toolbar .right { display: flex; gap: 4px; }
-.calendar .toolbar .link { font-size: 13px; }
+.calendar .toolbar .link {
+  font-size: 13px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--accent);
+  padding: 0 8px;
+}
 
 /* ── TOKEN SCREEN ── */
 .token-page .page-content {
