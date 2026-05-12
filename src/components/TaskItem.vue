@@ -3,7 +3,7 @@
     <div class="task-delete-zone" aria-hidden="true">
       <button class="task-swipe-btn" @click.stop="startDueEdit">
         <span class="material-symbols-outlined">flag</span>
-        <span class="task-swipe-label">Due Date</span>
+        <span class="task-swipe-label">Due</span>
       </button>
       <button class="task-swipe-btn task-swipe-del" @click.stop="doDelete">
         <span class="material-symbols-outlined">delete</span>
@@ -82,7 +82,7 @@
       <div class="task-hover-actions">
         <button v-if="!task.due && !editingDue" class="task-action-btn task-action-due" aria-label="Add due date" @click.stop="startDueEdit">
           <span class="material-symbols-outlined">flag</span>
-          <span class="task-action-label">Due Date</span>
+          <span class="task-action-label">Due</span>
         </button>
         <button class="task-action-btn task-action-delete" aria-label="Delete task" @click.stop="doDelete">
           <span class="material-symbols-outlined">delete</span>
