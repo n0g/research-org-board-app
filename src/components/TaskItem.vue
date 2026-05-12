@@ -1,6 +1,6 @@
 <template>
   <div class="task-item-wrap" role="listitem">
-    <div class="task-delete-zone" aria-hidden="true">
+    <div class="task-swipe-zone" aria-hidden="true">
       <button class="task-swipe-btn" :style="dueBtnStyle" @click.stop="startDueEdit">
         <span class="material-symbols-outlined">flag</span>
         <span class="task-swipe-label">Due</span>
@@ -107,17 +107,17 @@ const isSwiping = ref(false)
 let startX = 0, startY = 0, dirLocked = false, isHoriz = false
 
 const SNAP = 160
-const BTN_W = 72        // target width of each button at full reveal
-const MID = SNAP / 2    // delete reaches full size at this swipe distance
+const BTN_W = SNAP / 2  // 80px each; widths track swipe linearly so no clipping
 
 function easeOut(t) { return 1 - (1 - t) * (1 - t) }
 
 const delBtnStyle = computed(() => {
   const x = Math.abs(swipeX.value)
-  const p = easeOut(Math.min(1, x / MID))
+  const w = Math.min(BTN_W, x)
+  const p = easeOut(Math.min(1, x / BTN_W))
   const tr = isSwiping.value ? 'none' : 'width 0.25s ease, opacity 0.25s ease, transform 0.25s ease'
   return {
-    width: Math.round(BTN_W * p) + 'px',
+    width: w + 'px',
     opacity: Math.min(1, p * 1.8),
     transform: `scaleY(${p.toFixed(3)})`,
     transformOrigin: 'right center',
@@ -127,10 +127,11 @@ const delBtnStyle = computed(() => {
 
 const dueBtnStyle = computed(() => {
   const x = Math.abs(swipeX.value)
-  const p = easeOut(Math.max(0, Math.min(1, (x - MID) / MID)))
+  const w = Math.max(0, Math.min(BTN_W, x - BTN_W))
+  const p = easeOut(Math.max(0, Math.min(1, (x - BTN_W) / BTN_W)))
   const tr = isSwiping.value ? 'none' : 'width 0.25s ease, opacity 0.25s ease, transform 0.25s ease'
   return {
-    width: Math.round(BTN_W * p) + 'px',
+    width: w + 'px',
     opacity: Math.min(1, p * 1.8),
     transform: `scaleY(${p.toFixed(3)})`,
     transformOrigin: 'right center',
@@ -233,38 +234,42 @@ function startDueEdit(e) {
       return `<div class="toolbar toolbar-top no-shadow">
         <div class="toolbar-inner">
           <div class="left">
-            <a href="#" class="link cal-clear">Clear</a>
+            <button type="button" class="link cal-clear">Clear</button>
           </div>
           <div class="right" style="gap:4px">
-            <a href="#" class="link cal-today">Today</a>
-            <a href="#" class="link cal-tomorrow">Tomorrow</a>
-            <a href="#" class="link cal-nextweek">Next week</a>
+            <button type="button" class="link cal-today">Today</button>
+            <button type="button" class="link cal-tomorrow">Tomorrow</button>
+            <button type="button" class="link cal-nextweek">Next week</button>
           </div>
         </div>
       </div>`
     },
     on: {
       open(cal) {
-        cal.el.querySelector('.cal-clear')?.addEventListener('click', ev => {
+        function handler(ev) {
+          const t = ev.target.closest('.cal-clear,.cal-today,.cal-tomorrow,.cal-nextweek')
+          if (!t) return
           ev.preventDefault()
-          store.updateTaskDue(props.task.id, '').catch(console.error)
-          cal.close()
-        })
-        cal.el.querySelector('.cal-today')?.addEventListener('click', ev => {
-          ev.preventDefault(); pickQuick(cal, 0)
-        })
-        cal.el.querySelector('.cal-tomorrow')?.addEventListener('click', ev => {
-          ev.preventDefault(); pickQuick(cal, 1)
-        })
-        cal.el.querySelector('.cal-nextweek')?.addEventListener('click', ev => {
-          ev.preventDefault(); pickQuick(cal, 7)
-        })
+          ev.stopPropagation()
+          if (t.classList.contains('cal-clear')) {
+            store.updateTaskDue(props.task.id, '').catch(console.error)
+            cal.close()
+          } else if (t.classList.contains('cal-today')) { pickQuick(cal, 0) }
+          else if (t.classList.contains('cal-tomorrow')) { pickQuick(cal, 1) }
+          else if (t.classList.contains('cal-nextweek')) { pickQuick(cal, 7) }
+        }
+        document.addEventListener('click', handler, true)
+        cal._toolbarHandler = handler
       },
       change(cal, value) {
         if (!value.length) return
         store.updateTaskDue(props.task.id, isoDate(value[0])).catch(console.error)
       },
-      closed(cal) { cal.destroy(); calendarInstance = null },
+      closed(cal) {
+        if (cal._toolbarHandler) document.removeEventListener('click', cal._toolbarHandler, true)
+        cal.destroy()
+        calendarInstance = null
+      },
     },
   })
   calendarInstance.open()

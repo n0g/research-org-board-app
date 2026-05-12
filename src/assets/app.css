@@ -1610,15 +1610,14 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
   overflow: hidden;
 }
 .task-item-wrap + .task-item-wrap { border-top: 1px solid var(--border); }
-.task-delete-zone {
+.task-swipe-zone {
   position: absolute;
   inset: 8px 4px 8px auto;
-  width: 152px;
+  width: 160px;
+  overflow: hidden;
   display: flex;
   align-items: stretch;
   justify-content: flex-end;
-  gap: 4px;
-  padding: 0 2px;
 }
 .task-swipe-btn {
   flex: none;
