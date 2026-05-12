@@ -1679,7 +1679,7 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 
 .task-check {
   width: 20px; height: 20px;
-  border: 2px solid var(--border2);
+  border: 2px solid var(--text3);
   border-radius: 50%;
   cursor: pointer;
   flex-shrink: 0;
@@ -1743,7 +1743,6 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 .task-cal-badge {
   font-size: 13px;
   color: var(--text3);
-  opacity: 0.55;
   vertical-align: middle;
   margin-left: 5px;
 }
@@ -1764,6 +1763,8 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 .task-due-right .material-symbols-outlined { font-size: 14px; }
 .task-due-right.overdue { color: var(--red); }
 .task-due-right.due-soon { color: var(--amber); }
+html[data-theme="light"] .task-due-right.overdue { color: #dc2626; }
+html[data-theme="light"] .task-due-right.due-soon { color: #b45309; }
 .task-due-edit {
   font-size: 12px;
   background: var(--bg2);
