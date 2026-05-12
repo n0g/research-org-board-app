@@ -1,7 +1,12 @@
 <template>
   <div class="task-item-wrap" role="listitem">
-    <div class="task-delete-zone" aria-hidden="true" @click="doDelete">
-      <span class="material-symbols-outlined">delete</span>
+    <div class="task-delete-zone" aria-hidden="true">
+      <button class="task-swipe-btn" @click.stop="startDueEdit">
+        <span class="material-symbols-outlined">calendar_today</span>
+      </button>
+      <button class="task-swipe-btn task-swipe-del" @click.stop="doDelete">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
     </div>
     <div
       class="task-item"
@@ -34,6 +39,7 @@
             <a v-if="seg.href" :href="seg.href" target="_blank" rel="noopener noreferrer" class="task-link" @click.stop>{{ seg.text }}</a>
             <template v-else>{{ seg.text }}</template>
           </template>
+          <span v-if="task.due" class="material-symbols-outlined task-cal-badge">calendar_today</span>
         </div>
         <input
           v-if="editingTitle"
@@ -45,31 +51,36 @@
           @keydown.escape.stop="editingTitle = false"
           @click.stop
         >
-        <div
-          v-if="!editingDue"
-          class="task-due"
-          :class="[dueClass, { 'task-due-empty': !task.due }]"
-          role="button"
-          tabindex="0"
-          @click.stop="startDueEdit"
-          @keydown.enter.prevent="startDueEdit"
-          @keydown.space.prevent="startDueEdit"
-        >
-          <template v-if="task.due">{{ dueClass === 'overdue' ? '⚠︎ ' : '· ' }}{{ formattedDue }}</template>
-          <template v-else>+ due date</template>
-        </div>
-        <input
-          v-if="editingDue"
-          ref="dueInputEl"
-          type="date"
-          class="task-due-edit"
-          :value="task.due?.date ?? ''"
-          @blur="saveDue"
-          @keydown.enter.prevent="dueInputEl?.blur()"
-          @keydown.escape.stop="editingDue = false"
-        >
       </div>
+      <div
+        v-if="task.due && !editingDue"
+        class="task-due-right"
+        :class="dueClass"
+        role="button"
+        tabindex="0"
+        aria-label="Edit due date"
+        @click.stop="startDueEdit"
+        @keydown.enter.prevent="startDueEdit"
+        @keydown.space.prevent="startDueEdit"
+      >
+        <span class="material-symbols-outlined">calendar_today</span>
+        {{ formattedDue }}
+      </div>
+      <input
+        v-if="editingDue"
+        ref="dueInputEl"
+        type="date"
+        class="task-due-edit"
+        :value="task.due?.date ?? ''"
+        @blur="saveDue"
+        @keydown.enter.prevent="dueInputEl?.blur()"
+        @keydown.escape.stop="editingDue = false"
+        @click.stop
+      >
       <div class="task-hover-actions">
+        <button v-if="!task.due && !editingDue" class="task-action-btn task-add-due-btn" aria-label="Add due date" @click.stop="startDueEdit">
+          + due
+        </button>
         <button class="task-action-btn" aria-label="Delete task" @click.stop="doDelete">
           <span class="material-symbols-outlined">delete</span>
         </button>
@@ -100,7 +111,7 @@ const swipeOpen = ref(false)
 const isSwiping = ref(false)
 let startX = 0, startY = 0, dirLocked = false, isHoriz = false
 
-const SNAP = 80
+const SNAP = 148
 
 const swipeStyle = computed(() => ({
   transform: `translateX(${swipeX.value}px)`,
