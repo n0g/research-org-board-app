@@ -1614,10 +1614,11 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 .task-delete-zone {
   position: absolute;
   inset: 4px 4px 4px auto;
-  width: 144px;
+  width: 152px;
   display: flex;
   align-items: stretch;
-  gap: 2px;
+  gap: 6px;
+  padding: 0 2px;
 }
 .task-swipe-btn {
   flex: 1;
@@ -1627,18 +1628,14 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
   color: #fff;
   cursor: pointer;
   border: none;
-  padding: 0;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 6px;
 }
-.task-swipe-btn:not(.task-swipe-del) {
-  background: var(--accent);
-  border-radius: 8px 4px 4px 8px;
-}
-.task-swipe-btn.task-swipe-del {
-  background: var(--red);
-  border-radius: 4px 8px 8px 4px;
-}
+.task-swipe-btn:not(.task-swipe-del) { background: var(--accent); }
+.task-swipe-btn.task-swipe-del { background: var(--red); }
 .task-swipe-btn .material-symbols-outlined { font-size: 20px; }
-.task-swipe-btn:not(.task-swipe-del) { font-size: 12px; font-weight: 600; }
 .task-hover-actions {
   display: flex;
   align-items: center;

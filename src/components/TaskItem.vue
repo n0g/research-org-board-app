@@ -109,7 +109,7 @@ const swipeOpen = ref(false)
 const isSwiping = ref(false)
 let startX = 0, startY = 0, dirLocked = false, isHoriz = false
 
-const SNAP = 148
+const SNAP = 160
 
 const swipeStyle = computed(() => ({
   transform: `translateX(${swipeX.value}px)`,
