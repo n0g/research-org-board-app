@@ -1613,11 +1613,12 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 .task-swipe-zone {
   position: absolute;
   inset: 8px 4px 8px auto;
-  width: 160px;
+  width: 146px;
   overflow: hidden;
   display: flex;
   align-items: stretch;
   justify-content: flex-end;
+  gap: 6px;
 }
 .task-swipe-btn {
   flex: none;
@@ -1783,6 +1784,8 @@ html[data-theme="dark"] .overdue-badge { color: var(--red); background: rgba(255
 
 /* ── F7 CALENDAR OVERRIDES ── */
 .cal-clear { color: var(--red) !important; }
+.calendar .toolbar { height: 56px !important; }
+.calendar .toolbar .toolbar-inner { height: 56px !important; }
 .calendar .toolbar .right { display: flex; gap: 4px; }
 .calendar .toolbar .link { font-size: 13px; }
 

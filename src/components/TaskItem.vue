@@ -106,8 +106,9 @@ const swipeOpen = ref(false)
 const isSwiping = ref(false)
 let startX = 0, startY = 0, dirLocked = false, isHoriz = false
 
-const SNAP = 160
-const BTN_W = SNAP / 2  // 80px each; widths track swipe linearly so no clipping
+const GAP = 6
+const BTN_W = 70
+const SNAP = BTN_W * 2 + GAP  // 146px; widths track swipe linearly so no clipping
 
 function easeOut(t) { return 1 - (1 - t) * (1 - t) }
 
@@ -127,8 +128,8 @@ const delBtnStyle = computed(() => {
 
 const dueBtnStyle = computed(() => {
   const x = Math.abs(swipeX.value)
-  const w = Math.max(0, Math.min(BTN_W, x - BTN_W))
-  const p = easeOut(Math.max(0, Math.min(1, (x - BTN_W) / BTN_W)))
+  const w = Math.max(0, Math.min(BTN_W, x - BTN_W - GAP))
+  const p = easeOut(Math.max(0, Math.min(1, (x - BTN_W - GAP) / BTN_W)))
   const tr = isSwiping.value ? 'none' : 'width 0.25s ease, opacity 0.25s ease, transform 0.25s ease'
   return {
     width: w + 'px',
