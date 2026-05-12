@@ -1608,9 +1608,8 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 .task-item-wrap {
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
-  margin-bottom: 8px;
 }
+.task-item-wrap + .task-item-wrap { border-top: 1px solid var(--border); }
 .task-delete-zone {
   position: absolute;
   inset: 4px 4px 4px auto;
@@ -1663,17 +1662,12 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  background: var(--bg);
-  border: 1px solid rgba(226,232,240,0.6);
-  border-radius: 8px;
+  background: var(--bg-surface);
   padding: 14px 16px;
-  transition: border-color 0.1s;
   cursor: default;
   touch-action: pan-y;
 }
 html[data-theme="light"] .task-item { background: #ffffff; }
-html[data-theme="dark"] .task-item { border-color: var(--border); }
-.task-item:hover { border-color: var(--border2); }
 
 .task-item.p1 { border-left: 3px solid var(--red); }
 .task-item.p2 { border-left: 3px solid var(--amber); }

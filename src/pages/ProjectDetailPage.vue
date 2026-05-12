@@ -299,8 +299,6 @@
             >
           </div>
 
-          <div v-if="tasks.length" class="task-group-label">Tasks</div>
-
           <div
             v-if="tasks.length"
             ref="taskListEl"
