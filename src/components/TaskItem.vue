@@ -113,15 +113,27 @@ function easeOut(t) { return 1 - (1 - t) * (1 - t) }
 const delBtnStyle = computed(() => {
   const x = Math.abs(swipeX.value)
   const p = easeOut(Math.min(1, x / MID))
-  const tr = isSwiping.value ? 'none' : 'width 0.25s ease, opacity 0.25s ease'
-  return { width: Math.round(BTN_W * p) + 'px', opacity: Math.min(1, p * 1.8), transition: tr }
+  const tr = isSwiping.value ? 'none' : 'width 0.25s ease, opacity 0.25s ease, transform 0.25s ease'
+  return {
+    width: Math.round(BTN_W * p) + 'px',
+    opacity: Math.min(1, p * 1.8),
+    transform: `scaleY(${p.toFixed(3)})`,
+    transformOrigin: 'right center',
+    transition: tr,
+  }
 })
 
 const dueBtnStyle = computed(() => {
   const x = Math.abs(swipeX.value)
   const p = easeOut(Math.max(0, Math.min(1, (x - MID) / MID)))
-  const tr = isSwiping.value ? 'none' : 'width 0.25s ease, opacity 0.25s ease'
-  return { width: Math.round(BTN_W * p) + 'px', opacity: Math.min(1, p * 1.8), transition: tr }
+  const tr = isSwiping.value ? 'none' : 'width 0.25s ease, opacity 0.25s ease, transform 0.25s ease'
+  return {
+    width: Math.round(BTN_W * p) + 'px',
+    opacity: Math.min(1, p * 1.8),
+    transform: `scaleY(${p.toFixed(3)})`,
+    transformOrigin: 'right center',
+    transition: tr,
+  }
 })
 
 const swipeStyle = computed(() => ({
