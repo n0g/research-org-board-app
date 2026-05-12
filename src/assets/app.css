@@ -1719,6 +1719,7 @@ html[data-theme="light"] .task-item { background: #ffffff; }
   margin: 2px 0;
 }
 .is-dragging .task-item { opacity: 0.35; }
+.is-dragging .task-hover-actions { opacity: 0 !important; }
 .task-name { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; cursor: text; }
 .task-title-edit {
   font-size: 14px;
