@@ -309,12 +309,14 @@
               @keydown.enter.prevent="startAddTask"
               @keydown.space.prevent="startAddTask"
             >
+              <div class="task-handle-spacer" aria-hidden="true"></div>
               <div class="task-quick-add-btn" aria-hidden="true">
                 <span class="material-symbols-outlined">add</span>
               </div>
               <span class="task-quick-add-label">Add task</span>
             </div>
             <div v-else class="task-quick-add-row task-quick-add-editing">
+              <div class="task-handle-spacer" aria-hidden="true"></div>
               <div class="task-quick-add-btn" aria-hidden="true">
                 <span class="material-symbols-outlined">add</span>
               </div>

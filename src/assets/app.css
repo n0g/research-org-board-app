@@ -1567,6 +1567,7 @@ html[data-theme="light"] .project-tasks { background: #faf9fe; }
   background: var(--bg-surface);
   cursor: pointer;
 }
+.task-handle-spacer { width: 20px; flex-shrink: 0; }
 .task-quick-add-btn {
   width: 18px; height: 18px;
   border-radius: 50%;
