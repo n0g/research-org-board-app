@@ -25,7 +25,12 @@
             <h1
               v-if="!editingTitle"
               class="project-title project-title-editable"
+              role="button"
+              tabindex="0"
+              aria-label="Edit project title"
               @click="startEditTitle"
+              @keydown.enter.prevent="startEditTitle"
+              @keydown.space.prevent="startEditTitle"
             >{{ project?.name ?? 'Loading…' }}</h1>
             <textarea
               v-else
@@ -33,6 +38,7 @@
               v-model="titleDraft"
               class="project-title project-title-input"
               rows="2"
+              aria-label="Project title"
               @blur="saveTitle"
               @keydown.meta.enter.prevent="titleInputEl?.blur()"
               @keydown.escape.prevent="cancelTitle"
@@ -60,23 +66,28 @@
                 {{ person }}
                 <button class="collab-chip-remove" :aria-label="`Remove ${person}`" @click.stop="removeCollab(person)"><span class="material-symbols-outlined">close</span></button>
               </span>
-              <button v-if="!addingCollab" class="collab-add-pill" @click.stop="startAddCollab"><span class="material-symbols-outlined">add</span></button>
+              <button v-if="!addingCollab" class="collab-add-pill" aria-label="Add collaborator" @click.stop="startAddCollab"><span class="material-symbols-outlined" aria-hidden="true">add</span></button>
               <div v-else ref="collabWrapperEl" class="collab-combo-wrapper">
                 <input
                   ref="collabInputEl"
                   v-model="collabQuery"
                   class="collab-combo-input"
                   placeholder="Name…"
+                  aria-label="Collaborator name"
+                  aria-autocomplete="list"
+                  :aria-expanded="filteredCollabs.length > 0"
                   autocomplete="off"
                   @keydown.enter.prevent="commitCollab(collabQuery)"
                   @keydown.escape.prevent="cancelAddCollab"
                   @keydown.down.prevent="focusCollabOption(0)"
                 >
-                <div v-if="filteredCollabs.length" class="popup-dropdown">
+                <div v-if="filteredCollabs.length" class="popup-dropdown" role="listbox" aria-label="Collaborator suggestions">
                   <button
                     v-for="(c, idx) in filteredCollabs"
                     :key="c"
                     class="popup-option"
+                    role="option"
+                    :aria-selected="false"
                     @mousedown.prevent
                     @click="commitCollab(c)"
                     @keydown.down.prevent="focusCollabOption(idx + 1)"
@@ -95,9 +106,12 @@
               v-if="!editingStatus"
               class="meta-editable"
               :class="{ placeholder: !statusText }"
+              role="button"
               tabindex="0"
+              aria-label="Edit status"
               @click="startEdit('status')"
               @keydown.enter.prevent="startEdit('status')"
+              @keydown.space.prevent="startEdit('status')"
             >{{ statusText || 'Add a status…' }}</div>
             <textarea
               v-else
@@ -105,6 +119,7 @@
               v-model="statusDraft"
               class="meta-textarea"
               rows="3"
+              aria-label="Status"
               @blur="saveStatus"
               @keydown.escape.prevent="cancelStatus"
               @keydown.meta.enter.prevent="statusTextareaEl?.blur()"
@@ -147,9 +162,12 @@
                 v-if="!editingVenue"
                 class="meta-editable"
                 :class="{ placeholder: !venueText }"
+                role="button"
                 tabindex="0"
+                aria-label="Edit venue"
                 @click="startEditVenue"
                 @keydown.enter.prevent="startEditVenue"
+                @keydown.space.prevent="startEditVenue"
               >{{ venueText || 'Add venue…' }}</div>
               <input
                 v-else
@@ -158,6 +176,7 @@
                 class="meta-input"
                 type="text"
                 placeholder="e.g. PETS 2026"
+                aria-label="Venue"
                 @blur="saveVenue"
                 @keydown.enter.prevent="venueInputEl?.blur()"
                 @keydown.escape.prevent="cancelVenue"
@@ -173,16 +192,17 @@
                   :class="deadlineDateClass"
                   type="date"
                   :value="deadlineDateValue"
+                  aria-label="Deadline date"
                   @change="onDeadlineChange"
                   @keydown.enter.prevent="($event.target).blur()"
                 >
                 <button
                   v-if="deadlineDateValue"
                   class="deadline-clear-btn"
-                  title="Remove deadline"
+                  aria-label="Remove deadline"
                   @click="store.setDeadlineDate(projectId, '').catch(console.error)"
                 >
-                  <span class="material-symbols-outlined">close</span>
+                  <span class="material-symbols-outlined" aria-hidden="true">close</span>
                 </button>
               </div>
             </div>
@@ -196,9 +216,12 @@
                 v-if="!editingSubmission"
                 class="meta-editable submission-url-text"
                 :class="{ placeholder: !submissionUrl }"
+                role="button"
                 tabindex="0"
+                aria-label="Edit submission URL"
                 @click="startEditSubmission"
                 @keydown.enter.prevent="startEditSubmission"
+                @keydown.space.prevent="startEditSubmission"
               >{{ submissionUrl || 'Add submission URL…' }}</div>
               <input
                 v-else
@@ -207,6 +230,7 @@
                 class="meta-input"
                 type="url"
                 placeholder="https://…"
+                aria-label="Submission URL"
                 @blur="saveSubmission"
                 @keydown.enter.prevent="submissionInputEl?.blur()"
                 @keydown.escape.prevent="cancelSubmission"
@@ -217,8 +241,8 @@
                 class="submission-open-btn external"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="Open submission"
-              ><span class="material-symbols-outlined">open_in_new</span></a>
+                aria-label="Open submission in new tab"
+              ><span class="material-symbols-outlined" aria-hidden="true">open_in_new</span></a>
             </div>
             <div v-if="submissionUrl && matchedSite" class="submission-status">
               <div v-if="submissionStatusLoading" class="submission-status-loading">
@@ -248,9 +272,12 @@
               v-if="!editingSummary"
               class="meta-editable"
               :class="{ placeholder: !summaryText }"
+              role="button"
               tabindex="0"
+              aria-label="Edit summary"
               @click="startEdit('summary')"
               @keydown.enter.prevent="startEdit('summary')"
+              @keydown.space.prevent="startEdit('summary')"
             >{{ summaryText || 'Add a summary…' }}</div>
             <textarea
               v-else
@@ -258,6 +285,7 @@
               v-model="summaryDraft"
               class="meta-textarea"
               rows="4"
+              aria-label="Summary"
               @blur="saveSummary"
               @keydown.escape.prevent="cancelSummary"
               @keydown.meta.enter.prevent="summaryTextareaEl?.blur()"
@@ -279,7 +307,7 @@
         </section>
 
         <!-- Right tasks pane -->
-        <section class="project-tasks" @keydown="handleTasksKey">
+        <section class="project-tasks" aria-label="Project tasks" @keydown="handleTasksKey">
           <div class="tasks-header">
             <div class="tasks-title">Project Tasks</div>
             <div class="tasks-subtitle">{{ tasks.length }} open task{{ tasks.length !== 1 ? 's' : '' }}</div>

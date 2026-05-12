@@ -710,8 +710,8 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   border: none;
   border-radius: 50%;
@@ -1115,8 +1115,8 @@ html[data-theme="dark"] .project-meta { background: var(--bg2); }
 .back-btn {
   background: none; border: none;
   cursor: pointer;
-  padding: 0;
-  margin-bottom: 20px;
+  padding: 8px 0;
+  margin-bottom: 12px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1435,8 +1435,8 @@ html[data-theme="dark"] .popup-dropdown {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   border-radius: 9999px;
   border: 1.5px dashed var(--border2);
   background: transparent;
@@ -1479,8 +1479,8 @@ html[data-theme="dark"] .popup-dropdown {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   margin-left: 2px;
   padding: 0;
   border: none;
@@ -1523,8 +1523,8 @@ html[data-theme="dark"] .popup-dropdown {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 8px;
   border: none;
   background: transparent;
