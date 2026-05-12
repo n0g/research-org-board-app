@@ -1669,9 +1669,9 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 }
 html[data-theme="light"] .task-item { background: #ffffff; }
 
-.task-item.p1 { border-left: 3px solid var(--red); }
-.task-item.p2 { border-left: 3px solid var(--amber); }
-.task-item.p3 { border-left: 3px solid var(--blue); }
+.task-item.p1 .task-check { border-color: var(--red); }
+.task-item.p2 .task-check { border-color: var(--amber); }
+.task-item.p3 .task-check { border-color: var(--blue); }
 
 .task-check {
   width: 20px; height: 20px;
