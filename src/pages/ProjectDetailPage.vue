@@ -321,7 +321,6 @@
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
       <button class="tab-btn tab-btn-active" aria-current="page" @click="goBoard"><span class="material-symbols-outlined">view_kanban</span>Board</button>
       <button class="tab-btn" @click="goTasks"><span class="material-symbols-outlined">checklist</span>Tasks</button>
-      <button class="tab-btn" @click="goReviews"><span class="material-symbols-outlined">grading</span>Reviews</button>
       <button class="tab-btn" @click="goSettings"><span class="material-symbols-outlined">settings</span>Settings</button>
     </f7-toolbar>
   </f7-page>
@@ -736,7 +735,6 @@ async function confirmDelete() {
 function goBack() { f7.views.main.router.back() }
 function goBoard() { f7.views.main.router.navigate('/board/', { clearPreviousHistory: true }) }
 function goTasks() { f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true }) }
-function goReviews() { f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true }) }
 function goSettings() { f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true }) }
 
 onMounted(async () => {
