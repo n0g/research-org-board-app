@@ -1612,7 +1612,7 @@ html[data-theme="light"] .task-quick-add { background: #ffffff; }
 .task-item-wrap + .task-item-wrap { border-top: 1px solid var(--border); }
 .task-swipe-zone {
   position: absolute;
-  inset: 8px 4px 8px auto;
+  inset: 8px 0 8px auto;
   width: 146px;
   overflow: hidden;
   display: flex;
@@ -1789,12 +1789,14 @@ html[data-theme="dark"] .overdue-badge { color: var(--red); background: rgba(255
 .calendar .toolbar .right { display: flex; gap: 4px; }
 .calendar .toolbar .link {
   font-size: 13px;
-  background: none;
+  background: none !important;
   border: none;
   cursor: pointer;
   font-family: inherit;
   color: var(--accent);
   padding: 0 8px;
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
 /* ── TOKEN SCREEN ── */
