@@ -221,10 +221,9 @@ html[data-theme="dark"] .board-sidebar {
     scroll-padding-left: calc(240px + 12px + 24px);
     transition: padding-left 0.2s ease;
   }
-  /* Push project detail content past the sidebar when open */
-  .project-screen:has(.board-sidebar:not(.collapsed)) .project-main {
-    margin-left: calc(240px + 12px + 16px);
-    transition: margin-left 0.2s ease;
+  /* Extend project meta background under the sidebar; push content past it */
+  .project-screen:has(.board-sidebar:not(.collapsed)) .project-meta {
+    padding-left: calc(240px + 12px + 16px + 32px);
   }
 }
 
@@ -1164,6 +1163,7 @@ html[data-theme="dark"] .theme-seg-btn.active {
   display: flex;
   flex-direction: column;
   gap: 0;
+  transition: padding-left 0.2s ease;
 }
 html[data-theme="dark"] .project-meta { background: var(--bg2); }
 .project-meta-collapsed { padding-left: 52px; }
