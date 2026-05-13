@@ -394,16 +394,24 @@ html[data-theme="dark"] .sidebar-nav-active {
   top: calc(env(safe-area-inset-top) + 20px);
   left: 12px;
   z-index: 10;
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  background: var(--bg-sidebar);
-  border: 1px solid var(--border);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(245,245,247,0.60);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(0,0,0,0.10);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.14);
   color: var(--text2);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: background 0.1s, color 0.1s;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
 }
-.sidebar-expand-btn:hover { background: var(--bg3); color: var(--text); }
+html[data-theme="dark"] .sidebar-expand-btn {
+  background: rgba(30,30,35,0.60);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+}
+.sidebar-expand-btn:hover { color: var(--text); box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
 .sidebar-expand-btn .material-symbols-outlined { font-size: 20px; }
 
 .fab-new-project {
