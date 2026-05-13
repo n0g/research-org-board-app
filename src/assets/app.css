@@ -235,13 +235,13 @@ html[data-theme="dark"] .board-sidebar {
 
 /* Sidebar brand header */
 .sidebar-brand {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0px 0px 3px;
-  gap: 8px;
-  -webkit-app-region: drag;
-  app-region: drag;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  padding: 4px 4px 0;
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
 }
 .sidebar-brand button, .sidebar-brand a {
   -webkit-app-region: no-drag;
@@ -271,7 +271,8 @@ html[data-theme="dark"] .board-sidebar {
 .sidebar-collapse-btn .material-symbols-outlined { font-size: 20px; }
 
 /* Sidebar nav */
-.sidebar-nav { padding: 0 0 12px; border-bottom: 1px solid var(--border); }
+.sidebar-nav { padding: 8px 0 12px; border-bottom: 1px solid var(--border); }
+.sidebar-nav .sidebar-nav-item { margin-right: 52px; width: calc(100% - 60px); }
 
 .sidebar-nav-item {
   display: flex;
@@ -386,7 +387,7 @@ html[data-theme="dark"] .sidebar-nav-active {
 /* Floating expand button shown when sidebar is hidden */
 .sidebar-expand-btn {
   position: absolute;
-  top: calc(env(safe-area-inset-top) + 12px);
+  top: calc(env(safe-area-inset-top) + 16px);
   left: 12px;
   z-index: 10;
   width: 44px; height: 44px;
