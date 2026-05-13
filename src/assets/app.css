@@ -2391,7 +2391,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   .filter-tabs { padding-top: calc(env(safe-area-inset-top) + 18px); }
   .schedule-list .triage-list-body { padding-top: calc(66px + env(safe-area-inset-top)); }
   .schedule-list-collapsed .filter-tabs {
-    padding-left: 64px;
+    padding-left: 72px;
     padding-top: calc(env(safe-area-inset-top) + 16px);
   }
   .schedule-list-collapsed .seg-ctrl {
@@ -2728,8 +2728,6 @@ html[data-theme="dark"] .seg-btn.active { background: rgba(255,255,255,0.15); }
   flex-shrink: 0;
   position: relative;
 }
-
-.schedule-list-collapsed .filter-tabs { padding-left: 52px; }
 
 /* Task rows are draggable */
 .schedule-task-row {
