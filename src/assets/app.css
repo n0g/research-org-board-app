@@ -1018,6 +1018,10 @@ html[data-theme="dark"] .settings-sheet {
   flex: 1;
   overflow-y: auto;
   padding: calc(32px + env(safe-area-inset-top)) 48px 32px;
+}
+@media (max-width: 767px) {
+  .settings-main {
+    padding: calc(24px + env(safe-area-inset-top)) 24px calc(56px + 16px + env(safe-area-inset-bottom));
   background: var(--bg);
   transition: margin-left 0.2s ease;
 }
