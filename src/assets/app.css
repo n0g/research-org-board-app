@@ -2376,18 +2376,28 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   background: var(--bg);
   position: relative;
 }
-.triage-tabs {
+.filter-tabs {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 2;
   padding: 12px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-surface);
-  flex-shrink: 0;
+  background: rgba(245,245,247,0.70);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
 }
-.triage-list-collapsed .triage-tabs { padding-left: 52px; }
+html[data-theme="dark"] .filter-tabs {
+  background: rgba(30,30,35,0.75);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.triage-list-collapsed .filter-tabs { padding-left: 52px; }
 @media (max-width: 767px) {
-  .triage-tabs { padding-top: calc(12px + env(safe-area-inset-top)); }
+  .filter-tabs { padding-top: calc(12px + env(safe-area-inset-top)); }
+  .schedule-list .triage-list-body { padding-top: calc(60px + env(safe-area-inset-top)); }
 }
 @media (min-width: 768px) {
-  .triage-tabs { padding-top: calc(env(safe-area-inset-top) + 18px); }
+  .filter-tabs { padding-top: calc(env(safe-area-inset-top) + 18px); }
+  .schedule-list .triage-list-body { padding-top: calc(66px + env(safe-area-inset-top)); }
 }
 .triage-list-body {
   flex: 1;
@@ -2609,10 +2619,11 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 /* Segmented control */
 .seg-ctrl {
   display: flex;
-  background: var(--bg3);
+  background: rgba(0,0,0,0.07);
   border-radius: 10px;
   padding: 3px;
 }
+html[data-theme="dark"] .seg-ctrl { background: rgba(255,255,255,0.08); }
 .seg-btn {
   flex: 1;
   padding: 7px 12px;
@@ -2626,10 +2637,11 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   transition: all 0.12s;
 }
 .seg-btn.active {
-  background: var(--bg);
+  background: rgba(255,255,255,0.90);
   color: var(--text);
   box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 }
+html[data-theme="dark"] .seg-btn.active { background: rgba(255,255,255,0.15); }
 .seg-btn:not(.active):hover { color: var(--text); }
 .triage-seg-narrow { max-width: 160px; }
 
@@ -2701,7 +2713,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   position: relative;
 }
 
-.schedule-list-collapsed .triage-tabs { padding-left: 52px; }
+.schedule-list-collapsed .filter-tabs { padding-left: 52px; }
 
 /* Task rows are draggable */
 .schedule-task-row {

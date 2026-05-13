@@ -42,7 +42,7 @@
 
         <!-- Left: task list -->
         <div class="schedule-list" :class="{ 'schedule-list-collapsed': sidebarCollapsed }">
-          <div class="triage-tabs">
+          <div class="filter-tabs">
             <div class="seg-ctrl" role="tablist" aria-label="Task filter">
               <button
                 v-for="t in TABS"
