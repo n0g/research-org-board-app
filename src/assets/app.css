@@ -271,7 +271,7 @@ html[data-theme="dark"] .board-sidebar {
 .sidebar-collapse-btn .material-symbols-outlined { font-size: 20px; }
 
 /* Sidebar nav */
-.sidebar-nav { padding: 8px 0 12px; border-bottom: 1px solid var(--border); }
+.sidebar-nav { padding: 8px 0 12px; background-image: linear-gradient(var(--border), var(--border)); background-size: calc(100% - 24px) 1px; background-position: 12px bottom; background-repeat: no-repeat; }
 .sidebar-nav .sidebar-nav-item { margin-right: 52px; width: calc(100% - 60px); }
 
 .sidebar-nav-item {
@@ -377,7 +377,10 @@ html[data-theme="dark"] .sidebar-nav-active {
 .sidebar-footer {
   margin-top: auto;
   padding: 8px 0;
-  border-top: 1px solid var(--border);
+  background-image: linear-gradient(var(--border), var(--border));
+  background-size: calc(100% - 24px) 1px;
+  background-position: 12px top;
+  background-repeat: no-repeat;
   flex-shrink: 0;
 }
 
