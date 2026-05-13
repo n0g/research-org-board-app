@@ -238,7 +238,7 @@ html[data-theme="dark"] .board-sidebar {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 2px 2px 4px;
+  padding: 4px 4px 4px;
   gap: 8px;
   -webkit-app-region: drag;
   app-region: drag;
