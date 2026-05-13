@@ -2381,14 +2381,6 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   top: 0; left: 0; right: 0;
   z-index: 2;
   padding: 12px;
-  background: rgba(245,245,247,0.70);
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-}
-html[data-theme="dark"] .filter-tabs {
-  background: rgba(30,30,35,0.75);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .triage-list-collapsed .filter-tabs { padding-left: 52px; }
 @media (max-width: 767px) {
@@ -2619,17 +2611,24 @@ html[data-theme="dark"] .filter-tabs {
 /* Segmented control */
 .seg-ctrl {
   display: flex;
-  background: rgba(0,0,0,0.07);
-  border-radius: 10px;
+  background: rgba(245,245,247,0.70);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  border-radius: 20px;
   padding: 3px;
 }
-html[data-theme="dark"] .seg-ctrl { background: rgba(255,255,255,0.08); }
+html[data-theme="dark"] .seg-ctrl {
+  background: rgba(30,30,35,0.75);
+  border: 1px solid rgba(255,255,255,0.08);
+}
 .seg-btn {
   flex: 1;
   padding: 7px 12px;
   font-size: 12px;
   font-weight: 600;
-  border-radius: 7px;
+  border-radius: 16px;
   border: none;
   background: transparent;
   color: var(--text2);
