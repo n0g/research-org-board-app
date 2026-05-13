@@ -120,7 +120,6 @@
         <span class="material-symbols-outlined" aria-hidden="true">settings</span>
         <span class="sidebar-label">Settings</span>
       </button>
-      <div v-if="lastUpdatedText" class="sidebar-last-updated">{{ lastUpdatedText }}</div>
     </div>
   </aside>
 </template>
@@ -142,9 +141,6 @@ const { sidebarCollapsed, toggleSidebar } = useSidebar()
 const collabOpen = ref(true)
 const venuesOpen = ref(true)
 
-const lastUpdatedText = computed(() =>
-  store.lastUpdated ? `Updated ${store.lastUpdated.toLocaleTimeString()}` : ''
-)
 
 function goBoard() {
   f7.views.main.router.navigate('/board/', { clearPreviousHistory: true })

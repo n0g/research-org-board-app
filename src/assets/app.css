@@ -379,11 +379,6 @@ html[data-theme="dark"] .sidebar-nav-active {
   border-top: 1px solid var(--border);
   flex-shrink: 0;
 }
-.sidebar-last-updated {
-  font-size: 10px;
-  color: var(--text3);
-  padding: 2px 14px 6px;
-}
 
 /* Collapsed sidebar — fully hidden */
 .board-sidebar.collapsed { width: 0; overflow: hidden; border: none; box-shadow: none; opacity: 0; }
