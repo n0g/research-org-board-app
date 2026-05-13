@@ -194,7 +194,7 @@ a, button, .card, .stage-opt, .task-check, .task-due-right {
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  transition: width 0.2s ease;
+  transition: width 0.2s ease, opacity 0.2s ease;
 }
 html[data-theme="dark"] .board-sidebar {
   background: rgba(30,30,35,0.70);
@@ -381,7 +381,7 @@ html[data-theme="dark"] .sidebar-nav-active {
 }
 
 /* Collapsed sidebar — fully hidden */
-.board-sidebar.collapsed { width: 0; overflow: hidden; border: none; box-shadow: none; }
+.board-sidebar.collapsed { width: 0; overflow: hidden; border: none; box-shadow: none; opacity: 0; }
 
 /* Floating expand button shown when sidebar is hidden */
 .sidebar-expand-btn {
@@ -997,6 +997,7 @@ html[data-theme="dark"] .settings-sheet {
   padding: 0 !important;
 }
 .settings-screen {
+  position: relative;
   display: flex;
   flex-direction: row;
   flex: 1;
@@ -1009,6 +1010,12 @@ html[data-theme="dark"] .settings-sheet {
   overflow-y: auto;
   padding: calc(32px + env(safe-area-inset-top)) 48px 32px;
   background: var(--bg);
+  transition: margin-left 0.2s ease;
+}
+@media (min-width: 768px) {
+  .settings-screen:has(.board-sidebar:not(.collapsed)) .settings-main {
+    margin-left: calc(240px + 12px + 16px);
+  }
 }
 .settings-content {
   max-width: 560px;
@@ -2320,6 +2327,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   padding: 0 !important;
 }
 .tasks-screen {
+  position: relative;
   display: flex;
   flex-direction: row;
   flex: 1;
@@ -2332,6 +2340,12 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   display: flex;
   overflow: hidden;
   padding-top: env(safe-area-inset-top);
+  transition: margin-left 0.2s ease;
+}
+@media (min-width: 768px) {
+  .tasks-screen:has(.board-sidebar:not(.collapsed)) .tasks-main {
+    margin-left: calc(240px + 12px + 16px);
+  }
 }
 
 /* Task list (left pane) */
@@ -2640,6 +2654,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 .schedule-page .page-content { flex: 1; overflow: hidden; padding: 0 !important; }
 
 .schedule-screen {
+  position: relative;
   display: flex;
   height: 100%;
   overflow: hidden;
@@ -2650,6 +2665,12 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   display: flex;
   overflow: hidden;
   position: relative;
+  transition: margin-left 0.2s ease;
+}
+@media (min-width: 768px) {
+  .schedule-screen:has(.board-sidebar:not(.collapsed)) .schedule-main {
+    margin-left: calc(240px + 12px + 16px);
+  }
 }
 
 /* Left pane: task list */
