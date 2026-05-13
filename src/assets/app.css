@@ -193,7 +193,7 @@ a, button, .card, .stage-opt, .task-check, .task-due-right {
   display: none;
   flex-direction: column;
   overflow: hidden;
-  transition: width 0.2s ease, opacity 0.2s ease;
+  transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
 }
 .sidebar-scroll {
   flex: 1;
@@ -224,7 +224,6 @@ html[data-theme="dark"] .board-sidebar {
   .board-screen:has(.board-sidebar:not(.collapsed)) .board {
     padding-left: calc(240px + 12px + 24px);
     scroll-padding-left: calc(240px + 12px + 24px);
-    transition: padding-left 0.2s ease;
   }
   /* Extend project meta background under the sidebar; push content past it */
   .project-screen:has(.board-sidebar:not(.collapsed)) .project-meta {
@@ -507,6 +506,7 @@ html[data-theme="dark"] .sidebar-expand-btn {
   -webkit-overflow-scrolling: touch;
   user-select: none;
   background: var(--bg);
+  transition: padding-left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 html[data-theme="light"] .board { background: #ffffff; }
 @media (min-width: 768px) { .board { padding-left: 64px; scroll-padding-left: 64px; } }
@@ -1023,7 +1023,7 @@ html[data-theme="dark"] .settings-sheet {
   overflow-y: auto;
   padding: calc(32px + env(safe-area-inset-top)) 48px 32px;
   background: var(--bg);
-  transition: margin-left 0.2s ease;
+  transition: margin-left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 @media (max-width: 767px) {
   .settings-main {
@@ -1182,7 +1182,7 @@ html[data-theme="dark"] .theme-seg-btn.active {
   display: flex;
   flex-direction: column;
   gap: 0;
-  transition: padding-left 0.2s ease, width 0.2s ease;
+  transition: padding-left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 html[data-theme="dark"] .project-meta { background: var(--bg2); }
 .project-meta-collapsed .back-btn { margin-left: 32px; }
@@ -2359,7 +2359,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   display: flex;
   overflow: hidden;
   padding-top: env(safe-area-inset-top);
-  transition: margin-left 0.2s ease;
+  transition: margin-left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 @media (min-width: 768px) {
   .tasks-screen:has(.board-sidebar:not(.collapsed)) .tasks-main {
@@ -2708,7 +2708,7 @@ html[data-theme="dark"] .seg-btn.active { background: rgba(255,255,255,0.15); }
   display: flex;
   overflow: hidden;
   position: relative;
-  transition: margin-left 0.2s ease;
+  transition: margin-left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 @media (min-width: 768px) {
   .schedule-screen:has(.board-sidebar:not(.collapsed)) .schedule-main {
