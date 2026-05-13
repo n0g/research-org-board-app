@@ -192,16 +192,21 @@ a, button, .card, .stage-opt, .task-check, .task-due-right {
   box-shadow: 0 4px 32px rgba(0,0,0,0.10);
   display: none;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   transition: width 0.2s ease, opacity 0.2s ease;
 }
+.sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+.sidebar-scroll::-webkit-scrollbar { width: 0; }
 html[data-theme="dark"] .board-sidebar {
   background: rgba(30,30,35,0.70);
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 4px 32px rgba(0,0,0,0.40);
 }
-.board-sidebar::-webkit-scrollbar { width: 0; }
 
 @media (min-width: 768px) {
   .board-sidebar {

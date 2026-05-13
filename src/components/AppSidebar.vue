@@ -47,66 +47,68 @@
       </button>
     </nav>
 
-    <!-- Custom filters slot (e.g. Reviews page conferences) — hides default collaborators/venues -->
-    <slot name="filters" />
+    <!-- Scrollable middle: filters slot + collaborators + venues -->
+    <div class="sidebar-scroll">
+      <slot name="filters" />
 
-    <!-- Collaborators section -->
-    <template v-if="!$slots.filters && store.allCollaborators.length">
-      <button
-        class="sidebar-section-header"
-        :aria-expanded="collabOpen"
-        @click="collabOpen = !collabOpen"
-      >
-        <span class="sidebar-section-label">Collaborators</span>
-        <span
-          class="material-symbols-outlined sidebar-section-chevron"
-          :class="{ open: collabOpen }"
-          aria-hidden="true"
-        >keyboard_arrow_down</span>
-      </button>
-      <template v-if="collabOpen">
+      <!-- Collaborators section -->
+      <template v-if="!$slots.filters && store.allCollaborators.length">
         <button
-          v-for="person in store.allCollaborators"
-          :key="person"
-          class="sidebar-nav-item"
-          :class="{ 'sidebar-filter-active': store.activeFilter?.type === 'person' && store.activeFilter?.value === person }"
-          :title="person"
-          @click="store.setFilter('person', person)"
+          class="sidebar-section-header"
+          :aria-expanded="collabOpen"
+          @click="collabOpen = !collabOpen"
         >
-          <span class="sidebar-avatar" aria-hidden="true">{{ person.slice(0, 2).toUpperCase() }}</span>
-          <span class="sidebar-label">{{ person }}</span>
+          <span class="sidebar-section-label">Collaborators</span>
+          <span
+            class="material-symbols-outlined sidebar-section-chevron"
+            :class="{ open: collabOpen }"
+            aria-hidden="true"
+          >keyboard_arrow_down</span>
         </button>
+        <template v-if="collabOpen">
+          <button
+            v-for="person in store.allCollaborators"
+            :key="person"
+            class="sidebar-nav-item"
+            :class="{ 'sidebar-filter-active': store.activeFilter?.type === 'person' && store.activeFilter?.value === person }"
+            :title="person"
+            @click="store.setFilter('person', person)"
+          >
+            <span class="sidebar-avatar" aria-hidden="true">{{ person.slice(0, 2).toUpperCase() }}</span>
+            <span class="sidebar-label">{{ person }}</span>
+          </button>
+        </template>
       </template>
-    </template>
 
-    <!-- Venues section -->
-    <template v-if="!$slots.filters && store.allVenues.length">
-      <button
-        class="sidebar-section-header"
-        :aria-expanded="venuesOpen"
-        @click="venuesOpen = !venuesOpen"
-      >
-        <span class="sidebar-section-label">Venues</span>
-        <span
-          class="material-symbols-outlined sidebar-section-chevron"
-          :class="{ open: venuesOpen }"
-          aria-hidden="true"
-        >keyboard_arrow_down</span>
-      </button>
-      <template v-if="venuesOpen">
+      <!-- Venues section -->
+      <template v-if="!$slots.filters && store.allVenues.length">
         <button
-          v-for="venue in store.allVenues"
-          :key="venue"
-          class="sidebar-nav-item"
-          :class="{ 'sidebar-filter-active': store.activeFilter?.type === 'venue' && store.activeFilter?.value === venue }"
-          :title="venue"
-          @click="store.setFilter('venue', venue)"
+          class="sidebar-section-header"
+          :aria-expanded="venuesOpen"
+          @click="venuesOpen = !venuesOpen"
         >
-          <span class="sidebar-venue-dot" aria-hidden="true"></span>
-          <span class="sidebar-label">{{ venue }}</span>
+          <span class="sidebar-section-label">Venues</span>
+          <span
+            class="material-symbols-outlined sidebar-section-chevron"
+            :class="{ open: venuesOpen }"
+            aria-hidden="true"
+          >keyboard_arrow_down</span>
         </button>
+        <template v-if="venuesOpen">
+          <button
+            v-for="venue in store.allVenues"
+            :key="venue"
+            class="sidebar-nav-item"
+            :class="{ 'sidebar-filter-active': store.activeFilter?.type === 'venue' && store.activeFilter?.value === venue }"
+            :title="venue"
+            @click="store.setFilter('venue', venue)"
+          >
+            <span class="sidebar-venue-dot" aria-hidden="true"></span>
+            <span class="sidebar-label">{{ venue }}</span>
+          </button>
+        </template>
       </template>
-    </template>
+    </div>
 
     <!-- Footer -->
     <div class="sidebar-footer">
