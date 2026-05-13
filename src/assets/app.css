@@ -471,9 +471,8 @@ html[data-theme="dark"] .sidebar-nav-active {
 }
 html[data-theme="light"] .board { background: #ffffff; }
 @media (min-width: 768px) { .board { padding-left: 64px; scroll-padding-left: 64px; } }
-.board::-webkit-scrollbar { height: 4px; }
-.board::-webkit-scrollbar-track { background: transparent; }
-.board::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+.board { scrollbar-width: none; }
+.board::-webkit-scrollbar { display: none; }
 
 /* ── COLUMN ── */
 .col {
@@ -790,7 +789,7 @@ html[data-theme="dark"] .filter-fab {
 .filter-fab.active { background: color-mix(in srgb, var(--accent) 60%, transparent); color: #fff; border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 2px 12px color-mix(in srgb, var(--accent) 35%, transparent); }
 .filter-fab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (max-width: 767px) {
-  .filter-fab { bottom: calc(50px + 12px + 16px + env(safe-area-inset-bottom)); }
+  .filter-fab { bottom: calc(8px + env(safe-area-inset-bottom)); }
 }
 
 /* ── BUTTONS ── */
@@ -867,6 +866,10 @@ html[data-theme="dark"] .bottom-tabbar.toolbar {
 @media (max-width: 767px) {
   .board-page .bottom-tabbar.toolbar {
     right: calc(16px + 56px + 12px) !important;
+  }
+  .tasks-page .bottom-tabbar.toolbar,
+  .schedule-page .bottom-tabbar.toolbar {
+    right: calc(16px + 44px + 12px) !important;
   }
 }
 .bottom-tabbar.toolbar::before,
