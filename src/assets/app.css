@@ -390,7 +390,7 @@ html[data-theme="dark"] .sidebar-nav-active {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 20px color-mix(in srgb, var(--accent) 35%, transparent);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--accent) 35%, transparent), 0 2px 8px rgba(0,0,0,0.12);
   z-index: 10;
   transition: transform 0.15s, box-shadow 0.15s;
 }
@@ -770,8 +770,8 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   background: rgba(245,245,247,0.50);
   backdrop-filter: blur(12px) saturate(160%);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
-  border: 1px solid rgba(255,255,255,0.55);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  border: 1px solid rgba(0,0,0,0.10);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.14);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -783,6 +783,7 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
 html[data-theme="dark"] .filter-fab {
   background: rgba(30,30,35,0.60);
   border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35);
 }
 .filter-fab .material-symbols-outlined { font-size: 20px; }
 .filter-fab:hover { color: var(--text); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
@@ -848,7 +849,7 @@ html[data-theme="dark"] input:focus { box-shadow: 0 0 0 2px rgba(255,159,10,0.15
   background: rgba(245,245,247,0.50) !important;
   backdrop-filter: blur(12px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
-  border: 1px solid rgba(255,255,255,0.55) !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
   border-radius: 24px !important;
   left: 16px !important;
   right: 16px !important;
@@ -856,7 +857,7 @@ html[data-theme="dark"] input:focus { box-shadow: 0 0 0 2px rgba(255,159,10,0.15
   width: auto !important;
   height: auto !important;
   padding-bottom: 0 !important;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.10) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.14) !important;
 }
 html[data-theme="dark"] .bottom-tabbar.toolbar {
   background: rgba(30,30,35,0.60) !important;
