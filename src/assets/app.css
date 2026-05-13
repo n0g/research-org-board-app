@@ -258,7 +258,7 @@ html[data-theme="dark"] .board-sidebar {
   white-space: nowrap;
 }
 .sidebar-collapse-btn {
-  width: 20px; height: 20px;
+  width: 28px; height: 28px;
   border-radius: 50%;
   background: none; border: none;
   color: var(--text3);
@@ -268,7 +268,7 @@ html[data-theme="dark"] .board-sidebar {
   transition: background 0.1s, color 0.1s;
 }
 .sidebar-collapse-btn:hover { background: var(--border); color: var(--text2); }
-.sidebar-collapse-btn .material-symbols-outlined { font-size: 16px; }
+.sidebar-collapse-btn .material-symbols-outlined { font-size: 20px; }
 
 /* Sidebar nav */
 .sidebar-nav { padding: 4px 0 12px; border-bottom: 1px solid var(--border); }
