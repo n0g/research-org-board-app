@@ -238,7 +238,7 @@ html[data-theme="dark"] .board-sidebar {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 4px 4px 4px;
+  padding: 4px 4px 3px;
   gap: 8px;
   -webkit-app-region: drag;
   app-region: drag;
@@ -271,7 +271,7 @@ html[data-theme="dark"] .board-sidebar {
 .sidebar-collapse-btn .material-symbols-outlined { font-size: 20px; }
 
 /* Sidebar nav */
-.sidebar-nav { padding: 4px 0 12px; border-bottom: 1px solid var(--border); }
+.sidebar-nav { padding: 0 0 12px; border-bottom: 1px solid var(--border); }
 
 .sidebar-nav-item {
   display: flex;
