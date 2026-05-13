@@ -2,7 +2,6 @@
   <aside class="board-sidebar" :class="{ collapsed: sidebarCollapsed }">
     <!-- Brand header -->
     <div class="sidebar-brand">
-      <span class="sidebar-brand-name sidebar-label">Research Projects</span>
       <button
         class="sidebar-collapse-btn"
         :title="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
