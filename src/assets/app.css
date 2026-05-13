@@ -412,36 +412,17 @@ html[data-theme="dark"] .sidebar-nav-item:hover { background: rgba(255,255,255,0
   backdrop-filter: blur(12px) saturate(160%);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
   border: 1px solid rgba(255,255,255,0.35);
-  box-shadow:
-    0 4px 20px rgba(0,0,0,0.14),
-    inset 0 1px 0 rgba(255,255,255,0.80),
-    inset 1px 0 0 rgba(255,255,255,0.30),
-    inset -1px 0 0 rgba(255,255,255,0.15),
-    inset 0 -1px 0 rgba(255,255,255,0.10);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.65);
   color: var(--text2);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: background 0.15s, color 0.15s, box-shadow 0.15s;
 }
-.sidebar-expand-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(ellipse 80% 55% at 50% -5%, rgba(255,255,255,0.30) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: -1;
-}
 html[data-theme="dark"] .sidebar-expand-btn {
   background: rgba(30,30,35,0.60);
   border: 1px solid rgba(255,255,255,0.10);
-  box-shadow:
-    0 4px 20px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    inset 1px 0 0 rgba(255,255,255,0.04),
-    inset -1px 0 0 rgba(255,255,255,0.02);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
 }
-html[data-theme="dark"] .sidebar-expand-btn::before { opacity: 0.4; }
 .sidebar-expand-btn:hover { color: var(--text); box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
 .sidebar-expand-btn .material-symbols-outlined { font-size: 20px; }
 
@@ -464,21 +445,9 @@ html[data-theme="dark"] .sidebar-expand-btn::before { opacity: 0.4; }
   box-shadow:
     0 4px 20px color-mix(in srgb, var(--accent) 35%, transparent),
     0 2px 8px rgba(0,0,0,0.12),
-    inset 0 1px 0 rgba(255,255,255,0.40),
-    inset 1px 0 0 rgba(255,255,255,0.20),
-    inset -1px 0 0 rgba(255,255,255,0.10),
-    inset 0 -1px 0 rgba(255,255,255,0.08);
+    inset 0 1px 0 rgba(255,255,255,0.25);
   z-index: 10;
   transition: transform 0.15s, box-shadow 0.15s;
-}
-.fab-new-project::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(ellipse 80% 55% at 50% -5%, rgba(255,255,255,0.35) 0%, transparent 65%);
-  pointer-events: none;
-  z-index: -1;
 }
 .fab-new-project:hover { transform: scale(1.06); box-shadow: 0 6px 24px color-mix(in srgb, var(--accent) 45%, transparent); }
 .fab-new-project .material-symbols-outlined { font-size: 26px; }
@@ -858,12 +827,7 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   backdrop-filter: blur(12px) saturate(160%);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
   border: 1px solid rgba(255,255,255,0.35);
-  box-shadow:
-    0 4px 20px rgba(0,0,0,0.14),
-    inset 0 1px 0 rgba(255,255,255,0.80),
-    inset 1px 0 0 rgba(255,255,255,0.30),
-    inset -1px 0 0 rgba(255,255,255,0.15),
-    inset 0 -1px 0 rgba(255,255,255,0.10);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.65);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -872,25 +836,11 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   transition: background 0.15s, color 0.15s, box-shadow 0.15s, border-color 0.15s;
   z-index: 2;
 }
-.filter-fab::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(ellipse 80% 55% at 50% -5%, rgba(255,255,255,0.30) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: -1;
-}
 html[data-theme="dark"] .filter-fab {
   background: rgba(30,30,35,0.60);
   border: 1px solid rgba(255,255,255,0.10);
-  box-shadow:
-    0 4px 20px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    inset 1px 0 0 rgba(255,255,255,0.04),
-    inset -1px 0 0 rgba(255,255,255,0.02);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
 }
-html[data-theme="dark"] .filter-fab::before { opacity: 0.4; }
 .filter-fab .material-symbols-outlined { font-size: 20px; }
 .filter-fab:hover { color: var(--text); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
 .filter-fab.active { background: color-mix(in srgb, var(--accent) 60%, transparent); color: #fff; border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 2px 12px color-mix(in srgb, var(--accent) 35%, transparent); }
