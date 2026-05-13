@@ -1173,7 +1173,7 @@ html[data-theme="dark"] .theme-seg-btn.active {
   background: #ffffff;
   border-right: 1px solid var(--border);
   overflow-y: auto;
-  padding: calc(26px + env(safe-area-inset-top)) 32px 32px;
+  padding: calc(18px + env(safe-area-inset-top)) 32px 32px;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -1618,7 +1618,7 @@ html[data-theme="dark"] .project-delete-btn:hover { background: rgba(229,62,62,0
   flex: 1;
   background: var(--bg-surface);
   overflow-y: auto;
-  padding: calc(32px + env(safe-area-inset-top)) 32px 32px;
+  padding: calc(18px + env(safe-area-inset-top)) 32px 32px;
   min-height: 0;
 }
 html[data-theme="light"] .project-tasks { background: #faf9fe; }
