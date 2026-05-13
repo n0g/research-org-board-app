@@ -184,13 +184,23 @@ a, button, .card, .stage-opt, .task-check, .task-due-right {
 .board-sidebar {
   width: 240px;
   flex-shrink: 0;
-  background: var(--bg-sidebar);
-  border-right: 1px solid var(--border);
+  background: rgba(245,245,247,0.60);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+  margin: calc(env(safe-area-inset-top) + 12px) 0 12px 12px;
   display: none;
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  transition: width 0.2s ease;
+  transition: width 0.2s ease, margin 0.2s ease;
+}
+html[data-theme="dark"] .board-sidebar {
+  background: rgba(30,30,35,0.70);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.40);
 }
 .board-sidebar::-webkit-scrollbar { width: 0; }
 
@@ -206,7 +216,7 @@ a, button, .card, .stage-opt, .task-check, .task-due-right {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: calc(20px + env(safe-area-inset-top)) 16px 16px;
+  padding: 20px 16px 16px;
   gap: 8px;
   -webkit-app-region: drag;
   app-region: drag;
@@ -354,7 +364,7 @@ html[data-theme="dark"] .sidebar-nav-active {
 }
 
 /* Collapsed sidebar — fully hidden */
-.board-sidebar.collapsed { width: 0; overflow: hidden; border-right: none; }
+.board-sidebar.collapsed { width: 0; overflow: hidden; margin-left: 0; border: none; box-shadow: none; }
 
 /* Floating expand button shown when sidebar is hidden */
 .sidebar-expand-btn {
