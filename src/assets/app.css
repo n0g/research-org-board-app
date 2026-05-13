@@ -764,8 +764,8 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   position: absolute;
   bottom: 16px;
   right: 16px;
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: rgba(245,245,247,0.50);
   backdrop-filter: blur(12px) saturate(160%);
@@ -869,7 +869,7 @@ html[data-theme="dark"] .bottom-tabbar.toolbar {
   }
   .tasks-page .bottom-tabbar.toolbar,
   .schedule-page .bottom-tabbar.toolbar {
-    right: calc(16px + 44px + 12px) !important;
+    right: calc(16px + 56px + 12px) !important;
   }
 }
 .bottom-tabbar.toolbar::before,
