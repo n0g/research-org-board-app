@@ -238,7 +238,7 @@ html[data-theme="dark"] .board-sidebar {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 4px 4px 3px;
+  padding: 0px 0px 3px;
   gap: 8px;
   -webkit-app-region: drag;
   app-region: drag;
@@ -258,7 +258,7 @@ html[data-theme="dark"] .board-sidebar {
   white-space: nowrap;
 }
 .sidebar-collapse-btn {
-  width: 28px; height: 28px;
+  width: 44px; height: 44px;
   border-radius: 50%;
   background: none; border: none;
   color: var(--text3);
@@ -386,7 +386,7 @@ html[data-theme="dark"] .sidebar-nav-active {
 /* Floating expand button shown when sidebar is hidden */
 .sidebar-expand-btn {
   position: absolute;
-  top: calc(env(safe-area-inset-top) + 8px);
+  top: calc(env(safe-area-inset-top) + 12px);
   left: 12px;
   z-index: 10;
   width: 44px; height: 44px;
