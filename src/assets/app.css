@@ -30,8 +30,8 @@
   --col-w: 320px;
   --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-code: 'IBM Plex Mono', ui-monospace, monospace;
-  --shadow-card: 0 1px 2px 0 rgba(0,0,0,0.05);
-  --shadow-card-hover: 0 2px 8px 0 rgba(0,0,0,0.10);
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.03), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 2px 8px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
   /* Legacy aliases used by Token/Setup/HotCRP pages */
   --bg1: #ffffff;
   --err-bg: rgba(239,68,68,0.08);
@@ -76,7 +76,7 @@ html[data-theme="dark"] {
   --stage-4: rgba(255,69,58,0.80);
   --stage-5: rgba(142,142,147,0.80);
   --shadow-card: none;
-  --shadow-card-hover: 0 2px 12px rgba(0,0,0,0.5);
+  --shadow-card-hover: 0 4px 20px rgba(0,0,0,0.35);
   /* Legacy aliases */
   --bg1: #1C1C1E;
   --err-bg: rgba(255,69,58,0.12);
@@ -591,7 +591,7 @@ html[data-theme="light"] .board { background: #ffffff; }
   margin: 0; /* reset F7's 16px card margins */
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 16px 10px 10px 16px;
   cursor: grab;
   box-shadow: var(--shadow-card);
@@ -2118,7 +2118,7 @@ html[data-theme="light"] .token-box a { color: #3b82f6; }
   display: block;
   background: var(--bg2);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 12px 14px;
   text-decoration: none;
   color: inherit;
