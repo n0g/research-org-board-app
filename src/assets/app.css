@@ -1084,10 +1084,6 @@ html[data-theme="dark"] .settings-sheet {
 .settings-row-group .settings-row {
   padding: 13px 16px;
   margin: 0;
-  border-bottom: 1px solid var(--border);
-}
-.settings-row-group .settings-row:last-child {
-  border-bottom: none;
 }
 .settings-card {
   background: var(--bg-surface);
