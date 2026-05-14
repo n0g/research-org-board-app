@@ -28,12 +28,6 @@
       </div>
     </div>
 
-    <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn" @click="goBoard"><i class="ph ph-kanban" aria-hidden="true"></i>Board</button>
-      <button class="tab-btn tab-btn-active" aria-current="page"><i class="ph ph-list-checks" aria-hidden="true"></i>Tasks</button>
-      <button class="tab-btn" @click="goSchedule"><i class="ph ph-calendar" aria-hidden="true"></i>Schedule</button>
-      <button class="tab-btn" @click="goSettings"><i class="ph ph-gear" aria-hidden="true"></i>Settings</button>
-    </f7-toolbar>
   </f7-page>
 </template>
 
@@ -103,8 +97,5 @@ onMounted(async () => {
 
 onBeforeUnmount(showTabbar)
 
-function goBack()     { f7.view.current.router.back() }
-function goBoard()    { f7.tab.show('#view-board') }
-function goSchedule() { f7.tab.show('#view-schedule') }
-function goSettings() { f7.tab.show('#view-settings') }
+function goBack() { f7.view.current.router.back() }
 </script>
