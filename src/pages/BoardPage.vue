@@ -44,12 +44,6 @@
       </div>
     </div>
 
-    <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn tab-btn-active" aria-current="page"><i class="ph ph-kanban" aria-hidden="true"></i>Board</button>
-      <button class="tab-btn" @click="goTasks"><i class="ph ph-list-checks" aria-hidden="true"></i>Tasks</button>
-      <button class="tab-btn" @click="goSchedule"><i class="ph ph-calendar" aria-hidden="true"></i>Schedule</button>
-      <button class="tab-btn" @click="goSettings"><i class="ph ph-gear" aria-hidden="true"></i>Settings</button>
-    </f7-toolbar>
   </f7-page>
 </template>
 
@@ -75,17 +69,11 @@ const unassignedProjects = computed(() =>
 )
 
 function openProject(project) {
-  f7.views.main.router.navigate('/project/' + project.id + '/', { transition: 'f7-push' })
+  f7.view.current.router.navigate('/project/' + project.id + '/')
 }
 
 function openNewProject() {
-  f7.views.main.router.navigate('/project/new/', { transition: 'f7-push' })
-}
-
-function goTasks() { f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true }) }
-function goSchedule() { f7.views.main.router.navigate('/schedule/', { clearPreviousHistory: true }) }
-function goSettings() {
-  f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true })
+  f7.view.current.router.navigate('/project/new/')
 }
 
 usePullToRefresh(

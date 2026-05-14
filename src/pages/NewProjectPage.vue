@@ -49,23 +49,20 @@
       </div>
     </div>
 
-    <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn tab-btn-active" aria-current="page" @click="goBoard"><i class="ph ph-kanban" aria-hidden="true"></i>Board</button>
-      <button class="tab-btn" @click="goReviews"><i class="ph ph-clipboard-text" aria-hidden="true"></i>Reviews</button>
-      <button class="tab-btn" @click="goSettings"><i class="ph ph-gear" aria-hidden="true"></i>Settings</button>
-    </f7-toolbar>
   </f7-page>
 </template>
 
 <script setup>
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useSidebar } from '../composables/useSidebar.js'
+import { useTabbar } from '../composables/useTabbar.js'
 import AppSidebar from '../components/AppSidebar.vue'
 
 const store = useBoardStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
+const { hide: hideTabbar, show: showTabbar } = useTabbar()
 
 const titleInputEl = ref(null)
 const titleDraft = ref('')
@@ -73,11 +70,14 @@ const creating = ref(false)
 const errorMsg = ref('')
 
 onMounted(async () => {
+  hideTabbar()
   store.initStages()
   await store.loadIfStale()
   await nextTick()
   titleInputEl.value?.focus()
 })
+
+onBeforeUnmount(showTabbar)
 
 async function create() {
   const name = titleDraft.value.trim()
@@ -86,15 +86,14 @@ async function create() {
   errorMsg.value = ''
   try {
     const project = await store.createProject(name)
-    f7.views.main.router.navigate(`/project/${project.id}/`, { reloadCurrent: true })
+    f7.view.current.router.navigate(`/project/${project.id}/`, { reloadCurrent: true })
   } catch (e) {
     errorMsg.value = 'Failed to create project. Please try again.'
     creating.value = false
   }
 }
 
-function goBack()     { f7.views.main.router.back() }
-function goBoard()    { f7.views.main.router.navigate('/board/', { clearPreviousHistory: true }) }
-function goReviews()  { f7.views.main.router.navigate('/reviews/', { clearPreviousHistory: true }) }
-function goSettings() { f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true }) }
+function goBack()     { f7.view.current.router.back() }
+function goBoard()    { f7.tab.show('#view-board') }
+function goSettings() { f7.tab.show('#view-settings') }
 </script>

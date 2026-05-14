@@ -142,19 +142,8 @@ const collabOpen = ref(true)
 const venuesOpen = ref(true)
 
 
-function goBoard() {
-  f7.views.main.router.navigate('/board/', { clearPreviousHistory: true })
-}
-
-function goTasks() {
-  f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true })
-}
-
-function goSchedule() {
-  f7.views.main.router.navigate('/schedule/', { clearPreviousHistory: true })
-}
-
-function goSettings() {
-  f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true })
-}
+function goBoard()    { f7.tab.show('#view-board') }
+function goTasks()    { f7.tab.show('#view-tasks') }
+function goSchedule() { f7.tab.show('#view-schedule') }
+function goSettings() { f7.tab.show('#view-settings') }
 </script>

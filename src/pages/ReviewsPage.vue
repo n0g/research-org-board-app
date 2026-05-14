@@ -101,12 +101,6 @@
       </div>
     </div>
 
-    <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn" @click="goBoard"><i class="ph ph-kanban" aria-hidden="true"></i>Board</button>
-      <button class="tab-btn" @click="goTasks"><i class="ph ph-list-checks" aria-hidden="true"></i>Tasks</button>
-      <button class="tab-btn" @click="goSchedule"><i class="ph ph-calendar" aria-hidden="true"></i>Schedule</button>
-      <button class="tab-btn" @click="goSettings"><i class="ph ph-gear" aria-hidden="true"></i>Settings</button>
-    </f7-toolbar>
   </f7-page>
 </template>
 
@@ -157,11 +151,11 @@ function authorList(paper) {
   return names.join(', ') + (rest > 0 ? ` +${rest} more` : '')
 }
 
-function goBoard() { f7.views.main.router.navigate('/board/', { clearPreviousHistory: true }) }
-function goTasks() { f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true }) }
-function goSchedule() { f7.views.main.router.navigate('/schedule/', { clearPreviousHistory: true }) }
-function goManageSites() { f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true }) }
-function goSettings() { f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true }) }
+function goBoard()       { f7.tab.show('#view-board') }
+function goTasks()       { f7.tab.show('#view-tasks') }
+function goSchedule()    { f7.tab.show('#view-schedule') }
+function goManageSites() { f7.tab.show('#view-settings') }
+function goSettings()    { f7.tab.show('#view-settings') }
 
 onMounted(() => {
   if (store.sites.length && !store.results.length) store.loadAll()

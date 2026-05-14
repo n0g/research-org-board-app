@@ -112,12 +112,6 @@
       </div>
     </div>
 
-    <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn" @click="goBoard"><i class="ph ph-kanban" aria-hidden="true"></i>Board</button>
-      <button class="tab-btn tab-btn-active" aria-current="page"><i class="ph ph-list-checks" aria-hidden="true"></i>Tasks</button>
-      <button class="tab-btn" @click="goSchedule"><i class="ph ph-calendar" aria-hidden="true"></i>Schedule</button>
-      <button class="tab-btn" @click="goSettings"><i class="ph ph-gear" aria-hidden="true"></i>Settings</button>
-    </f7-toolbar>
   </f7-page>
 </template>
 
@@ -181,7 +175,7 @@ function selectTask(task) {
   if (window.innerWidth < 768) {
     store.triageTaskIds = filteredTasks.value.map(t => t.id)
     store.triageCurrentId = task.id
-    f7.views.main.router.navigate(`/tasks/${task.id}/`, { transition: 'f7-push' })
+    f7.view.current.router.navigate(`/tasks/${task.id}/`)
   } else {
     selectedTask.value = task
   }
@@ -214,9 +208,9 @@ function handleKey(e) {
 }
 
 // ── Page navigation ──
-function goBoard() { f7.views.main.router.navigate('/board/', { clearPreviousHistory: true }) }
-function goSchedule() { f7.views.main.router.navigate('/schedule/', { clearPreviousHistory: true }) }
-function goSettings() { f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true }) }
+function goBoard()    { f7.tab.show('#view-board') }
+function goSchedule() { f7.tab.show('#view-schedule') }
+function goSettings() { f7.tab.show('#view-settings') }
 
 onMounted(async () => {
   store.initStages()

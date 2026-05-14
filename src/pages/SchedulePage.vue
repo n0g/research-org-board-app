@@ -263,12 +263,6 @@
       </div>
     </Teleport>
 
-    <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn" @click="goBoard"><i class="ph ph-kanban" aria-hidden="true"></i>Board</button>
-      <button class="tab-btn" @click="goTasks"><i class="ph ph-list-checks" aria-hidden="true"></i>Tasks</button>
-      <button class="tab-btn tab-btn-active" aria-current="page"><i class="ph ph-calendar" aria-hidden="true"></i>Schedule</button>
-      <button class="tab-btn" @click="goSettings"><i class="ph ph-gear" aria-hidden="true"></i>Settings</button>
-    </f7-toolbar>
   </f7-page>
 </template>
 
@@ -353,7 +347,7 @@ function focusTaskRow(idx) {
 function scheduleTaskByKey(task) {
   if (calStore.isConnected) {
     store.pendingScheduleTask = task
-    f7.views.main.router.navigate('/schedule/place/')
+    f7.view.current.router.navigate('/schedule/place/')
   } else {
     goSettings()
   }
@@ -604,7 +598,7 @@ function onTaskPointerDown(e, task) {
         // genuine tap — navigate
         if (calStore.isConnected) {
           store.pendingScheduleTask = task
-          f7.views.main.router.navigate('/schedule/place/')
+          f7.view.current.router.navigate('/schedule/place/')
         } else {
           goSettings()
         }
@@ -754,9 +748,9 @@ onBeforeUnmount(() => {
 })
 
 // ── Navigation ──
-function goBoard() { f7.views.main.router.navigate('/board/', { clearPreviousHistory: true }) }
-function goTasks() { f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true }) }
-function goSettings() { f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true }) }
+function goBoard()    { f7.tab.show('#view-board') }
+function goTasks()    { f7.tab.show('#view-tasks') }
+function goSettings() { f7.tab.show('#view-settings') }
 
 watch(() => calStore.isConnected, async (connected) => {
   if (connected) {

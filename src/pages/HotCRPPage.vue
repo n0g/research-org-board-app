@@ -90,9 +90,10 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useReviewsStore } from '../stores/reviews.js'
+import { useTabbar } from '../composables/useTabbar.js'
 
 const store = useReviewsStore()
 const tokenInputEl = ref(null)
@@ -117,9 +118,7 @@ function clearProxy() {
 function focusToken() { tokenInputEl.value?.focus() }
 function focusName() { nameInputEl.value?.focus() }
 
-function goBack() {
-  f7.views.main.router.back()
-}
+function goBack() { f7.view.current.router.back() }
 
 function addSite() {
   addError.value = ''
@@ -134,5 +133,7 @@ function addSite() {
   newName.value = ''
 }
 
-onMounted(() => { proxyDraft.value = store.proxyUrl })
+const { hide: hideTabbar, show: showTabbar } = useTabbar()
+onMounted(() => { hideTabbar(); proxyDraft.value = store.proxyUrl })
+onBeforeUnmount(showTabbar)
 </script>

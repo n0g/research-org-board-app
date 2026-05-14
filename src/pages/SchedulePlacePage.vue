@@ -104,10 +104,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useCalendarStore } from '../stores/calendar.js'
+import { useTabbar } from '../composables/useTabbar.js'
 import { getTime } from '../composables/useTaskTriage.js'
 
 const store = useBoardStore()
@@ -232,20 +233,21 @@ async function scheduleAt(day, slot) {
     console.error('Failed to schedule:', err)
   }
   store.pendingScheduleTask = null
-  f7.views.main.router.back()
+  f7.view.current.router.back()
 }
 
 function cancel() {
   store.pendingScheduleTask = null
-  f7.views.main.router.back()
+  f7.view.current.router.back()
 }
 
-function goSettings() {
-  f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true })
-}
+function goSettings() { f7.tab.show('#view-settings') }
+
+const { hide: hideTabbar, show: showTabbar } = useTabbar()
 
 onMounted(async () => {
-  if (!store.pendingScheduleTask) { f7.views.main.router.back(); return }
+  hideTabbar()
+  if (!store.pendingScheduleTask) { f7.view.current.router.back(); return }
   if (calStore.isConnected) {
     calStore.loadWeekEvents(weekStart.value)
     await nextTick()
@@ -255,4 +257,6 @@ onMounted(async () => {
     }
   }
 })
+
+onBeforeUnmount(showTabbar)
 </script>

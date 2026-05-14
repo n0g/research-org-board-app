@@ -372,11 +372,12 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, onBeforeUnmount, nextTick } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useReviewsStore } from '../stores/reviews.js'
 import { useSidebar } from '../composables/useSidebar.js'
+import { useTabbar } from '../composables/useTabbar.js'
 import { VENUES, stripPersonPrefix, isPersonLabel } from '../lib/helpers.js'
 import { fetchPaperStatus, extractPaperId, matchSiteForUrl } from '../lib/hotcrp.js'
 
@@ -390,6 +391,7 @@ const props = defineProps({
 const store = useBoardStore()
 const reviewsStore = useReviewsStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
+const { hide: hideTabbar, show: showTabbar } = useTabbar()
 const newTaskContent = ref('')
 const addingTask = ref(false)
 const quickAddInputEl = ref(null)
@@ -771,21 +773,26 @@ async function confirmDelete() {
   if (!project.value) return
   if (!window.confirm(`Delete "${project.value.name}"? This cannot be undone.`)) return
   await store.deleteProject(projectId.value).catch(console.error)
-  f7.views.main.router.navigate('/board/', { clearPreviousHistory: true })
+  f7.view.current.router.back()
 }
 
 // ── Navigation ──
-function goBack() { f7.views.main.router.back() }
-function goBoard() { f7.views.main.router.navigate('/board/', { clearPreviousHistory: true }) }
-function goTasks() { f7.views.main.router.navigate('/tasks/', { clearPreviousHistory: true }) }
-function goSchedule() { f7.views.main.router.navigate('/schedule/', { clearPreviousHistory: true }) }
-function goSettings() { f7.views.main.router.navigate('/settings/', { clearPreviousHistory: true }) }
+function goBack() { f7.view.current.router.back() }
+function goBoard()    { f7.tab.show('#view-board') }
+function goTasks()    { f7.tab.show('#view-tasks') }
+function goSchedule() { f7.tab.show('#view-schedule') }
+function goSettings() { f7.tab.show('#view-settings') }
 
 onMounted(async () => {
+  hideTabbar()
   document.addEventListener('click', onDocClick)
   store.initStages()
   await store.loadIfStale()
   if (submissionUrl.value && matchedSite.value && paperIdFromUrl.value) loadSubmissionStatus()
+})
+
+onBeforeUnmount(() => {
+  showTabbar()
 })
 
 onUnmounted(() => {

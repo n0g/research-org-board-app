@@ -31,20 +31,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { f7 } from 'framework7-vue/bundle'
+import { ref } from 'vue'
 import { useBoardStore } from '../stores/board.js'
 
 const store = useBoardStore()
 const tokenInput = ref('')
 const error = ref('')
 const busy = ref(false)
-
-onMounted(() => {
-  if (store.token) {
-    f7.views.main.router.navigate('/board/', { clearPreviousHistory: true })
-  }
-})
 
 async function submit() {
   const val = tokenInput.value.trim()
@@ -53,7 +46,7 @@ async function submit() {
   busy.value = true
   try {
     await store.saveToken(val)
-    f7.views.main.router.navigate('/board/', { clearPreviousHistory: true })
+    // App.vue's v-if/v-else on store.token mounts the tab views automatically
   } catch {
     error.value = 'Could not connect — check your token.'
   } finally {
