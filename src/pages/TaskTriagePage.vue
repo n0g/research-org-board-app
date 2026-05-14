@@ -112,6 +112,7 @@
       </div>
     </div>
 
+    <AppTabbar current-tab="tasks" />
   </f7-page>
 </template>
 
@@ -123,6 +124,7 @@ import { useSidebar } from '../composables/useSidebar.js'
 import { getLabel, getUrgencyLabel, getImportance, getTime, formatDeadline } from '../composables/useTaskTriage.js'
 import { parseTaskContent } from '../lib/helpers.js'
 import AppSidebar from '../components/AppSidebar.vue'
+import AppTabbar from '../components/AppTabbar.vue'
 import TaskDetailPanel from '../components/TaskDetailPanel.vue'
 
 const store = useBoardStore()

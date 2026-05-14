@@ -53,16 +53,14 @@
 </template>
 
 <script setup>
-import { ref, nextTick, onMounted, onBeforeUnmount } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useSidebar } from '../composables/useSidebar.js'
-import { useTabbar } from '../composables/useTabbar.js'
 import AppSidebar from '../components/AppSidebar.vue'
 
 const store = useBoardStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
-const { hide: hideTabbar, show: showTabbar } = useTabbar()
 
 const titleInputEl = ref(null)
 const titleDraft = ref('')
@@ -70,14 +68,11 @@ const creating = ref(false)
 const errorMsg = ref('')
 
 onMounted(async () => {
-  hideTabbar()
   store.initStages()
   await store.loadIfStale()
   await nextTick()
   titleInputEl.value?.focus()
 })
-
-onBeforeUnmount(showTabbar)
 
 async function create() {
   const name = titleDraft.value.trim()

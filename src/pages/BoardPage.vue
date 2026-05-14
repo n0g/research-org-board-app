@@ -44,6 +44,7 @@
       </div>
     </div>
 
+    <AppTabbar current-tab="board" />
   </f7-page>
 </template>
 
@@ -56,6 +57,7 @@ import { usePullToRefresh } from '../composables/usePullToRefresh.js'
 import { useSidebar } from '../composables/useSidebar.js'
 import BoardColumn from '../components/BoardColumn.vue'
 import AppSidebar from '../components/AppSidebar.vue'
+import AppTabbar from '../components/AppTabbar.vue'
 
 const store = useBoardStore()
 const reviewsStore = useReviewsStore()

@@ -104,11 +104,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useCalendarStore } from '../stores/calendar.js'
-import { useTabbar } from '../composables/useTabbar.js'
 import { getTime } from '../composables/useTaskTriage.js'
 
 const store = useBoardStore()
@@ -243,10 +242,7 @@ function cancel() {
 
 function goSettings() { f7.tab.show('#view-settings') }
 
-const { hide: hideTabbar, show: showTabbar } = useTabbar()
-
 onMounted(async () => {
-  hideTabbar()
   if (!store.pendingScheduleTask) { f7.view.current.router.back(); return }
   if (calStore.isConnected) {
     calStore.loadWeekEvents(weekStart.value)
@@ -257,6 +253,4 @@ onMounted(async () => {
     }
   }
 })
-
-onBeforeUnmount(showTabbar)
 </script>

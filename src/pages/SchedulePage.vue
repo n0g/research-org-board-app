@@ -263,6 +263,7 @@
       </div>
     </Teleport>
 
+    <AppTabbar current-tab="schedule" />
   </f7-page>
 </template>
 
@@ -282,6 +283,7 @@ const TABS = [
   { key: 'focus', label: 'Focus' },
 ]
 import AppSidebar from '../components/AppSidebar.vue'
+import AppTabbar from '../components/AppTabbar.vue'
 
 const store = useBoardStore()
 const calStore = useCalendarStore()

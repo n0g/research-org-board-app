@@ -366,12 +366,11 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
 import { useReviewsStore } from '../stores/reviews.js'
 import { useSidebar } from '../composables/useSidebar.js'
-import { useTabbar } from '../composables/useTabbar.js'
 import { VENUES, stripPersonPrefix, isPersonLabel } from '../lib/helpers.js'
 import { fetchPaperStatus, extractPaperId, matchSiteForUrl } from '../lib/hotcrp.js'
 
@@ -385,7 +384,6 @@ const props = defineProps({
 const store = useBoardStore()
 const reviewsStore = useReviewsStore()
 const { sidebarCollapsed, toggleSidebar } = useSidebar()
-const { hide: hideTabbar, show: showTabbar } = useTabbar()
 const newTaskContent = ref('')
 const addingTask = ref(false)
 const quickAddInputEl = ref(null)
@@ -774,15 +772,10 @@ async function confirmDelete() {
 function goBack() { f7.view.current.router.back() }
 
 onMounted(async () => {
-  hideTabbar()
   document.addEventListener('click', onDocClick)
   store.initStages()
   await store.loadIfStale()
   if (submissionUrl.value && matchedSite.value && paperIdFromUrl.value) loadSubmissionStatus()
-})
-
-onBeforeUnmount(() => {
-  showTabbar()
 })
 
 onUnmounted(() => {

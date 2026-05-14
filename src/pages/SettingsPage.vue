@@ -256,6 +256,7 @@
       </div>
     </div>
 
+    <AppTabbar current-tab="settings" />
   </f7-page>
 </template>
 
@@ -271,6 +272,7 @@ import { DEFAULT_STAGES } from '../lib/helpers.js'
 import { apiAll } from '../lib/todoist.js'
 import { initSortable } from '../lib/sortable.js'
 import AppSidebar from '../components/AppSidebar.vue'
+import AppTabbar from '../components/AppTabbar.vue'
 
 const boardStore = useBoardStore()
 const reviewsStore = useReviewsStore()

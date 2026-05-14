@@ -895,23 +895,32 @@ html[data-theme="dark"] input:focus { box-shadow: 0 0 0 2px rgba(255,159,10,0.15
 }
 
 .bottom-tabbar {
-  position: fixed;
+  position: fixed !important;
+  left: 16px !important;
+  right: 16px !important;
+  bottom: calc(env(safe-area-inset-bottom) + 8px) !important;
+  top: auto !important;
+  height: auto !important;
+  width: auto !important;
   z-index: 5000;
   background: rgba(245,245,247,0.50);
   backdrop-filter: blur(12px) saturate(160%);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
   border: 1px solid rgba(255,255,255,0.35);
   border-radius: 24px;
-  left: 16px;
-  right: 16px;
-  bottom: calc(env(safe-area-inset-bottom) + 8px);
-  display: flex;
   box-shadow:
     0 4px 24px rgba(0,0,0,0.14),
     inset 0 1px 0 rgba(255,255,255,0.80),
     inset 1px 0 0 rgba(255,255,255,0.30),
     inset -1px 0 0 rgba(255,255,255,0.15),
     inset 0 -1px 0 rgba(255,255,255,0.10);
+}
+.bottom-tabbar .toolbar-inner {
+  position: relative !important;
+  height: auto !important;
+  width: 100%;
+  display: flex;
+  overflow: visible;
 }
 html[data-theme="dark"] .bottom-tabbar {
   background: rgba(30,30,35,0.60);

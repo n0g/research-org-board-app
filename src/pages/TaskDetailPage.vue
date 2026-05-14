@@ -32,10 +32,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onBeforeUnmount } from 'vue'
+import { computed, onMounted } from 'vue'
 import { f7 } from 'framework7-vue/bundle'
 import { useBoardStore } from '../stores/board.js'
-import { useTabbar } from '../composables/useTabbar.js'
 import TaskDetailPanel from '../components/TaskDetailPanel.vue'
 
 const props = defineProps({
@@ -86,16 +85,11 @@ function onTouchEnd(e) {
   }
 }
 
-const { hide: hideTabbar, show: showTabbar } = useTabbar()
-
 onMounted(async () => {
-  hideTabbar()
   store.triageCurrentId = urlTaskId.value
   store.initStages()
   await store.loadIfStale()
 })
-
-onBeforeUnmount(showTabbar)
 
 function goBack() { f7.view.current.router.back() }
 </script>
