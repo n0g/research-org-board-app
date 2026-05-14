@@ -874,6 +874,20 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg
 html[data-theme="dark"] input:focus { box-shadow: 0 0 0 2px rgba(255,159,10,0.15); }
 
 /* ── BOTTOM TABBAR ── */
+/* ── Tab cross-fade ── */
+.views-tabs > .view.tab {
+  display: flex !important;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+.views-tabs > .view.tab.tab-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .bottom-tabbar.toolbar {
   background: rgba(245,245,247,0.50) !important;
   backdrop-filter: blur(12px) saturate(160%) !important;
