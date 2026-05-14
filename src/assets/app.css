@@ -173,7 +173,7 @@ a, button, .card, .stage-opt, .task-check, .task-due-right {
 }
 
 /* ── ICONS ── */
-.ph { font-size: 18px; line-height: 1; }
+.ph, .ph-fill { font-size: 18px; line-height: 1; }
 
 /* ── BOARD SIDEBAR ── */
 .board-sidebar {

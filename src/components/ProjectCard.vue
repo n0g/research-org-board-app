@@ -63,7 +63,7 @@
           @pointerdown.stop
           @click.stop="store.toggleFocus(project.id)"
         >
-          <i :class="isFocus ? 'ph ph-lightning-fill' : 'ph ph-lightning'" aria-hidden="true"></i>
+          <i :class="isFocus ? 'ph-fill ph-lightning' : 'ph ph-lightning'" aria-hidden="true"></i>
         </button>
       </div>
     </div>
