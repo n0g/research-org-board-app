@@ -63,10 +63,7 @@
           @pointerdown.stop
           @click.stop="store.toggleFocus(project.id)"
         >
-          <span class="bolt-icon" :class="boltFillClass" aria-hidden="true">
-            <i class="ph ph-lightning bolt-bg"></i>
-            <i class="ph ph-lightning-fill bolt-fg"></i>
-          </span>
+          <i class="ph ph-lightning" aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -119,12 +116,6 @@ const scheduledHoursThisWeek = computed(() => {
     minutes += t === '15m' ? 15 : t === '30m' ? 30 : t === '2h' ? 120 : 60
   }
   return minutes / 60
-})
-const boltFillClass = computed(() => {
-  if (!isFocus.value) return ''
-  if (scheduledHoursThisWeek.value >= 4) return 'bolt-focus-full'
-  if (scheduledHoursThisWeek.value > 0) return 'bolt-focus-half'
-  return 'bolt-focus-empty'
 })
 
 const statusText = computed(() => stageInfo.value?.task.content ?? '')
