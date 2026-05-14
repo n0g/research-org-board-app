@@ -1033,6 +1033,9 @@ html[data-theme="dark"] .settings-sheet {
   .settings-screen:has(.board-sidebar:not(.collapsed)) .settings-main {
     margin-left: calc(240px + 12px + 16px);
   }
+  .settings-screen:has(.board-sidebar.collapsed) .settings-main {
+    padding-left: 68px;
+  }
 }
 .settings-content {
   max-width: 560px;
