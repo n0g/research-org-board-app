@@ -6,17 +6,12 @@
     <!-- Authenticated: tab views + shared tabbar -->
     <template v-else>
       <f7-views tabs>
-        <f7-view id="view-board"    name="board"    tab tab-active url="/board/" />
-        <f7-view id="view-tasks"    name="tasks"    tab url="/tasks/" />
-        <f7-view id="view-schedule" name="schedule" tab url="/schedule/" />
-        <f7-view id="view-settings" name="settings" tab url="/settings/" />
-      </f7-views>
-      <f7-toolbar
-        v-show="tabbarVisible"
-        no-hairline
-        position="bottom"
-        class="bottom-tabbar"
-      >
+        <f7-toolbar
+          v-show="tabbarVisible"
+          no-hairline
+          position="bottom"
+          class="bottom-tabbar"
+        >
         <button
           class="tab-btn"
           :class="{ 'tab-btn-active': activeTab === 'board' }"
@@ -42,6 +37,11 @@
           @click="showTab('settings')"
         ><i class="ph ph-gear" aria-hidden="true"></i>Settings</button>
       </f7-toolbar>
+        <f7-view id="view-board"    name="board"    tab tab-active url="/board/" />
+        <f7-view id="view-tasks"    name="tasks"    tab url="/tasks/" />
+        <f7-view id="view-schedule" name="schedule" tab url="/schedule/" />
+        <f7-view id="view-settings" name="settings" tab url="/settings/" />
+      </f7-views>
     </template>
   </f7-app>
 </template>
