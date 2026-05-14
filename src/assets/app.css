@@ -895,6 +895,8 @@ html[data-theme="dark"] input:focus { box-shadow: 0 0 0 2px rgba(255,159,10,0.15
 }
 
 .bottom-tabbar.toolbar {
+  position: fixed !important;
+  z-index: 5000 !important;
   background: rgba(245,245,247,0.50) !important;
   backdrop-filter: blur(12px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
