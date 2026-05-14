@@ -11,12 +11,12 @@
           aria-label="Expand sidebar"
           @click="toggleSidebar"
         >
-          <span class="material-symbols-outlined">left_panel_open</span>
+          <i class="ph ph-sidebar-simple" aria-hidden="true"></i>
         </button>
 
         <section class="project-meta">
           <button class="back-btn" @click="goBack">
-            <span class="material-symbols-outlined">arrow_back</span>
+            <i class="ph ph-arrow-left" aria-hidden="true"></i>
             Board
           </button>
 
@@ -50,9 +50,9 @@
     </div>
 
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn tab-btn-active" aria-current="page" @click="goBoard"><span class="material-symbols-outlined">view_kanban</span>Board</button>
-      <button class="tab-btn" @click="goReviews"><span class="material-symbols-outlined">grading</span>Reviews</button>
-      <button class="tab-btn" @click="goSettings"><span class="material-symbols-outlined">settings</span>Settings</button>
+      <button class="tab-btn tab-btn-active" aria-current="page" @click="goBoard"><i class="ph ph-kanban" aria-hidden="true"></i>Board</button>
+      <button class="tab-btn" @click="goReviews"><i class="ph ph-clipboard-text" aria-hidden="true"></i>Reviews</button>
+      <button class="tab-btn" @click="goSettings"><i class="ph ph-gear" aria-hidden="true"></i>Settings</button>
     </f7-toolbar>
   </f7-page>
 </template>

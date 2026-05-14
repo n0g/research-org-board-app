@@ -6,11 +6,11 @@
           <template v-if="projectsWithTasks.length">
             <button class="sidebar-section-header" :aria-expanded="projectsOpen" @click="projectsOpen = !projectsOpen">
               <span class="sidebar-section-label">Projects</span>
-              <span
-                class="material-symbols-outlined sidebar-section-chevron"
+              <i
+                class="ph ph-caret-down sidebar-section-chevron"
                 :class="{ open: projectsOpen }"
                 aria-hidden="true"
-              >keyboard_arrow_down</span>
+              ></i>
             </button>
             <template v-if="projectsOpen">
               <button
@@ -21,7 +21,7 @@
                 :title="project.name"
                 @click="toggleProject(project.id)"
               >
-                <span class="material-symbols-outlined" aria-hidden="true">folder</span>
+                <i class="ph ph-folder" aria-hidden="true"></i>
                 <span class="sidebar-label">{{ project.name }}</span>
               </button>
             </template>
@@ -37,7 +37,7 @@
           aria-label="Expand sidebar"
           @click="toggleSidebar"
         >
-          <span class="material-symbols-outlined">left_panel_open</span>
+          <i class="ph ph-sidebar-simple" aria-hidden="true"></i>
         </button>
 
         <!-- Left: task list -->
@@ -68,10 +68,10 @@
               <div class="triage-task-meta">
                 <div class="triage-task-tags">
                   <span v-if="getUrgencyLabel(task)" class="triage-tag">
-                    <span class="material-symbols-outlined">bolt</span>{{ getUrgencyLabel(task) }}
+                    <i class="ph ph-lightning" aria-hidden="true"></i>{{ getUrgencyLabel(task) }}
                   </span>
                   <span v-if="getImportance(task)" class="triage-tag">
-                    <span class="material-symbols-outlined">star</span>{{ getImportance(task) }}
+                    <i class="ph ph-star" aria-hidden="true"></i>{{ getImportance(task) }}
                   </span>
                   <span v-if="getTime(task)" class="triage-tag triage-tag-dim">{{ getTime(task) }}</span>
                 </div>
@@ -86,7 +86,7 @@
             :aria-label="showUntriaged ? 'Show all tasks' : 'Show untriaged only'"
             @click="showUntriaged = !showUntriaged"
           >
-            <span class="material-symbols-outlined">filter_alt</span>
+            <i class="ph ph-funnel" aria-hidden="true"></i>
           </button>
         </div>
 
@@ -95,17 +95,17 @@
           <template v-if="selectedTask">
             <div class="task-nav-bar">
               <button class="task-nav-btn" :disabled="selectedIndex <= 0" aria-label="Previous task" @click="goPrev">
-                <span class="material-symbols-outlined">chevron_left</span>
+                <i class="ph ph-caret-left" aria-hidden="true"></i>
               </button>
               <span class="task-nav-count">{{ selectedIndex + 1 }} / {{ filteredTasks.length }}</span>
               <button class="task-nav-btn" :disabled="selectedIndex >= filteredTasks.length - 1" aria-label="Next task" @click="goNext">
-                <span class="material-symbols-outlined">chevron_right</span>
+                <i class="ph ph-caret-right" aria-hidden="true"></i>
               </button>
             </div>
             <TaskDetailPanel :task="selectedTask" @completed="onCompleted" />
           </template>
           <div v-else class="triage-no-selection">
-            <span class="material-symbols-outlined">checklist</span>
+            <i class="ph ph-list-checks" aria-hidden="true"></i>
             <p>Select a task to triage</p>
           </div>
         </div>
@@ -113,10 +113,10 @@
     </div>
 
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn" @click="goBoard"><span class="material-symbols-outlined">view_kanban</span>Board</button>
-      <button class="tab-btn tab-btn-active" aria-current="page"><span class="material-symbols-outlined">checklist</span>Tasks</button>
-      <button class="tab-btn" @click="goSchedule"><span class="material-symbols-outlined">calendar_today</span>Schedule</button>
-      <button class="tab-btn" @click="goSettings"><span class="material-symbols-outlined">settings</span>Settings</button>
+      <button class="tab-btn" @click="goBoard"><i class="ph ph-kanban" aria-hidden="true"></i>Board</button>
+      <button class="tab-btn tab-btn-active" aria-current="page"><i class="ph ph-list-checks" aria-hidden="true"></i>Tasks</button>
+      <button class="tab-btn" @click="goSchedule"><i class="ph ph-calendar" aria-hidden="true"></i>Schedule</button>
+      <button class="tab-btn" @click="goSettings"><i class="ph ph-gear" aria-hidden="true"></i>Settings</button>
     </f7-toolbar>
   </f7-page>
 </template>

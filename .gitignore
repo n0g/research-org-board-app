@@ -2,3 +2,4 @@ node_modules/
 dist/
 .env.local
 .env.*.local
+hotcrp-3.0.0/

@@ -20,7 +20,7 @@
         class="card-submission-icon"
         :class="`card-submission-${submissionStatusKey}`"
         :title="submissionStatus"
-      ><span class="material-symbols-outlined">{{ submissionStatusIcon }}</span></span>
+      ><i :class="`ph ph-${submissionStatusIcon}`"></i></span>
       <span
         v-else-if="submissionError"
         class="card-submission-unavailable"
@@ -52,7 +52,7 @@
 
       <div class="card-bottom-right">
         <div v-if="deadlineDate" class="card-date" :class="deadlineDateClass">
-          <span class="material-symbols-outlined">calendar_today</span>
+          <i class="ph ph-calendar" aria-hidden="true"></i>
           {{ deadlineFormatted }}
         </div>
         <button
@@ -64,8 +64,8 @@
           @click.stop="store.toggleFocus(project.id)"
         >
           <span class="bolt-icon" :class="boltFillClass" aria-hidden="true">
-            <span class="material-symbols-outlined bolt-bg">bolt</span>
-            <span class="material-symbols-outlined bolt-fg">bolt</span>
+            <i class="ph ph-lightning bolt-bg"></i>
+            <i class="ph ph-lightning-fill bolt-fg"></i>
           </span>
         </button>
       </div>
@@ -159,10 +159,10 @@ const submissionStatusKey = computed(() => {
 })
 const submissionStatusIcon = computed(() => {
   const k = submissionStatusKey.value
-  if (k === 'accepted') return 'check_circle'
-  if (k === 'rejected') return 'cancel'
-  if (k === 'submitted') return 'cloud_upload'
-  return 'radio_button_unchecked'
+  if (k === 'accepted') return 'check-circle'
+  if (k === 'rejected') return 'x-circle'
+  if (k === 'submitted') return 'cloud-arrow-up'
+  return 'circle'
 })
 
 // Deadline display

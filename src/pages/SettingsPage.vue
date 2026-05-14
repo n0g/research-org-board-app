@@ -11,7 +11,7 @@
           aria-label="Expand sidebar"
           @click="toggleSidebar"
         >
-          <span class="material-symbols-outlined">left_panel_open</span>
+          <i class="ph ph-sidebar-simple" aria-hidden="true"></i>
         </button>
 
         <div class="settings-content">
@@ -99,7 +99,7 @@
                   v-model="row.label"
                   class="stage-label-input"
                 >
-                <button class="del" :aria-label="'Remove stage ' + row.name" @click="stageRows.splice(i, 1)"><span class="material-symbols-outlined">close</span></button>
+                <button class="del" :aria-label="'Remove stage ' + row.name" @click="stageRows.splice(i, 1)"><i class="ph ph-x" aria-hidden="true"></i></button>
               </div>
             </div>
 
@@ -145,7 +145,7 @@
                   <div class="site-name-text">{{ site.name }}</div>
                   <div class="site-url-text">{{ site.url }}</div>
                 </div>
-                <button class="del" :aria-label="'Remove ' + site.name" @click="reviewsStore.removeSite(site.id)"><span class="material-symbols-outlined">close</span></button>
+                <button class="del" :aria-label="'Remove ' + site.name" @click="reviewsStore.removeSite(site.id)"><i class="ph ph-x" aria-hidden="true"></i></button>
               </div>
             </div>
 
@@ -254,10 +254,10 @@
     </div>
 
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn" @click="goBoard"><span class="material-symbols-outlined">view_kanban</span>Board</button>
-      <button class="tab-btn" @click="goTasks"><span class="material-symbols-outlined">checklist</span>Tasks</button>
-      <button class="tab-btn" @click="goSchedule"><span class="material-symbols-outlined">calendar_today</span>Schedule</button>
-      <button class="tab-btn tab-btn-active" aria-current="page"><span class="material-symbols-outlined">settings</span>Settings</button>
+      <button class="tab-btn" @click="goBoard"><i class="ph ph-kanban" aria-hidden="true"></i>Board</button>
+      <button class="tab-btn" @click="goTasks"><i class="ph ph-list-checks" aria-hidden="true"></i>Tasks</button>
+      <button class="tab-btn" @click="goSchedule"><i class="ph ph-calendar" aria-hidden="true"></i>Schedule</button>
+      <button class="tab-btn tab-btn-active" aria-current="page"><i class="ph ph-gear" aria-hidden="true"></i>Settings</button>
     </f7-toolbar>
   </f7-page>
 </template>

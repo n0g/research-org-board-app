@@ -4,7 +4,7 @@
 
       <div class="place-topbar">
         <button class="back-btn" @click="cancel">
-          <span class="material-symbols-outlined">arrow_back</span>
+          <i class="ph ph-arrow-left" aria-hidden="true"></i>
           Schedule
         </button>
         <span class="place-task-label">{{ store.pendingScheduleTask?.content }}</span>
@@ -13,11 +13,11 @@
       <template v-if="calStore.isConnected">
         <div class="cal-nav">
           <button class="cal-nav-btn" title="Previous week" @click="prevWeek">
-            <span class="material-symbols-outlined">chevron_left</span>
+            <i class="ph ph-caret-left" aria-hidden="true"></i>
           </button>
           <span class="cal-nav-label">{{ weekLabel }}</span>
           <button class="cal-nav-btn" title="Next week" @click="nextWeek">
-            <span class="material-symbols-outlined">chevron_right</span>
+            <i class="ph ph-caret-right" aria-hidden="true"></i>
           </button>
           <button class="cal-today-btn" @click="goToday">Today</button>
         </div>
@@ -92,7 +92,7 @@
       </template>
 
       <div v-else class="cal-not-connected">
-        <span class="material-symbols-outlined">calendar_today</span>
+        <i class="ph ph-calendar" aria-hidden="true"></i>
         <p>{{ calStore.clientId ? 'Session expired — reconnect to continue' : 'Connect Google Calendar in Settings' }}</p>
         <button class="btn primary" @click="calStore.clientId ? calStore.connect() : goSettings()">
           {{ calStore.clientId ? 'Reconnect' : 'Settings' }}

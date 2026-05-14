@@ -7,32 +7,32 @@
     >
       <div class="task-detail-topbar">
         <button class="back-btn" @click="goBack">
-          <span class="material-symbols-outlined">arrow_back</span>
+          <i class="ph ph-arrow-left" aria-hidden="true"></i>
           Tasks
         </button>
         <div class="task-nav-bar">
           <button class="task-nav-btn" :disabled="!prevId" aria-label="Previous task" @click="goPrev">
-            <span class="material-symbols-outlined">chevron_left</span>
+            <i class="ph ph-caret-left" aria-hidden="true"></i>
           </button>
           <span class="task-nav-count">{{ currentIndex + 1 }} / {{ taskIds.length }}</span>
           <button class="task-nav-btn" :disabled="!nextId" aria-label="Next task" @click="goNext">
-            <span class="material-symbols-outlined">chevron_right</span>
+            <i class="ph ph-caret-right" aria-hidden="true"></i>
           </button>
         </div>
       </div>
 
       <TaskDetailPanel v-if="task" :task="task" @completed="goNext" />
       <div v-else class="triage-no-selection">
-        <span class="material-symbols-outlined">checklist</span>
+        <i class="ph ph-list-checks" aria-hidden="true"></i>
         <p>Task not found</p>
       </div>
     </div>
 
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn" @click="goBoard"><span class="material-symbols-outlined">view_kanban</span>Board</button>
-      <button class="tab-btn tab-btn-active" aria-current="page"><span class="material-symbols-outlined">checklist</span>Tasks</button>
-      <button class="tab-btn" @click="goSchedule"><span class="material-symbols-outlined">calendar_today</span>Schedule</button>
-      <button class="tab-btn" @click="goSettings"><span class="material-symbols-outlined">settings</span>Settings</button>
+      <button class="tab-btn" @click="goBoard"><i class="ph ph-kanban" aria-hidden="true"></i>Board</button>
+      <button class="tab-btn tab-btn-active" aria-current="page"><i class="ph ph-list-checks" aria-hidden="true"></i>Tasks</button>
+      <button class="tab-btn" @click="goSchedule"><i class="ph ph-calendar" aria-hidden="true"></i>Schedule</button>
+      <button class="tab-btn" @click="goSettings"><i class="ph ph-gear" aria-hidden="true"></i>Settings</button>
     </f7-toolbar>
   </f7-page>
 </template>

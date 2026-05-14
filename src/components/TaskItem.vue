@@ -2,11 +2,11 @@
   <div class="task-item-wrap" role="listitem">
     <div class="task-swipe-zone" aria-hidden="true">
       <button class="task-swipe-btn" :style="dueBtnStyle" @click.stop="startDueEdit">
-        <span class="material-symbols-outlined">flag</span>
+        <i class="ph ph-flag" aria-hidden="true"></i>
         <span class="task-swipe-label">Due</span>
       </button>
       <button class="task-swipe-btn task-swipe-del" :style="delBtnStyle" @click.stop="doDelete">
-        <span class="material-symbols-outlined">delete</span>
+        <i class="ph ph-trash" aria-hidden="true"></i>
         <span class="task-swipe-label">Remove</span>
       </button>
     </div>
@@ -23,7 +23,7 @@
       @click="onItemClick"
     >
       <div class="task-handle" aria-hidden="true">
-        <span class="material-symbols-outlined">drag_indicator</span>
+        <i class="ph ph-dots-six-vertical"></i>
       </div>
       <div
         class="task-check"
@@ -42,7 +42,7 @@
             <a v-if="seg.href" :href="seg.href" target="_blank" rel="noopener noreferrer" class="task-link" @click.stop>{{ seg.text }}</a>
             <template v-else>{{ seg.text }}</template>
           </template>
-          <span v-if="(task.labels || []).includes('scheduled')" class="material-symbols-outlined task-cal-badge">event</span>
+          <i v-if="(task.labels || []).includes('scheduled')" class="ph ph-calendar-check task-cal-badge" aria-hidden="true"></i>
         </div>
         <input
           v-if="editingTitle"
@@ -66,16 +66,16 @@
         @keydown.enter.prevent="startDueEdit"
         @keydown.space.prevent="startDueEdit"
       >
-        <span class="material-symbols-outlined">flag</span>
+        <i class="ph ph-flag" aria-hidden="true"></i>
         {{ formattedDue }}
       </div>
       <div class="task-hover-actions">
         <button v-if="!task.due" class="task-action-btn task-action-due" aria-label="Add due date" @click.stop="startDueEdit">
-          <span class="material-symbols-outlined">flag</span>
+          <i class="ph ph-flag" aria-hidden="true"></i>
           <span class="task-action-label">Due</span>
         </button>
         <button class="task-action-btn task-action-delete" aria-label="Delete task" @click.stop="doDelete">
-          <span class="material-symbols-outlined">delete</span>
+          <i class="ph ph-trash" aria-hidden="true"></i>
           <span class="task-action-label">Remove</span>
         </button>
       </div>

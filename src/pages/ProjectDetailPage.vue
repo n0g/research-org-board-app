@@ -11,13 +11,13 @@
           aria-label="Expand sidebar"
           @click="toggleSidebar"
         >
-          <span class="material-symbols-outlined">left_panel_open</span>
+          <i class="ph ph-sidebar-simple" aria-hidden="true"></i>
         </button>
 
         <!-- Left metadata pane -->
         <section class="project-meta" :class="{ 'project-meta-collapsed': sidebarCollapsed }">
           <button class="back-btn" @click="goBack">
-            <span class="material-symbols-outlined">arrow_back</span>
+            <i class="ph ph-arrow-left" aria-hidden="true"></i>
             Board
           </button>
 
@@ -51,8 +51,8 @@
               @click="store.toggleFocus(projectId)"
             >
               <span class="bolt-icon" :class="boltFillClass" aria-hidden="true">
-                <span class="material-symbols-outlined bolt-bg">bolt</span>
-                <span class="material-symbols-outlined bolt-fg">bolt</span>
+                <i class="ph ph-lightning bolt-bg"></i>
+                <i class="ph ph-lightning-fill bolt-fg"></i>
               </span>
             </button>
           </div>
@@ -62,11 +62,11 @@
             <div class="meta-label">Collaborators</div>
             <div class="collab-chips">
               <span v-for="person in personLabels" :key="person" class="collab-chip">
-                <span class="material-symbols-outlined">person</span>
+                <i class="ph ph-user" aria-hidden="true"></i>
                 {{ person }}
-                <button class="collab-chip-remove" :aria-label="`Remove ${person}`" @click.stop="removeCollab(person)"><span class="material-symbols-outlined">close</span></button>
+                <button class="collab-chip-remove" :aria-label="`Remove ${person}`" @click.stop="removeCollab(person)"><i class="ph ph-x" aria-hidden="true"></i></button>
               </span>
-              <button v-if="!addingCollab" class="collab-add-pill" aria-label="Add collaborator" @click.stop="startAddCollab"><span class="material-symbols-outlined" aria-hidden="true">add</span></button>
+              <button v-if="!addingCollab" class="collab-add-pill" aria-label="Add collaborator" @click.stop="startAddCollab"><i class="ph ph-plus" aria-hidden="true"></i></button>
               <div v-else ref="collabWrapperEl" class="collab-combo-wrapper">
                 <input
                   ref="collabInputEl"
@@ -137,7 +137,7 @@
                 @click.stop="stagePopupOpen = !stagePopupOpen"
               >
                 <span>{{ stageObj?.name ?? 'Unassigned' }}</span>
-                <span class="material-symbols-outlined popup-chevron" aria-hidden="true">expand_more</span>
+                <i class="ph ph-caret-down popup-chevron" aria-hidden="true"></i>
               </button>
               <div v-if="stagePopupOpen" class="popup-dropdown" role="listbox" :aria-label="'Pipeline stage: ' + (stageObj?.name ?? 'Unassigned')">
                 <button
@@ -202,7 +202,7 @@
                   aria-label="Remove deadline"
                   @click="store.setDeadlineDate(projectId, '').catch(console.error)"
                 >
-                  <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                  <i class="ph ph-x" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
@@ -242,22 +242,22 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Open submission in new tab"
-              ><span class="material-symbols-outlined" aria-hidden="true">open_in_new</span></a>
+              ><i class="ph ph-arrow-square-out" aria-hidden="true"></i></a>
             </div>
             <div v-if="submissionUrl && matchedSite" class="submission-status">
               <div v-if="submissionStatusLoading" class="submission-status-loading">
-                <span class="material-symbols-outlined spin-icon">refresh</span>
+                <i class="ph ph-arrow-clockwise spin-icon" aria-hidden="true"></i>
                 Checking…
               </div>
               <div v-else-if="submissionStatusError" class="submission-status-chips">
                 <span class="sub-chip sub-chip-gray" :title="submissionStatusError">
-                  <span class="material-symbols-outlined">help</span>
+                  <i class="ph ph-question" aria-hidden="true"></i>
                   Status unavailable
                 </span>
               </div>
               <div v-else-if="submissionStatusData" class="submission-status-chips">
                 <span class="sub-chip" :class="statusChipClass(submissionStatusData.status)">
-                  <span class="material-symbols-outlined">{{ statusChipIcon(submissionStatusData.status) }}</span>
+                  <i :class="`ph ph-${statusChipIcon(submissionStatusData.status)}`" aria-hidden="true"></i>
                   {{ submissionStatusData.status }}
                 </span>
               </div>
@@ -301,7 +301,7 @@
               rel="noopener noreferrer"
             >Open in Todoist ↗</a>
             <button class="project-delete-btn" title="Delete project" aria-label="Delete project" @click="confirmDelete">
-              <span class="material-symbols-outlined">delete</span>
+              <i class="ph ph-trash" aria-hidden="true"></i>
             </button>
           </div>
         </section>
@@ -339,14 +339,14 @@
             >
               <div class="task-handle-spacer" aria-hidden="true"></div>
               <div class="task-quick-add-btn" aria-hidden="true">
-                <span class="material-symbols-outlined">add</span>
+                <i class="ph ph-plus"></i>
               </div>
               <span class="task-quick-add-label">Add task</span>
             </div>
             <div v-else class="task-quick-add-row task-quick-add-editing">
               <div class="task-handle-spacer" aria-hidden="true"></div>
               <div class="task-quick-add-btn" aria-hidden="true">
-                <span class="material-symbols-outlined">add</span>
+                <i class="ph ph-plus"></i>
               </div>
               <input
                 ref="quickAddInputEl"
@@ -366,10 +366,10 @@
     </div>
 
     <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-      <button class="tab-btn tab-btn-active" aria-current="page" @click="goBoard"><span class="material-symbols-outlined">view_kanban</span>Board</button>
-      <button class="tab-btn" @click="goTasks"><span class="material-symbols-outlined">checklist</span>Tasks</button>
-      <button class="tab-btn" @click="goSchedule"><span class="material-symbols-outlined">calendar_today</span>Schedule</button>
-      <button class="tab-btn" @click="goSettings"><span class="material-symbols-outlined">settings</span>Settings</button>
+      <button class="tab-btn tab-btn-active" aria-current="page" @click="goBoard"><i class="ph ph-kanban" aria-hidden="true"></i>Board</button>
+      <button class="tab-btn" @click="goTasks"><i class="ph ph-list-checks" aria-hidden="true"></i>Tasks</button>
+      <button class="tab-btn" @click="goSchedule"><i class="ph ph-calendar" aria-hidden="true"></i>Schedule</button>
+      <button class="tab-btn" @click="goSettings"><i class="ph ph-gear" aria-hidden="true"></i>Settings</button>
     </f7-toolbar>
   </f7-page>
 </template>
@@ -676,12 +676,12 @@ function statusChipClass(status) {
 }
 
 function statusChipIcon(status) {
-  if (!status) return 'radio_button_unchecked'
+  if (!status) return 'circle'
   const s = status.toLowerCase()
-  if (s.includes('accept')) return 'check_circle'
-  if (s.includes('reject')) return 'cancel'
-  if (s.includes('submit')) return 'upload_file'
-  return 'radio_button_unchecked'
+  if (s.includes('accept')) return 'check-circle'
+  if (s.includes('reject')) return 'x-circle'
+  if (s.includes('submit')) return 'file-arrow-up'
+  return 'circle'
 }
 
 watch([submissionUrl, matchedSite], ([url, site]) => {

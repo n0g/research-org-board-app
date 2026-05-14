@@ -44,7 +44,7 @@
               class="del"
               :aria-label="'Remove ' + site.name"
               @click="store.removeSite(site.id)"
-            ><span class="material-symbols-outlined">close</span></button>
+            ><i class="ph ph-x" aria-hidden="true"></i></button>
           </div>
         </div>
 
@@ -81,7 +81,7 @@
         <div v-if="addError" class="error-msg" role="alert" style="margin-top:10px">{{ addError }}</div>
 
         <div class="setup-actions" style="margin-top:16px">
-          <button class="btn" @click="goBack"><span class="material-symbols-outlined">arrow_back</span>Back</button>
+          <button class="btn" @click="goBack"><i class="ph ph-arrow-left" aria-hidden="true"></i>Back</button>
           <button class="btn primary" @click="addSite">Add site</button>
         </div>
       </div>

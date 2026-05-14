@@ -60,14 +60,14 @@
         <label class="triage-field-label">People</label>
         <div class="collab-chips">
           <span v-for="name in draft.people" :key="name" class="collab-chip">
-            <span class="material-symbols-outlined">person</span>
+            <i class="ph ph-user" aria-hidden="true"></i>
             {{ name }}
             <button class="collab-chip-remove" :aria-label="'Remove ' + name" @click="removePerson(name)">
-              <span class="material-symbols-outlined">close</span>
+              <i class="ph ph-x" aria-hidden="true"></i>
             </button>
           </span>
           <button v-if="!addingPerson" class="collab-add-pill" @click.stop="startAddPerson">
-            <span class="material-symbols-outlined">add</span>
+            <i class="ph ph-plus" aria-hidden="true"></i>
           </button>
           <div v-else ref="personWrapperEl" class="collab-combo-wrapper">
             <input
@@ -111,7 +111,7 @@
             aria-label="Clear deadline"
             @click="draft.deadline = ''"
           >
-            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+            <i class="ph ph-x" aria-hidden="true"></i>
           </button>
         </div>
       </div>
@@ -127,7 +127,7 @@
 
       <div class="triage-complete-row">
         <button class="triage-complete-btn" :disabled="completing" @click="complete">
-          <span class="material-symbols-outlined">check_circle</span>
+          <i class="ph ph-check-circle" aria-hidden="true"></i>
           {{ completing ? 'Marking done…' : 'Mark as done' }}
         </button>
       </div>

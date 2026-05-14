@@ -8,7 +8,7 @@
         :aria-label="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
         @click="toggleSidebar"
       >
-        <span class="material-symbols-outlined">left_panel_close</span>
+        <i class="ph ph-sidebar-simple" aria-hidden="true"></i>
       </button>
     </div>
 
@@ -21,7 +21,7 @@
         title="Board"
         @click="currentPage !== 'board' && goBoard()"
       >
-        <span class="material-symbols-outlined" aria-hidden="true">view_kanban</span>
+        <i class="ph ph-kanban" aria-hidden="true"></i>
         <span class="sidebar-label">Board</span>
       </button>
 
@@ -31,7 +31,7 @@
         title="Tasks"
         @click="currentPage !== 'tasks' && goTasks()"
       >
-        <span class="material-symbols-outlined" aria-hidden="true">checklist</span>
+        <i class="ph ph-list-checks" aria-hidden="true"></i>
         <span class="sidebar-label">Tasks</span>
       </button>
 
@@ -41,7 +41,7 @@
         title="Schedule"
         @click="currentPage !== 'schedule' && goSchedule()"
       >
-        <span class="material-symbols-outlined" aria-hidden="true">calendar_today</span>
+        <i class="ph ph-calendar" aria-hidden="true"></i>
         <span class="sidebar-label">Schedule</span>
       </button>
     </nav>
@@ -58,11 +58,11 @@
           @click="collabOpen = !collabOpen"
         >
           <span class="sidebar-section-label">Collaborators</span>
-          <span
-            class="material-symbols-outlined sidebar-section-chevron"
+          <i
+            class="ph ph-caret-down sidebar-section-chevron"
             :class="{ open: collabOpen }"
             aria-hidden="true"
-          >keyboard_arrow_down</span>
+          ></i>
         </button>
         <template v-if="collabOpen">
           <button
@@ -87,11 +87,11 @@
           @click="venuesOpen = !venuesOpen"
         >
           <span class="sidebar-section-label">Venues</span>
-          <span
-            class="material-symbols-outlined sidebar-section-chevron"
+          <i
+            class="ph ph-caret-down sidebar-section-chevron"
             :class="{ open: venuesOpen }"
             aria-hidden="true"
-          >keyboard_arrow_down</span>
+          ></i>
         </button>
         <template v-if="venuesOpen">
           <button
@@ -117,7 +117,7 @@
         title="Settings"
         @click="currentPage !== 'settings' && goSettings()"
       >
-        <span class="material-symbols-outlined" aria-hidden="true">settings</span>
+        <i class="ph ph-gear" aria-hidden="true"></i>
         <span class="sidebar-label">Settings</span>
       </button>
     </div>
