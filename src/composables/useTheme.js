@@ -12,6 +12,14 @@ export function useTheme() {
     document.documentElement.dataset.theme = dark ? 'dark' : 'light'
     document.documentElement.classList.toggle('dark', dark)
     icon.value = ICONS[p]
+    let meta = document.querySelector('meta[name="theme-color"][data-dynamic]')
+    if (!meta) {
+      meta = document.createElement('meta')
+      meta.name = 'theme-color'
+      meta.dataset.dynamic = '1'
+      document.head.appendChild(meta)
+    }
+    meta.content = dark ? '#1C1C1E' : '#F5F5F7'
   }
 
   function cycle() {
