@@ -50,10 +50,7 @@
               :aria-label="isFocus ? 'Remove focus' : 'Set as focus project'"
               @click="store.toggleFocus(projectId)"
             >
-              <span class="bolt-icon" :class="boltFillClass" aria-hidden="true">
-                <i class="ph ph-lightning bolt-bg"></i>
-                <i class="ph ph-lightning-fill bolt-fg"></i>
-              </span>
+              <i :class="isFocus ? 'ph-fill ph-lightning' : 'ph ph-lightning'" aria-hidden="true"></i>
             </button>
           </div>
 
@@ -405,30 +402,7 @@ function _getMonday(d) {
   const day = new Date(d); const dow = day.getDay()
   day.setDate(day.getDate() + (dow === 0 ? -6 : 1 - dow)); day.setHours(0,0,0,0); return day
 }
-const scheduledHoursThisWeek = computed(() => {
-  if (!isFocus.value) return 0
-  const monday = _getMonday(new Date())
-  const sunday = new Date(monday); sunday.setDate(monday.getDate() + 7)
-  let minutes = 0
-  for (const task of store.tasks) {
-    if (task.project_id !== projectId.value || task.is_completed) continue
-    const line = (task.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
-    const m = line?.match(/\(([^)]+)\)$/)
-    if (!m) continue
-    const dt = new Date(m[1])
-    if (dt < monday || dt >= sunday) continue
-    const t = (task.labels || []).find(l => l.startsWith('time::'))?.replace('time::', '')
-    if (!t) continue
-    minutes += t === '15m' ? 15 : t === '30m' ? 30 : t === '2h' ? 120 : 60
-  }
-  return minutes / 60
-})
-const boltFillClass = computed(() => {
-  if (!isFocus.value) return ''
-  if (scheduledHoursThisWeek.value >= 4) return 'bolt-focus-full'
-  if (scheduledHoursThisWeek.value > 0) return 'bolt-focus-half'
-  return 'bolt-focus-empty'
-})
+
 const stageInfo = computed(() => store.projectStage(projectId.value))
 const meta = computed(() => store.projectMeta(projectId.value))
 const tasks = computed(() => store.projectTasks(projectId.value))
