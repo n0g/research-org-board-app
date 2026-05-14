@@ -838,7 +838,7 @@ html[data-theme="dark"] .btn {
   font-size: 13px;
   font-weight: 500;
   padding: 7px 14px;
-  border-radius: 6px;
+  border-radius: 100px;
   cursor: pointer;
   transition: background 0.1s;
   white-space: nowrap;
