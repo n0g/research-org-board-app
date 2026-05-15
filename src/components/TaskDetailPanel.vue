@@ -45,11 +45,11 @@
     <div class="triage-fields">
       <div class="triage-field">
         <label id="label-time" class="triage-field-label">Estimated Time</label>
-        <div class="seg-ctrl" role="group" aria-labelledby="label-time">
+        <div class="theme-segmented" role="group" aria-labelledby="label-time">
           <button
             v-for="t in TIME_OPTS"
             :key="t"
-            class="seg-btn"
+            class="theme-seg-btn"
             :class="{ active: draft.time === t }"
             @click="draft.time = t"
           >{{ t }}</button>
