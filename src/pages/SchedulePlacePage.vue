@@ -222,8 +222,12 @@ function goToday() {
 async function scheduleAt(day, slot) {
   const task = store.pendingScheduleTask
   if (!task) return
-  await calStore.deleteAllByTaskId(task.id)
+  // Navigate back immediately so the tap doesn't produce ghost events on SchedulePage
+  store.pendingScheduleTask = null
+  f7.view.current.router.back()
+  // API calls continue after navigation (stores are persistent)
   try {
+    await calStore.deleteAllByTaskId(task.id)
     const [year, month, dayN] = isoDate(day).split('-').map(Number)
     const start = new Date(year, month - 1, dayN, slot.hour, slot.minute, 0, 0)
     const projectName = store.displayProjects.find(p => p.id === task.project_id)?.name ?? ''
@@ -232,8 +236,6 @@ async function scheduleAt(day, slot) {
   } catch (err) {
     console.error('Failed to schedule:', err)
   }
-  store.pendingScheduleTask = null
-  f7.view.current.router.back()
 }
 
 function cancel() {

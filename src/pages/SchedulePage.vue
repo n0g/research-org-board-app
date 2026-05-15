@@ -1,5 +1,5 @@
 <template>
-  <f7-page name="schedule" class="schedule-page" no-swipeback>
+  <f7-page name="schedule" class="schedule-page" no-swipeback @page:afterin="onPageAfterIn">
     <div class="schedule-screen">
       <AppSidebar current-page="schedule">
         <template #filters>
@@ -660,6 +660,8 @@ function onCalEventPointerDown(e, ev) {
     return
   }
   if (ev._calId !== calStore.selectedCalendarId) return
+  // Phone: no drag support on small screens; skip to avoid stuck listener state
+  if (e.pointerType === 'touch' && window.innerWidth < 768) return
   e.preventDefault()
   draggingCalEvent.value = ev
   _startDrag(e, ev.summary)
@@ -742,6 +744,16 @@ async function onPointerUp() {
       console.error('Failed to move event:', err)
     }
   }
+}
+
+function onPageAfterIn() {
+  document.removeEventListener('pointermove', onPointerMove)
+  document.removeEventListener('pointerup', onPointerUp)
+  if (ghostEl) { ghostEl.remove(); ghostEl = null }
+  draggingTask.value = null
+  draggingCalEvent.value = null
+  hoveredSlot.value = null
+  importingEvent.value = null
 }
 
 onBeforeUnmount(() => {
