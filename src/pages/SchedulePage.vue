@@ -71,7 +71,8 @@
               :class="{ 'schedule-task-dragging': draggingTask?.id === task.id }"
               tabindex="0"
               @pointerdown="onTaskPointerDown($event, task)"
-              @click="onTaskTap(task)"
+              @touchstart.passive="onTaskTouchStart"
+              @touchend="onTaskTouchEnd($event, task)"
               @keydown.enter.prevent="scheduleTaskByKey(task)"
               @keydown.space.prevent="scheduleTaskByKey(task)"
               @keydown.down.prevent.stop="focusTaskRow(idx + 1)"
@@ -581,15 +582,26 @@ function _startDrag(e, label, isTouch = false) {
   document.addEventListener('pointerup', onPointerUp)
 }
 
-// Phone tap — use @click (not pointerdown) so iOS scroll suppresses it naturally
-// and F7's touch state is clean before navigation begins.
-function onTaskTap(task) {
-  if (window.innerWidth >= 768) return  // iPad/desktop: drag via @pointerdown instead
+// Phone tap — raw touchstart/touchend bypasses F7's synthesized-click blocker
+let _taskTapStartX = 0
+let _taskTapStartY = 0
+
+function onTaskTouchStart(e) {
+  const t = e.touches[0]
+  if (t) { _taskTapStartX = t.clientX; _taskTapStartY = t.clientY }
+}
+
+function onTaskTouchEnd(e, task) {
+  if (window.innerWidth >= 768) return  // iPad/desktop: drag via @pointerdown
+  const t = e.changedTouches[0]
+  if (!t) return
+  if (Math.abs(t.clientX - _taskTapStartX) > 10 || Math.abs(t.clientY - _taskTapStartY) > 10) return
+  e.preventDefault()  // suppress synthesized click
   if (calStore.isConnected) {
     store.pendingScheduleTask = task
-    setTimeout(() => f7.view.current.router.navigate('/schedule/place/'), 0)
+    f7.view.current.router.navigate('/schedule/place/')
   } else {
-    setTimeout(() => goSettings(), 0)
+    goSettings()
   }
 }
 
