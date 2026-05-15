@@ -185,7 +185,7 @@ export const useCalendarStore = defineStore('calendar', () => {
     if (notes) parts.push(notes)
     if (task.project_id) {
       const base = `${window.location.origin}${import.meta.env.BASE_URL}`
-      parts.push(`Open in Research Board: ${base}board/project/${task.project_id}/`)
+      parts.push(`Open in Research Board: ${base}?project=${task.project_id}`)
     }
     return parts.join('\n\n')
   }

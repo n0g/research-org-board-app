@@ -104,6 +104,8 @@ onMounted(async () => {
   await store.loadIfStale()
   boardReady.value = true
   triggerSubmissionStatuses()
+  const projectId = new URLSearchParams(location.search).get('project')
+  if (projectId) f7.view.current.router.navigate(`/project/${projectId}/`)
   const label = new URLSearchParams(location.search).get('stage')
   if (label && store.stages) {
     const idx = store.stages.findIndex(s => s.label === label)
