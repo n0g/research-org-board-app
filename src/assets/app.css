@@ -772,7 +772,7 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   cursor: pointer;
   transition: opacity 0.15s, color 0.15s, background 0.15s;
 }
-.card-focus-btn .ph { font-size: 14px; }
+.card-focus-btn .ph, .card-focus-btn .ph-fill { font-size: 14px; }
 /* Always show on touch devices; show on hover/focus on pointer devices */
 @media (hover: hover) {
   .card:hover .card-focus-btn,
