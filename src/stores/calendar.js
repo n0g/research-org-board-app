@@ -1,6 +1,15 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { GCAL_CLIENT_ID } from '../config.js'
+import { useBoardStore } from './board.js'
+
+const SYNC_QUEUE_KEY = 'rb_cal_sync_queue'
+function _getSyncQueue() {
+  try { return new Set(JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY) || '[]')) } catch { return new Set() }
+}
+function _saveSyncQueue(q) { localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify([...q])) }
+function _queueTaskSync(taskId) { const q = _getSyncQueue(); q.add(String(taskId)); _saveSyncQueue(q) }
+function _dequeueTaskSync(taskId) { const q = _getSyncQueue(); q.delete(String(taskId)); _saveSyncQueue(q) }
 
 const BAKED_CLIENT_ID = import.meta.env.VITE_GCAL_CLIENT_ID || GCAL_CLIENT_ID
 const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly'
@@ -213,10 +222,7 @@ export const useCalendarStore = defineStore('calendar', () => {
     return event
   }
 
-  async function syncEventForTask(task, projectName) {
-    if (!await _ensureToken()) return
-    const evs = scheduledByTaskId.value.get(String(task.id))
-    if (!evs?.length) return
+  async function _patchEvents(evs, task, projectName) {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
     const desc = buildEventDescription(task, projectName)
     const durationMap = { '15m': 15, '30m': 30, '1h': 60, '2h': 120, '4h': 240 }
@@ -241,6 +247,46 @@ export const useCalendarStore = defineStore('calendar', () => {
       const updated = await res.json()
       const idx = events.value.findIndex(e => e.id === ev.id)
       if (idx !== -1) events.value[idx] = { ...events.value[idx], ...updated }
+    }))
+  }
+
+  async function syncEventForTask(task, projectName) {
+    if (!await _ensureToken()) {
+      _queueTaskSync(task.id)
+      return
+    }
+    const evs = scheduledByTaskId.value.get(String(task.id)) || []
+    if (!evs.length) { _dequeueTaskSync(task.id); return }
+    await _patchEvents(evs, task, projectName)
+    _dequeueTaskSync(task.id)
+  }
+
+  async function drainSyncQueue() {
+    const q = _getSyncQueue()
+    if (!q.size) return
+    if (!await _ensureToken()) return
+    const boardStore = useBoardStore()
+    const cals = calendarList.value.length
+      ? calendarList.value.filter(c => c.accessRole === 'writer' || c.accessRole === 'owner')
+      : [{ id: selectedCalendarId.value }]
+    await Promise.allSettled([...q].map(async taskId => {
+      const task = boardStore.tasks.find(t => t.id === taskId)
+      if (!task) { _dequeueTaskSync(taskId); return }
+      // Search API for events linked to this task (works regardless of loaded week)
+      const evs = []
+      await Promise.allSettled(cals.map(async cal => {
+        const params = new URLSearchParams({ privateExtendedProperty: `todoist_task_id=${taskId}`, singleEvents: 'true', maxResults: '10' })
+        const res = await fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal.id)}/events?${params}`,
+          { headers: { Authorization: `Bearer ${accessToken.value}` } }
+        )
+        if (!res.ok) return
+        const data = await res.json()
+        for (const ev of (data.items || [])) evs.push({ ...ev, _calId: cal.id })
+      }))
+      const projectName = boardStore.projects.find(p => p.id === task.project_id)?.name ?? ''
+      if (evs.length) await _patchEvents(evs, task, projectName)
+      _dequeueTaskSync(taskId)
     }))
   }
 
@@ -327,6 +373,8 @@ export const useCalendarStore = defineStore('calendar', () => {
       }
     })
   }
+
+  watch(isConnected, (connected) => { if (connected) drainSyncQueue().catch(() => {}) })
 
   async function linkEventToTask(eventId, calId, taskId) {
     if (!await _ensureToken()) throw new Error('Not authenticated')
