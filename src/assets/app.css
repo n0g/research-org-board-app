@@ -2921,12 +2921,14 @@ html[data-theme="dark"] .schedule-cal { background: var(--bg-surface); }
 .cal-header {
   display: flex;
   flex-shrink: 0;
-  background: var(--bg);
+  background: #faf9fe;
   position: sticky;
   top: 0;
   z-index: 10;
   border-bottom: 1px solid var(--border);
 }
+html[data-theme="dark"] .cal-header { background: var(--bg-surface); }
+@media (max-width: 767px) { .cal-header { background: var(--bg); } }
 
 .cal-gutter { width: 52px; flex-shrink: 0; }
 
