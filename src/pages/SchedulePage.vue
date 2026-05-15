@@ -716,13 +716,14 @@ async function onPointerUp() {
     await calStore.deleteAllByTaskId(task.id)
     try {
       const start = new Date(year, month - 1, day, slot.hour, slot.minute, 0, 0)
+      const projectName = store.displayProjects.find(p => p.id === task.project_id)?.name ?? ''
       await calStore.createEvent(
-        task.content,
+        task,
+        projectName,
         new Date(year, month - 1, day),
         slot.hour,
         slot.minute,
-        taskDurationMinutes(task),
-        task.id
+        taskDurationMinutes(task)
       )
       await store.saveScheduledTime(task.id, start.toISOString())
     } catch (err) {
