@@ -1659,6 +1659,7 @@ html[data-theme="dark"] .project-delete-btn:hover { background: rgba(229,62,62,0
   padding: calc(18px + env(safe-area-inset-top)) 32px 32px;
   min-height: 0;
 }
+html[data-theme="light"] .project-tasks { background: var(--bg-pane-right); }
 .project-tasks::-webkit-scrollbar { width: 4px; }
 .project-tasks::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 @media (max-width: 767px) {
