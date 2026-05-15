@@ -524,6 +524,9 @@ html[data-theme="dark"] .sidebar-expand-btn {
   transition: padding-left 0.3s cubic-bezier(0.16, 1.08, 0.3, 1);
 }
 html[data-theme="light"] .board { background: #ffffff; }
+html[data-theme="dark"] .board-main { background: var(--bg-surface); }
+html[data-theme="dark"] .board { background: var(--bg-surface); }
+html[data-theme="dark"] .board-loading { background: var(--bg-surface); }
 @media (min-width: 768px) { .board { padding-left: 64px; scroll-padding-left: 64px; } }
 .board { scrollbar-width: none; }
 .board::-webkit-scrollbar { display: none; }
