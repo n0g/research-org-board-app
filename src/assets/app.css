@@ -607,7 +607,7 @@ html[data-theme="dark"] .board-loading { background: var(--bg-surface); }
   touch-action: pan-y;
   user-select: none;
 }
-html[data-theme="light"] .card { background: #ffffff; }
+html[data-theme="light"] .card { background: var(--bg-sidebar); }
 .card:hover { border-color: var(--border2); box-shadow: var(--shadow-card-hover); }
 .card:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .card.dragging {
