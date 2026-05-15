@@ -448,12 +448,15 @@ export const useBoardStore = defineStore('board', () => {
       if (priority !== undefined) task.priority = priority
       if (labels !== undefined) task.labels = labels
       if (description !== undefined) task.description = body.description
-      if (content !== undefined) {
-        task.content = content
-        const calStore = useCalendarStore()
-        if (calStore.isConnected) calStore.updateEventTitle(taskId, content).catch(() => {})
-      }
+      if (content !== undefined) task.content = content
       if (dueDate !== undefined) task.due = dueDate ? { date: dueDate } : null
+      if (content !== undefined || labels !== undefined || description !== undefined) {
+        const calStore = useCalendarStore()
+        if (calStore.isConnected) {
+          const projectName = projects.value.find(p => p.id === task.project_id)?.name ?? ''
+          calStore.syncEventForTask(task, projectName).catch(() => {})
+        }
+      }
     }
   }
 

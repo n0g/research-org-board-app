@@ -787,7 +787,8 @@ watch(() => calStore.scheduledByTaskId, async (map) => {
       if (calUpdated > taskUpdated + 5000) {
         await store.updateTaskTriage(taskId, { content: ev.summary })
       } else if (taskUpdated > calUpdated + 5000) {
-        await calStore.updateEventTitle(taskId, task.content)
+        const projectName = store.displayProjects.find(p => p.id === task.project_id)?.name ?? ''
+        await calStore.syncEventForTask(task, projectName)
       }
     }
   }

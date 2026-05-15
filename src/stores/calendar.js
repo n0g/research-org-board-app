@@ -167,18 +167,33 @@ export const useCalendarStore = defineStore('calendar', () => {
     }
   }
 
-  async function createEvent(title, dateObj, startHour, startMinute, durationMinutes, taskId) {
+  function buildEventDescription(task, projectName) {
+    const parts = []
+    if (projectName) parts.push(`Project: ${projectName}`)
+    const notes = (task.description ?? '').split('\n')
+      .filter(l => !l.startsWith('📅 Scheduled:'))
+      .join('\n').trim()
+    if (notes) parts.push(notes)
+    if (task.project_id) {
+      const base = `${window.location.origin}${import.meta.env.BASE_URL}`
+      parts.push(`Open in Research Board: ${base}board/project/${task.project_id}/`)
+    }
+    return parts.join('\n\n')
+  }
+
+  async function createEvent(task, projectName, dateObj, startHour, startMinute, durationMinutes) {
     if (!await _ensureToken()) throw new Error('Not authenticated')
     const start = new Date(dateObj)
     start.setHours(startHour, startMinute, 0, 0)
     const end = new Date(start.getTime() + durationMinutes * 60_000)
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
     const body = {
-      summary: title,
+      summary: task.content,
+      description: buildEventDescription(task, projectName),
       start: { dateTime: start.toISOString(), timeZone: tz },
       end: { dateTime: end.toISOString(), timeZone: tz },
+      extendedProperties: { private: { todoist_task_id: String(task.id) } },
     }
-    if (taskId) body.extendedProperties = { private: { todoist_task_id: String(taskId) } }
     const calId = encodeURIComponent(selectedCalendarId.value)
     const res = await fetch(
       `https://www.googleapis.com/calendar/v3/calendars/${calId}/events`,
@@ -193,10 +208,40 @@ export const useCalendarStore = defineStore('calendar', () => {
     )
     if (!res.ok) throw new Error(`Failed to create event: ${res.status}`)
     const event = await res.json()
-    // Tag with the selected calendar's color so it renders correctly immediately
     const calColor = calendarList.value.find(c => c.id === selectedCalendarId.value)?.backgroundColor ?? null
     events.value.push({ ...event, _calColor: calColor, _calId: selectedCalendarId.value })
     return event
+  }
+
+  async function syncEventForTask(task, projectName) {
+    if (!await _ensureToken()) return
+    const evs = scheduledByTaskId.value.get(String(task.id))
+    if (!evs?.length) return
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const desc = buildEventDescription(task, projectName)
+    const durationMap = { '15m': 15, '30m': 30, '1h': 60, '2h': 120, '4h': 240 }
+    const timeLabel = (task.labels || []).find(l => l.startsWith('time::'))
+    const duration = timeLabel ? durationMap[timeLabel.slice(6)] : null
+    await Promise.allSettled(evs.map(async ev => {
+      const patch = { summary: task.content, description: desc }
+      if (duration && ev.start?.dateTime) {
+        const start = new Date(ev.start.dateTime)
+        patch.start = { dateTime: start.toISOString(), timeZone: tz }
+        patch.end = { dateTime: new Date(start.getTime() + duration * 60_000).toISOString(), timeZone: tz }
+      }
+      const res = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(ev._calId)}/events/${ev.id}`,
+        {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${accessToken.value}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify(patch),
+        }
+      )
+      if (!res.ok) return
+      const updated = await res.json()
+      const idx = events.value.findIndex(e => e.id === ev.id)
+      if (idx !== -1) events.value[idx] = { ...events.value[idx], ...updated }
+    }))
   }
 
   async function deleteEvent(eventId, calId) {
@@ -305,7 +350,7 @@ export const useCalendarStore = defineStore('calendar', () => {
     clientId, events, loading, connectError, selectedCalendarId, calendarList, writableCalendars,
     isConnected, scheduledByTaskId,
     saveClientId, saveCalendarId, connect, disconnect,
-    loadWeekEvents, createEvent, deleteEvent, deleteAllByTaskId, updateEvent, updateEventTitle, fetchCalendarList,
+    loadWeekEvents, createEvent, deleteEvent, deleteAllByTaskId, updateEvent, updateEventTitle, syncEventForTask, fetchCalendarList,
     linkEventToTask,
   }
 })
