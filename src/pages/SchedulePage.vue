@@ -1,5 +1,5 @@
 <template>
-  <f7-page name="schedule" class="schedule-page" no-swipeback @page:afterin="onPageAfterIn">
+  <f7-page name="schedule" class="schedule-page" no-swipeback>
     <div class="schedule-screen">
       <AppSidebar current-page="schedule">
         <template #filters>
@@ -756,12 +756,17 @@ function onPageAfterIn() {
   importingEvent.value = null
 }
 
+function _onF7PageAfterIn(page) {
+  if (page.name === 'schedule') onPageAfterIn()
+}
+
 onBeforeUnmount(() => {
   document.removeEventListener('pointermove', onPointerMove)
   document.removeEventListener('pointerup', onPointerUp)
   if (ghostEl) { ghostEl.remove(); ghostEl = null }
   draggingTask.value = null
   draggingCalEvent.value = null
+  f7.off('pageAfterIn', _onF7PageAfterIn)
 })
 
 // ── Navigation ──
@@ -810,6 +815,7 @@ watch(() => calStore.scheduledByTaskId, async (map) => {
 })
 
 onMounted(async () => {
+  f7.on('pageAfterIn', _onF7PageAfterIn)
   store.initStages()
   await store.loadIfStale()
   if (calStore.isConnected) {

@@ -222,9 +222,12 @@ function goToday() {
 async function scheduleAt(day, slot) {
   const task = store.pendingScheduleTask
   if (!task) return
-  // Navigate back immediately so the tap doesn't produce ghost events on SchedulePage
   store.pendingScheduleTask = null
-  f7.view.current.router.back()
+  // Defer navigation by one tick so F7's iOS touch-handler finishes processing
+  // the current click/touch sequence before the router transitions away.
+  // Calling router.back() synchronously inside a synthesized click leaves F7's
+  // activeTouch state uncleared, blocking all subsequent taps on SchedulePage.
+  setTimeout(() => f7.view.current.router.back(), 0)
   // API calls continue after navigation (stores are persistent)
   try {
     await calStore.deleteAllByTaskId(task.id)
