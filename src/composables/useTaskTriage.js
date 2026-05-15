@@ -19,10 +19,12 @@ export const TIME_OPTS = ['15m', '30m', '1h', '2h']
 export const TRIAGE_PREFIXES = ['importance::', 'time::', 'delegatable::', 'person::']
 
 export function getLabel(task, prefix) {
+  if (!task) return null
   return (task.labels || []).find(l => l.startsWith(prefix))?.slice(prefix.length) ?? null
 }
 
 export function getUrgencyLabel(task) {
+  if (!task) return null
   const p = task.priority ?? 1
   if (p === 4) return 'Urgent'
   if (p === 3) return 'High'

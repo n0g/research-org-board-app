@@ -227,6 +227,8 @@ async function scheduleAt(day, slot) {
   if (!task) return
   // Capture duration before nulling pendingScheduleTask — taskDuration() reads it
   const duration = taskDuration()
+  hoveredDay.value = null   // prevent previewStyle() re-evaluating with null task
+  hoveredSlot.value = null
   store.pendingScheduleTask = null
   // Defer navigation so F7's iOS touch-handler finishes processing the current
   // click sequence before the router transitions. Calling router.back()

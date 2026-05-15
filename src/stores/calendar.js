@@ -116,6 +116,11 @@ export const useCalendarStore = defineStore('calendar', () => {
       if (!res.ok) return
       const data = await res.json()
       calendarList.value = data.items || []
+      // Reset stored calendar ID if it no longer exists in this account
+      if (selectedCalendarId.value !== 'primary') {
+        const ids = new Set(calendarList.value.map(c => c.id))
+        if (!ids.has(selectedCalendarId.value)) saveCalendarId('primary')
+      }
     } catch {}
   }
 
