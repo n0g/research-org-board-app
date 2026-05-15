@@ -137,14 +137,17 @@
           <template v-else>
             <!-- Week navigation -->
             <div class="cal-nav">
+              <div class="cal-month-label">
+                <span class="cal-month-name">{{ monthLabel.month }}</span>
+                <span class="cal-month-year">{{ monthLabel.year }}</span>
+              </div>
               <button class="cal-nav-btn" title="Previous week" @click="prevWeek">
                 <i class="ph ph-caret-left" aria-hidden="true"></i>
               </button>
-              <span class="cal-nav-label">{{ weekLabel }}</span>
+              <button class="cal-today-btn" @click="goToday">Today</button>
               <button class="cal-nav-btn" title="Next week" @click="nextWeek">
                 <i class="ph ph-caret-right" aria-hidden="true"></i>
               </button>
-              <button class="cal-today-btn" @click="goToday">Today</button>
               <span v-if="calStore.loading" class="cal-loading-dot"></span>
             </div>
 
@@ -417,13 +420,12 @@ const timeSlots = computed(() => {
   return slots
 })
 
-const weekLabel = computed(() => {
-  const start = weekDays.value[0]
-  const end = weekDays.value[6]
-  const startStr = start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-  const endStr = end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-  const year = end.getFullYear()
-  return `${startStr} – ${endStr}, ${year}`
+const monthLabel = computed(() => {
+  const mid = weekDays.value[3] // Thursday — most representative day for split-month weeks
+  return {
+    month: mid.toLocaleDateString(undefined, { month: 'long' }),
+    year: mid.getFullYear(),
+  }
 })
 
 function isoDate(d) {

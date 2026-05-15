@@ -2851,6 +2851,26 @@ html[data-theme="dark"] .seg-btn.active { background: rgba(255,255,255,0.15); }
   white-space: nowrap;
 }
 
+.cal-month-label {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin-right: auto;
+  padding-left: 4px;
+}
+.cal-month-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.cal-month-year {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text3);
+  line-height: 1;
+}
+
 .cal-today-btn {
   background: none !important;
   border: none !important;
