@@ -180,7 +180,7 @@ export const useCalendarStore = defineStore('calendar', () => {
     const parts = []
     if (projectName) parts.push(`Project: ${projectName}`)
     const notes = (task.description ?? '').split('\n')
-      .filter(l => !l.startsWith('📅 Scheduled:'))
+      .filter(l => !l.startsWith('📅 Scheduled:') && !l.startsWith('📅 GCal:'))
       .join('\n').trim()
     if (notes) parts.push(notes)
     if (task.project_id) {
@@ -219,6 +219,9 @@ export const useCalendarStore = defineStore('calendar', () => {
     const event = await res.json()
     const calColor = calendarList.value.find(c => c.id === selectedCalendarId.value)?.backgroundColor ?? null
     events.value.push({ ...event, _calColor: calColor, _calId: selectedCalendarId.value })
+    // Store event ID in Todoist so future syncs can PATCH directly without a Calendar search
+    const boardStore = useBoardStore()
+    boardStore.saveGCalEvent(task.id, event.id, selectedCalendarId.value).catch(() => {})
     return event
   }
 
@@ -250,11 +253,26 @@ export const useCalendarStore = defineStore('calendar', () => {
     }))
   }
 
+  function _parseGCalLine(task) {
+    const line = (task.description || '').split('\n').find(l => l.startsWith('📅 GCal:'))
+    if (!line) return null
+    const parts = line.slice('📅 GCal: '.length).split('|')
+    return parts.length === 2 ? { eventId: parts[0], calId: parts[1] } : null
+  }
+
   async function syncEventForTask(task, projectName) {
     if (!await _ensureToken()) {
       _queueTaskSync(task.id)
       return
     }
+    const stored = _parseGCalLine(task)
+    if (stored) {
+      const memEv = events.value.find(e => e.id === stored.eventId)
+      await _patchEvents([memEv || { id: stored.eventId, _calId: stored.calId }], task, projectName)
+      _dequeueTaskSync(task.id)
+      return
+    }
+    // Fallback: use in-memory map (tasks scheduled before this feature)
     const evs = scheduledByTaskId.value.get(String(task.id)) || []
     if (!evs.length) { _dequeueTaskSync(task.id); return }
     await _patchEvents(evs, task, projectName)
@@ -266,13 +284,20 @@ export const useCalendarStore = defineStore('calendar', () => {
     if (!q.size) return
     if (!await _ensureToken()) return
     const boardStore = useBoardStore()
-    const cals = calendarList.value.length
-      ? calendarList.value.filter(c => c.accessRole === 'writer' || c.accessRole === 'owner')
-      : [{ id: selectedCalendarId.value }]
     await Promise.allSettled([...q].map(async taskId => {
       const task = boardStore.tasks.find(t => t.id === taskId)
       if (!task) { _dequeueTaskSync(taskId); return }
-      // Search API for events linked to this task (works regardless of loaded week)
+      const stored = _parseGCalLine(task)
+      const projectName = boardStore.projects.find(p => p.id === task.project_id)?.name ?? ''
+      if (stored) {
+        await _patchEvents([{ id: stored.eventId, _calId: stored.calId }], task, projectName)
+        _dequeueTaskSync(taskId)
+        return
+      }
+      // Fallback: Calendar API search (tasks scheduled before GCal ID was stored)
+      const cals = calendarList.value.length
+        ? calendarList.value.filter(c => c.accessRole === 'writer' || c.accessRole === 'owner')
+        : [{ id: selectedCalendarId.value }]
       const evs = []
       await Promise.allSettled(cals.map(async cal => {
         const params = new URLSearchParams({ privateExtendedProperty: `todoist_task_id=${taskId}`, singleEvents: 'true', maxResults: '10' })
@@ -284,7 +309,6 @@ export const useCalendarStore = defineStore('calendar', () => {
         const data = await res.json()
         for (const ev of (data.items || [])) evs.push({ ...ev, _calId: cal.id })
       }))
-      const projectName = boardStore.projects.find(p => p.id === task.project_id)?.name ?? ''
       if (evs.length) await _patchEvents(evs, task, projectName)
       _dequeueTaskSync(taskId)
     }))

@@ -292,6 +292,17 @@ export const useBoardStore = defineStore('board', () => {
     if (task) task.due = dateVal ? { date: dateVal } : null
   }
 
+  async function saveGCalEvent(taskId, eventId, calId) {
+    const task = tasks.value.find(t => t.id === taskId)
+    if (!task) return
+    const gcalLine = `📅 GCal: ${eventId}|${calId}`
+    const filtered = (task.description || '').split('\n').filter(l => !l.startsWith('📅 GCal:'))
+    const trimmed = filtered.join('\n').trimEnd()
+    const newDesc = trimmed ? `${trimmed}\n${gcalLine}` : gcalLine
+    await api(token.value, `/tasks/${taskId}`, 'POST', { description: newDesc })
+    task.description = newDesc
+  }
+
   async function saveScheduledTime(taskId, isoDatetime) {
     const task = tasks.value.find(t => t.id === taskId)
     if (!task) return
@@ -426,14 +437,14 @@ export const useBoardStore = defineStore('board', () => {
     if (priority !== undefined) body.priority = priority
     if (labels !== undefined) body.labels = labels
     if (description !== undefined) {
-      // Preserve the 📅 Scheduled: line — it's managed by the scheduler, not the notes editor
+      // Preserve managed lines — scheduler and calendar event ID, not edited by the user
       const task = tasks.value.find(t => t.id === taskId)
-      const schedLine = task
-        ? (task.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
-        : null
-      const userLines = description.split('\n').filter(l => !l.startsWith('📅 Scheduled:'))
+      const managedLines = task
+        ? (task.description || '').split('\n').filter(l => l.startsWith('📅 Scheduled:') || l.startsWith('📅 GCal:'))
+        : []
+      const userLines = description.split('\n').filter(l => !l.startsWith('📅 Scheduled:') && !l.startsWith('📅 GCal:'))
       const trimmed = userLines.join('\n').trimEnd()
-      body.description = schedLine ? (trimmed ? `${trimmed}\n${schedLine}` : schedLine) : description
+      body.description = managedLines.length ? (trimmed ? `${trimmed}\n${managedLines.join('\n')}` : managedLines.join('\n')) : description
     }
     if (content !== undefined) {
       body.content = content
@@ -522,7 +533,7 @@ export const useBoardStore = defineStore('board', () => {
     setupStatus,
     initStages, saveToken, saveStages, resetToken, loadData, loadIfStale,
     projectStage, projectMeta, projectTasks, projectDeadline,
-    moveStage, completeTask, deleteTask, reorderTasks, quickAddTask, updateTaskDue, saveScheduledTime, updateStatusText,
+    moveStage, completeTask, deleteTask, reorderTasks, quickAddTask, updateTaskDue, saveGCalEvent, saveScheduledTime, updateStatusText,
     updateVenue, setDeadlineDate, addCollaborator, removeCollaborator, renameProject,
     projectDeadlineTaskBase, projectDeadlineTaskObj,
     projectSummaryTask, updateSummary, projectSubmissionTask, updateSubmissionUrl,
