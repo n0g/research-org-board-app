@@ -71,6 +71,7 @@
               :class="{ 'schedule-task-dragging': draggingTask?.id === task.id }"
               tabindex="0"
               @pointerdown="onTaskPointerDown($event, task)"
+              @click="onTaskTap(task)"
               @keydown.enter.prevent="scheduleTaskByKey(task)"
               @keydown.space.prevent="scheduleTaskByKey(task)"
               @keydown.down.prevent.stop="focusTaskRow(idx + 1)"
@@ -580,39 +581,20 @@ function _startDrag(e, label, isTouch = false) {
   document.addEventListener('pointerup', onPointerUp)
 }
 
-function onTaskPointerDown(e, task) {
-  if (e.pointerType === 'touch' && window.innerWidth < 768) {
-    const startX = e.clientX
-    const startY = e.clientY
-
-    function onMoveDecide(me) {
-      const dx = me.clientX - startX
-      const dy = me.clientY - startY
-      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return
-      document.removeEventListener('pointermove', onMoveDecide)
-      document.removeEventListener('pointerup', onUpTap)
-    }
-
-    function onUpTap(ue) {
-      document.removeEventListener('pointermove', onMoveDecide)
-      document.removeEventListener('pointerup', onUpTap)
-      const dx = ue.clientX - startX
-      const dy = ue.clientY - startY
-      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) {
-        // genuine tap — navigate
-        if (calStore.isConnected) {
-          store.pendingScheduleTask = task
-          f7.view.current.router.navigate('/schedule/place/')
-        } else {
-          goSettings()
-        }
-      }
-    }
-
-    document.addEventListener('pointermove', onMoveDecide)
-    document.addEventListener('pointerup', onUpTap)
-    return
+// Phone tap — use @click (not pointerdown) so iOS scroll suppresses it naturally
+// and F7's touch state is clean before navigation begins.
+function onTaskTap(task) {
+  if (window.innerWidth >= 768) return  // iPad/desktop: drag via @pointerdown instead
+  if (calStore.isConnected) {
+    store.pendingScheduleTask = task
+    setTimeout(() => f7.view.current.router.navigate('/schedule/place/'), 0)
+  } else {
+    setTimeout(() => goSettings(), 0)
   }
+}
+
+function onTaskPointerDown(e, task) {
+  if (e.pointerType === 'touch' && window.innerWidth < 768) return  // handled by @click
   if (e.pointerType === 'mouse' && e.button !== 0) return
 
   if (e.pointerType === 'touch') {
