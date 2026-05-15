@@ -290,7 +290,34 @@ export const useCalendarStore = defineStore('calendar', () => {
       const stored = _parseGCalLine(task)
       const projectName = boardStore.projects.find(p => p.id === task.project_id)?.name ?? ''
       if (stored) {
-        await _patchEvents([{ id: stored.eventId, _calId: stored.calId }], task, projectName)
+        // GET the event before patching so we can compare timestamps and avoid
+        // overwriting a newer calendar title with a stale Todoist title.
+        const getRes = await fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(stored.calId)}/events/${encodeURIComponent(stored.eventId)}`,
+          { headers: { Authorization: `Bearer ${accessToken.value}` } }
+        )
+        if (getRes.ok) {
+          const ev = await getRes.json()
+          const calUpdated = ev.updated ? new Date(ev.updated).getTime() : 0
+          const taskUpdated = task.updated_at ? new Date(task.updated_at).getTime() : 0
+          // Always push description (Todoist-only field, no reverse sync).
+          // Only push title if Todoist is at least as new as the calendar event.
+          const patch = { description: buildEventDescription(task, projectName) }
+          if (taskUpdated >= calUpdated) patch.summary = task.content
+          const patchRes = await fetch(
+            `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(stored.calId)}/events/${encodeURIComponent(stored.eventId)}`,
+            {
+              method: 'PATCH',
+              headers: { Authorization: `Bearer ${accessToken.value}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify(patch),
+            }
+          )
+          if (patchRes.ok) {
+            const updated = await patchRes.json()
+            const idx = events.value.findIndex(e => e.id === stored.eventId)
+            if (idx !== -1) events.value[idx] = { ...events.value[idx], ...updated }
+          }
+        }
         _dequeueTaskSync(taskId)
         return
       }
