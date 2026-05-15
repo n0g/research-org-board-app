@@ -2392,7 +2392,6 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
   flex: 1;
   display: flex;
   overflow: hidden;
-  padding-top: env(safe-area-inset-top);
   transition: margin-left 0.3s cubic-bezier(0.16, 1.08, 0.3, 1);
 }
 @media (min-width: 768px) {
@@ -2528,7 +2527,7 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 .triage-detail-inner {
   max-width: 540px;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: calc(32px + env(safe-area-inset-top)) 24px 32px;
 }
 @media (max-width: 767px) {
   .task-detail-main .triage-detail-inner { padding: 0; }
