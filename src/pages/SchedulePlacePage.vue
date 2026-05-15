@@ -222,19 +222,21 @@ function goToday() {
 async function scheduleAt(day, slot) {
   const task = store.pendingScheduleTask
   if (!task) return
+  // Capture duration before nulling pendingScheduleTask — taskDuration() reads it
+  const duration = taskDuration()
   store.pendingScheduleTask = null
-  // Defer navigation by one tick so F7's iOS touch-handler finishes processing
-  // the current click/touch sequence before the router transitions away.
-  // Calling router.back() synchronously inside a synthesized click leaves F7's
-  // activeTouch state uncleared, blocking all subsequent taps on SchedulePage.
+  // Defer navigation so F7's iOS touch-handler finishes processing the current
+  // click sequence before the router transitions. Calling router.back()
+  // synchronously inside a synthesized click leaves F7's activeTouch state
+  // uncleared, blocking all subsequent taps on SchedulePage.
   setTimeout(() => f7.view.current.router.back(), 0)
-  // API calls continue after navigation (stores are persistent)
+  // API calls continue after navigation (Pinia stores persist across pages)
   try {
     await calStore.deleteAllByTaskId(task.id)
     const [year, month, dayN] = isoDate(day).split('-').map(Number)
     const start = new Date(year, month - 1, dayN, slot.hour, slot.minute, 0, 0)
     const projectName = store.displayProjects.find(p => p.id === task.project_id)?.name ?? ''
-    await calStore.createEvent(task, projectName, new Date(year, month - 1, dayN), slot.hour, slot.minute, taskDuration())
+    await calStore.createEvent(task, projectName, new Date(year, month - 1, dayN), slot.hour, slot.minute, duration)
     await store.saveScheduledTime(task.id, start.toISOString())
   } catch (err) {
     console.error('Failed to schedule:', err)
@@ -243,7 +245,7 @@ async function scheduleAt(day, slot) {
 
 function cancel() {
   store.pendingScheduleTask = null
-  f7.view.current.router.back()
+  setTimeout(() => f7.view.current.router.back(), 0)
 }
 
 function goSettings() { f7.tab.show('#view-settings') }
