@@ -3,7 +3,7 @@
     <div class="project-screen">
       <AppSidebar current-page="board" />
 
-      <div class="project-main" :class="{ 'project-main-collapsed': sidebarCollapsed }">
+      <div class="project-main">
         <button
           v-if="sidebarCollapsed"
           class="sidebar-expand-btn"
@@ -14,12 +14,11 @@
           <i class="ph ph-sidebar-simple" aria-hidden="true"></i>
         </button>
 
-        <button class="back-btn" aria-label="Back" @click="goBack">
-          <i class="ph ph-arrow-left" aria-hidden="true"></i>
-        </button>
-
         <!-- Left metadata pane -->
         <section class="project-meta" :class="{ 'project-meta-collapsed': sidebarCollapsed }">
+          <button class="back-btn" aria-label="Back" @click="goBack">
+            <i class="ph ph-arrow-left" aria-hidden="true"></i>
+          </button>
 
           <div class="project-title-row">
             <h1

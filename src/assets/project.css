@@ -43,26 +43,26 @@
   border-right: 1px solid var(--border);
   overflow-y: auto;
   position: relative;
-  padding: calc(74px + env(safe-area-inset-top)) 32px 16px;
+  padding: calc(18px + env(safe-area-inset-top)) 32px 16px;
   display: flex;
   flex-direction: column;
   gap: 0;
   transition: padding-left 0.3s cubic-bezier(0.16, 1.08, 0.3, 1), width 0.3s cubic-bezier(0.16, 1.08, 0.3, 1);
 }
-.project-main > .back-btn {
-  position: absolute;
+.project-meta .back-btn {
+  position: sticky;
   top: calc(18px + env(safe-area-inset-top));
-  left: 32px;
+  align-self: flex-start;
   z-index: 2;
 }
-.project-main-collapsed > .back-btn { left: 68px; }
+.project-meta-collapsed .back-btn { margin-left: 36px; }
 .project-meta::-webkit-scrollbar { width: 4px; }
 .project-meta::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
 @media (max-width: 767px) {
   .project-main { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
   .project-meta { width: 100%; border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; flex-shrink: 0; height: auto; }
-  .project-main > .back-btn { position: fixed; top: calc(18px + env(safe-area-inset-top)); left: 16px; }
+  .project-meta .back-btn { position: fixed; top: calc(18px + env(safe-area-inset-top)); left: 16px; margin-left: 0; }
 }
 
 .back-btn {
