@@ -196,7 +196,7 @@
   align-items: flex-start;
   gap: 10px;
 }
-.schedule-task-check { margin-top: 1px; flex-shrink: 0; }
+.schedule-task-check { margin-top: 16px; flex-shrink: 0; }
 .schedule-task-content { flex: 1; min-width: 0; }
 
 /* Detail pane (right) */
