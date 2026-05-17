@@ -2511,14 +2511,41 @@ html[data-theme="light"] .setup-link { color: #3b82f6; }
 .triage-tag-scheduled { color: #34A853; }
 .triage-tag-overdue { color: var(--text3); }
 .schedule-task-right { display: flex; align-items: center; gap: 4px; }
-.schedule-complete-btn {
-  display: flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px; border-radius: 50%;
-  color: #34A853; background: none; border: none; cursor: pointer; padding: 0;
-  flex: none;
-}
-.schedule-complete-btn:active { opacity: 0.6; }
 .triage-task-date { font-size: 10px; color: var(--text3); font-weight: 500; }
+
+/* Group separators */
+.schedule-group-sep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 16px 6px;
+  pointer-events: none;
+}
+.schedule-group-sep:first-child { padding-top: 12px; }
+.schedule-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.schedule-group-line {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+}
+
+/* Today tasks: checkbox + content side-by-side */
+.schedule-task-has-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.schedule-task-check { margin-top: 1px; flex-shrink: 0; }
+.schedule-task-content { flex: 1; min-width: 0; }
 
 /* Detail pane (right) */
 .triage-detail {

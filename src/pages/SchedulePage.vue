@@ -63,54 +63,57 @@
                 {{ calStore.clientId ? 'Reconnect' : 'Settings' }}
               </button>
             </div>
-            <div v-if="!filteredTasks.length" class="triage-empty-list">No tasks</div>
-            <div
-              v-for="(task, idx) in filteredTasks"
-              :key="task.id"
-              class="triage-task-row schedule-task-row"
-              :class="{ 'schedule-task-dragging': draggingTask?.id === task.id }"
-              tabindex="0"
-              @pointerdown="onTaskPointerDown($event, task)"
-              @touchstart.passive="onTaskTouchStart"
-              @touchend="onTaskTouchEnd($event, task)"
-              @keydown.enter.prevent="scheduleTaskByKey(task)"
-              @keydown.space.prevent="scheduleTaskByKey(task)"
-              @keydown.down.prevent.stop="focusTaskRow(idx + 1)"
-              @keydown.up.prevent.stop="focusTaskRow(idx - 1)"
-            >
-              <div class="triage-task-project">{{ projectName(task) }}</div>
-              <div class="triage-task-title">
-                <template v-for="seg in parseTaskContent(task.content)" :key="seg.i">
-                  <a v-if="seg.href" :href="seg.href" target="_blank" rel="noopener noreferrer" class="task-link" @click.stop>{{ seg.text }}</a>
-                  <template v-else>{{ seg.text }}</template>
-                </template>
+            <div v-if="!taskGroups.length" class="triage-empty-list">No tasks</div>
+            <template v-for="group in taskGroups" :key="group.key">
+              <div class="schedule-group-sep">
+                <span class="schedule-group-label">{{ group.label }}</span>
+                <div class="schedule-group-line"></div>
               </div>
-              <div class="triage-task-meta">
-                <div class="triage-task-tags">
-                  <span v-if="getUrgencyLabel(task)" class="triage-tag">
-                    <i class="ph ph-lightning" aria-hidden="true"></i>{{ getUrgencyLabel(task) }}
-                  </span>
-                  <span v-if="getImportance(task)" class="triage-tag">
-                    <i class="ph ph-star" aria-hidden="true"></i>{{ getImportance(task) }}
-                  </span>
-                  <span v-if="getTime(task)" class="triage-tag triage-tag-dim">{{ getTime(task) }}</span>
-                </div>
-                <div class="schedule-task-right">
-                  <span v-if="scheduledLabel(task)" class="triage-tag triage-tag-scheduled" :class="{ 'triage-tag-overdue': isOverdue(task) }">
-                    <i class="ph ph-calendar-check" aria-hidden="true"></i>{{ scheduledLabel(task) }}
-                  </span>
-                  <button
-                    v-if="isOverdue(task)"
-                    class="schedule-complete-btn"
-                    title="Mark complete"
-                    @pointerdown.stop
-                    @click.stop="store.completeTask(task.id)"
-                  >
-                    <i class="ph ph-check-circle" aria-hidden="true"></i>
-                  </button>
+              <div
+                v-for="task in group.tasks"
+                :key="task.id"
+                class="triage-task-row schedule-task-row"
+                :class="{ 'schedule-task-dragging': draggingTask?.id === task.id, 'schedule-task-has-check': group.key === 'today' }"
+                tabindex="0"
+                @pointerdown="onTaskPointerDown($event, task)"
+                @touchstart.passive="onTaskTouchStart"
+                @touchend="onTaskTouchEnd($event, task)"
+                @keydown.enter.prevent="scheduleTaskByKey(task)"
+                @keydown.space.prevent="scheduleTaskByKey(task)"
+                @keydown.down.prevent.stop="focusTaskRow(taskFlatIndex.get(task.id) + 1)"
+                @keydown.up.prevent.stop="focusTaskRow(taskFlatIndex.get(task.id) - 1)"
+              >
+                <button
+                  v-if="group.key === 'today'"
+                  class="task-check schedule-task-check"
+                  title="Mark complete"
+                  @pointerdown.stop
+                  @touchstart.stop.passive
+                  @touchend.stop
+                  @click.stop="store.completeTask(task.id)"
+                ></button>
+                <div class="schedule-task-content">
+                  <div class="triage-task-project">{{ projectName(task) }}</div>
+                  <div class="triage-task-title">
+                    <template v-for="seg in parseTaskContent(task.content)" :key="seg.i">
+                      <a v-if="seg.href" :href="seg.href" target="_blank" rel="noopener noreferrer" class="task-link" @click.stop>{{ seg.text }}</a>
+                      <template v-else>{{ seg.text }}</template>
+                    </template>
+                  </div>
+                  <div class="triage-task-meta">
+                    <div class="triage-task-tags">
+                      <span v-if="getUrgencyLabel(task)" class="triage-tag">
+                        <i class="ph ph-lightning" aria-hidden="true"></i>{{ getUrgencyLabel(task) }}
+                      </span>
+                      <span v-if="getImportance(task)" class="triage-tag">
+                        <i class="ph ph-star" aria-hidden="true"></i>{{ getImportance(task) }}
+                      </span>
+                      <span v-if="getTime(task)" class="triage-tag triage-tag-dim">{{ getTime(task) }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </template>
           </div>
           <button
             class="filter-fab"
@@ -279,6 +282,7 @@ import { useBoardStore } from '../stores/board.js'
 import { useCalendarStore } from '../stores/calendar.js'
 import { useSidebar } from '../composables/useSidebar.js'
 import { getLabel, getUrgencyLabel, getImportance, getTime } from '../composables/useTaskTriage.js'
+import { useRelativeDateGroups } from '../composables/useRelativeDateGroups.js'
 import { parseTaskContent } from '../lib/helpers.js'
 
 const TABS = [
@@ -307,21 +311,11 @@ function toggleProject(id) {
 
 const allTasks = computed(() => {
   const projectSet = new Set(store.displayProjects.map(p => p.id))
-  const tasks = store.tasks.filter(t =>
+  return store.tasks.filter(t =>
     !t.is_completed &&
     projectSet.has(t.project_id) &&
     !store.excludedSectionIds.has(t.section_id)
   )
-  return tasks.sort((a, b) => {
-    const aLine = (a.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
-    const bLine = (b.description || '').split('\n').find(l => l.startsWith('📅 Scheduled:'))
-    const aDt = aLine?.match(/\(([^)]+)\)$/)?.[1] ? new Date(aLine.match(/\(([^)]+)\)$/)[1]).getTime() : null
-    const bDt = bLine?.match(/\(([^)]+)\)$/)?.[1] ? new Date(bLine.match(/\(([^)]+)\)$/)[1]).getTime() : null
-    if (aDt && bDt) return aDt - bDt
-    if (aDt) return -1
-    if (bDt) return 1
-    return 0
-  })
 })
 
 const projectsWithTasks = computed(() => {
@@ -340,6 +334,15 @@ const filteredTasks = computed(() => {
     case 'focus': return tasks.filter(t => store.focusProjectIds.has(t.project_id))
     default: return tasks
   }
+})
+
+const taskGroups = useRelativeDateGroups(filteredTasks, scheduledIso)
+
+const taskFlatIndex = computed(() => {
+  const map = new Map()
+  let i = 0
+  for (const group of taskGroups.value) for (const task of group.tasks) map.set(task.id, i++)
+  return map
 })
 
 function projectName(task) {
