@@ -438,14 +438,11 @@ html[data-theme="light"] .task-due-right.due-soon { color: #b45309; }
 .spin { animation: spin-shared 0.8s linear infinite; }
 @keyframes spin-shared { to { transform: rotate(360deg); } }
 
-/* ── SIDEBAR LABEL (shared across pages) ── */
+/* ── SIDEBAR LABEL (text span inside nav items) ── */
 .sidebar-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text3);
-  padding: 14px 16px 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: reduce) {
