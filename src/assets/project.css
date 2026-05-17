@@ -56,12 +56,6 @@
   z-index: 20;
   transition: left 0.3s cubic-bezier(0.16, 1.08, 0.3, 1);
 }
-/* Sidebar collapsed: clear the sidebar-expand-btn (left: 12px + width: 44px + gap: 12px = 68px) */
-.project-screen:has(.board-sidebar.collapsed) .project-meta .back-btn { left: 68px; }
-/* Sidebar expanded: align with the content area (matches .project-meta padding-left) */
-.project-screen:has(.board-sidebar:not(.collapsed)) .project-meta .back-btn {
-  left: calc(240px + 12px + 16px + 32px);
-}
 .project-meta::-webkit-scrollbar { width: 4px; }
 .project-meta::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
@@ -69,6 +63,14 @@
   .project-main { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
   .project-meta { width: 100%; border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; flex-shrink: 0; height: auto; }
   .project-meta .back-btn { left: 16px; }
+}
+@media (min-width: 768px) {
+  /* Sidebar collapsed: clear the sidebar-expand-btn (left: 12px + width: 44px + gap: 12px = 68px) */
+  .project-screen:has(.board-sidebar.collapsed) .project-meta .back-btn { left: 68px; }
+  /* Sidebar expanded: align with the content area (matches .project-meta padding-left) */
+  .project-screen:has(.board-sidebar:not(.collapsed)) .project-meta .back-btn {
+    left: calc(240px + 12px + 16px + 32px);
+  }
 }
 
 .back-btn {
