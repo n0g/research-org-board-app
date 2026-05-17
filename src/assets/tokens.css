@@ -1,0 +1,154 @@
+/* Design tokens, base resets, F7 variable overrides */
+
+/* ── FONTS (IBM Plex Mono local woff2) ── */
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('./fonts/ibm-plex-mono-400.woff2') format('woff2'); }
+
+/* ── DESIGN TOKENS — LIGHT (default, Stitch) ── */
+:root {
+  --bg: #ffffff;
+  --bg-surface: #faf9fe;
+  --bg-sidebar: #F5F5F7;
+  --bg2: #f4f3f8;
+  --bg-pane-left: #ffffff;
+  --bg-pane-right: #faf9fe;
+  --bg3: #eeedf3;
+  --border: #e2e8f0;
+  --border2: #94a3b8;
+  --text: #1a1b1f;
+  --text2: #5d5e60;
+  --text3: #6b6b70;
+  --count-bg: #e9e7ed;
+  --count-text: #4c4546;
+  --accent: #a855f7;
+  --accent-bg: rgba(168,85,247,0.15);
+  --red: #ef4444;
+  --green: #22c55e;
+  --blue: #3b82f6;
+  --amber: #fbbf24;
+  --stage-0: #3b82f6;
+  --stage-1: #22c55e;
+  --stage-2: #f59e0b;
+  --stage-3: #a855f7;
+  --stage-4: #f97316;
+  --stage-5: #94a3b8;
+  --col-w: 320px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-code: 'IBM Plex Mono', ui-monospace, monospace;
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.03), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 2px 8px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+  /* Legacy aliases used by Token/Setup/HotCRP pages */
+  --bg1: #ffffff;
+  --err-bg: rgba(239,68,68,0.08);
+  --err-b: rgba(239,68,68,0.30);
+  --radius: 8px;
+  --ui: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  /* Tag colors (for legacy tag styles) */
+  --tag-venue-c:  #3b82f6; --tag-venue-b:  rgba(59,130,246,0.35);  --tag-venue-bg:  rgba(59,130,246,0.10);
+  --tag-person-c: #22c55e; --tag-person-b: rgba(34,197,94,0.35);   --tag-person-bg: rgba(34,197,94,0.10);
+  --tag-over-c:   #ef4444; --tag-over-b:   rgba(239,68,68,0.35);   --tag-over-bg:   rgba(239,68,68,0.10);
+  --tag-soon-c:   #f97316; --tag-soon-b:   rgba(249,115,22,0.35);  --tag-soon-bg:   rgba(249,115,22,0.10);
+  --accent-d: #000000;
+}
+
+html { background-color: #F5F5F7; }
+html[data-theme="dark"] { background-color: #1C1C1E; }
+
+/* ── DESIGN TOKENS — DARK ── */
+html[data-theme="dark"] {
+  --bg: #000000;
+  --bg-surface: #1C1C1E;
+  --bg-sidebar: #1C1C1E;
+  --bg2: #2C2C2E;
+  --bg-pane-left: #2C2C2E;
+  --bg-pane-right: #1C1C1E;
+  --bg3: #3A3A3C;
+  --border: rgba(84,84,88,0.65);
+  --border2: rgba(84,84,88,0.90);
+  --text: #FFFFFF;
+  --text2: rgba(235,235,245,0.60);
+  --text3: rgba(235,235,245,0.50);
+  --count-bg: rgba(84,84,88,0.35);
+  --count-text: rgba(235,235,245,0.60);
+  --accent: #a855f7;
+  --accent-bg: rgba(168,85,247,0.15);
+  --red: #FF453A;
+  --green: #32D74B;
+  --blue: #0A84FF;
+  --amber: #FF9F0A;
+  --stage-0: rgba(10,132,255,0.80);
+  --stage-1: rgba(50,215,75,0.80);
+  --stage-2: rgba(255,159,10,0.80);
+  --stage-3: rgba(191,90,242,0.80);
+  --stage-4: rgba(255,69,58,0.80);
+  --stage-5: rgba(142,142,147,0.80);
+  --shadow-card: none;
+  --shadow-card-hover: 0 4px 20px rgba(0,0,0,0.35);
+  /* Legacy aliases */
+  --bg1: #1C1C1E;
+  --err-bg: rgba(255,69,58,0.12);
+  --err-b: rgba(255,69,58,0.35);
+  --accent-d: #C87800;
+  --tag-venue-c:  #0A84FF; --tag-venue-b:  rgba(10,132,255,0.35);  --tag-venue-bg:  rgba(10,132,255,0.12);
+  --tag-person-c: #32D74B; --tag-person-b: rgba(50,215,75,0.35);   --tag-person-bg: rgba(50,215,75,0.12);
+  --tag-over-c:   #FF453A; --tag-over-b:   rgba(255,69,58,0.35);   --tag-over-bg:   rgba(255,69,58,0.12);
+  --tag-soon-c:   #FF9F0A; --tag-soon-b:   rgba(255,159,10,0.35);  --tag-soon-bg:   rgba(255,159,10,0.12);
+}
+
+/* ── F7 VARIABLE OVERRIDES ── */
+:root,
+html[data-theme="dark"],
+html[data-theme="light"] {
+  --f7-page-bg-color:      var(--bg);
+  --f7-bars-bg-color:      var(--bg-sidebar);
+  --f7-bars-text-color:    var(--text);
+  --f7-bars-border-color:  var(--border);
+  --f7-navbar-bg-color:    var(--bg-sidebar);
+  --f7-navbar-text-color:  var(--text);
+  --f7-navbar-border-color:var(--border);
+  --f7-navbar-link-color:  var(--accent);
+  --f7-sheet-bg-color:     var(--bg);
+  --f7-sheet-border-color: var(--border2);
+  --f7-preloader-color:    var(--accent);
+  --f7-navbar-font-size:   16px;
+  --f7-sheet-border-radius: 20px 20px 0 0;
+  --f7-safe-area-bottom:   env(safe-area-inset-bottom);
+  --f7-touch-ripple-color: rgba(0,0,0,0.08);
+}
+html[data-theme="dark"] {
+  --f7-sheet-bg-color: rgba(28,28,30,0.95);
+  --f7-touch-ripple-color: rgba(255,159,10,0.15);
+}
+
+/* ── BASE RESETS ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* ── F7 PAGE BASE ── */
+.page-content {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+}
+.page { background: var(--bg); }
+.navbar { background: var(--bg-sidebar); font-family: var(--font); }
+.navbar .navbar-inner { border-bottom: 1px solid var(--border); }
+
+a, button, .card, .stage-opt, .task-check, .task-due-right {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── ICONS ── */
+.ph, .ph-fill { font-size: 18px; line-height: 1; }

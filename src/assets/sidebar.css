@@ -1,0 +1,275 @@
+/* Sidebar */
+
+/* ── BOARD SIDEBAR ── */
+.board-sidebar {
+  width: 240px;
+  background: rgba(245,245,247,0.60);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 16px;
+  box-shadow:
+    0 4px 32px rgba(0,0,0,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.80),
+    inset 1px 0 0 rgba(255,255,255,0.30),
+    inset -1px 0 0 rgba(255,255,255,0.15),
+    inset 0 0 24px rgba(255,255,255,0.07);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.3s cubic-bezier(0.16, 1.08, 0.3, 1), opacity 0.2s ease;
+}
+.board-sidebar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 90% 45% at 50% -5%, rgba(255,255,255,0.22) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+.sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+.sidebar-scroll::-webkit-scrollbar { width: 0; }
+html[data-theme="dark"] .board-sidebar {
+  background: rgba(30,30,35,0.70);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow:
+    0 4px 32px rgba(0,0,0,0.40),
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 1px 0 0 rgba(255,255,255,0.04),
+    inset -1px 0 0 rgba(255,255,255,0.02);
+}
+html[data-theme="dark"] .board-sidebar::before {
+  opacity: 0.4;
+}
+
+@media (min-width: 768px) {
+  .board-sidebar {
+    display: flex;
+    position: absolute;
+    left: 12px;
+    top: calc(env(safe-area-inset-top) + 12px);
+    bottom: 12px;
+    z-index: 10;
+  }
+  .bottom-tabbar { display: none !important; }
+  .board-page .page-content { padding-bottom: 0 !important; }
+  .project-page .page-content { padding-bottom: 0 !important; }
+  /* Push board content past the sidebar when open */
+  .board-screen:has(.board-sidebar:not(.collapsed)) .board {
+    padding-left: calc(240px + 12px + 24px);
+    scroll-padding-left: calc(240px + 12px + 24px);
+  }
+  /* Extend project meta background under the sidebar; push content past it */
+  .project-screen:has(.board-sidebar:not(.collapsed)) .project-meta {
+    width: calc(430px + 240px + 12px + 16px);
+    padding-left: calc(240px + 12px + 16px + 32px);
+  }
+}
+
+/* Sidebar brand header */
+.sidebar-brand {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  padding: 4px 4px 0;
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+.sidebar-brand button, .sidebar-brand a {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+.sidebar-brand-name {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sidebar-collapse-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: none; border: none;
+  color: var(--text3);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.1s, color 0.1s;
+}
+.sidebar-collapse-btn:hover { background: var(--border); color: var(--text2); }
+.sidebar-collapse-btn .ph { font-size: 20px; }
+
+/* Sidebar nav */
+.sidebar-nav { padding: 8px 0 12px; background-image: linear-gradient(var(--border), var(--border)); background-size: calc(100% - 24px) 1px; background-position: 12px bottom; background-repeat: no-repeat; }
+.sidebar-nav .sidebar-nav-item { margin-right: 52px; width: calc(100% - 60px); }
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  margin: 1px 8px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text2);
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: calc(100% - 16px);
+  text-align: left;
+  font-family: var(--font);
+  transition: background 0.1s, color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.sidebar-nav-item:hover { background: rgba(0,0,0,0.05); color: var(--text); }
+html[data-theme="dark"] .sidebar-nav-item:hover { background: rgba(255,255,255,0.08); }
+
+.sidebar-nav-active {
+  background: var(--accent-bg) !important;
+  color: var(--accent) !important;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.sidebar-nav-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.sidebar-filter-active {
+  background: var(--accent-bg) !important;
+  color: var(--accent) !important;
+}
+
+/* Sidebar sections */
+.sidebar-section-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 14px 16px 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+.sidebar-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text3);
+  flex: 1;
+}
+.sidebar-section-chevron {
+  color: var(--text3);
+  font-size: 18px !important;
+  transition: transform 0.15s;
+}
+.sidebar-section-chevron.open { transform: rotate(180deg); }
+
+/* Sidebar avatar + venue dot */
+.sidebar-avatar {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0;
+}
+.sidebar-filter-active .sidebar-avatar { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+
+.sidebar-venue-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text3);
+  flex-shrink: 0;
+  transition: background 0.1s;
+  margin-left: 1px;
+}
+.sidebar-filter-active .sidebar-venue-dot { background: var(--accent); }
+
+/* Sidebar footer */
+.sidebar-footer {
+  margin-top: auto;
+  padding: 8px 0;
+  background-image: linear-gradient(var(--border), var(--border));
+  background-size: calc(100% - 24px) 1px;
+  background-position: 12px top;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+}
+
+/* Collapsed sidebar — fully hidden */
+.board-sidebar.collapsed { width: 0; overflow: hidden; border: none; box-shadow: none; opacity: 0; }
+
+/* Floating expand button shown when sidebar is hidden */
+.sidebar-expand-btn {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 16px);
+  left: 12px;
+  z-index: 10;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(245,245,247,0.60);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.65);
+  color: var(--text2);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+html[data-theme="dark"] .sidebar-expand-btn {
+  background: rgba(30,30,35,0.60);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.sidebar-expand-btn:hover { color: var(--text); box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
+.sidebar-expand-btn .ph { font-size: 20px; }
+
+.fab-new-project {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 60%, transparent);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 4px 20px color-mix(in srgb, var(--accent) 35%, transparent),
+    0 2px 8px rgba(0,0,0,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+  z-index: 10;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.fab-new-project:hover { transform: scale(1.06); box-shadow: 0 6px 24px color-mix(in srgb, var(--accent) 45%, transparent); }
+.fab-new-project .ph { font-size: 26px; }
+@media (max-width: 767px) {
+  .fab-new-project { bottom: env(safe-area-inset-bottom); right: 16px; }
+}
