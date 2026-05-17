@@ -42,13 +42,20 @@
   background: var(--bg-pane-left);
   border-right: 1px solid var(--border);
   overflow-y: auto;
-  padding: calc(18px + env(safe-area-inset-top)) 32px 16px;
+  position: relative;
+  padding: calc(74px + env(safe-area-inset-top)) 32px 16px;
   display: flex;
   flex-direction: column;
   gap: 0;
   transition: padding-left 0.3s cubic-bezier(0.16, 1.08, 0.3, 1), width 0.3s cubic-bezier(0.16, 1.08, 0.3, 1);
 }
-.project-meta-collapsed .back-btn { margin-left: 36px; }
+.project-meta .back-btn {
+  position: absolute;
+  top: calc(18px + env(safe-area-inset-top));
+  left: 32px;
+  margin-bottom: 0;
+}
+.project-meta-collapsed .back-btn { left: 68px; }
 .project-meta::-webkit-scrollbar { width: 4px; }
 .project-meta::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
