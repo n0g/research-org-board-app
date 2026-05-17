@@ -48,7 +48,7 @@
   gap: 0;
   transition: padding-left 0.3s cubic-bezier(0.16, 1.08, 0.3, 1), width 0.3s cubic-bezier(0.16, 1.08, 0.3, 1);
 }
-.project-meta-collapsed .back-btn { margin-left: 32px; }
+.project-meta-collapsed .back-btn { margin-left: 36px; }
 .project-meta::-webkit-scrollbar { width: 4px; }
 .project-meta::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
