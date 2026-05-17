@@ -3,9 +3,8 @@
     <div class="place-screen">
 
       <div class="place-topbar">
-        <button class="back-btn" @click="cancel">
+        <button class="back-btn" aria-label="Back" @click="cancel">
           <i class="ph ph-arrow-left" aria-hidden="true"></i>
-          Schedule
         </button>
         <span class="place-task-label">{{ store.pendingScheduleTask?.content }}</span>
       </div>

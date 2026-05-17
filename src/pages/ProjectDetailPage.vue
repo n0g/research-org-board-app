@@ -16,9 +16,8 @@
 
         <!-- Left metadata pane -->
         <section class="project-meta" :class="{ 'project-meta-collapsed': sidebarCollapsed }">
-          <button class="back-btn" @click="goBack">
+          <button class="back-btn" aria-label="Back" @click="goBack">
             <i class="ph ph-arrow-left" aria-hidden="true"></i>
-            Board
           </button>
 
           <div class="project-title-row">
