@@ -73,7 +73,7 @@
                 v-for="task in group.tasks"
                 :key="task.id"
                 class="triage-task-row schedule-task-row"
-                :class="{ 'schedule-task-dragging': draggingTask?.id === task.id, 'schedule-task-has-check': group.key === 'today' }"
+                :class="{ 'schedule-task-dragging': draggingTask?.id === task.id, 'schedule-task-has-check': group.key === 'today' || group.key === 'overdue' }"
                 tabindex="0"
                 @pointerdown="onTaskPointerDown($event, task)"
                 @touchstart.passive="onTaskTouchStart"
@@ -84,7 +84,7 @@
                 @keydown.up.prevent.stop="focusTaskRow(taskFlatIndex.get(task.id) - 1)"
               >
                 <button
-                  v-if="group.key === 'today'"
+                  v-if="group.key === 'today' || group.key === 'overdue'"
                   class="task-check schedule-task-check"
                   title="Mark complete"
                   @pointerdown.stop
