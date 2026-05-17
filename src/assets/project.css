@@ -62,6 +62,7 @@
 @media (max-width: 767px) {
   .project-main { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
   .project-meta { width: 100%; border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; flex-shrink: 0; height: auto; }
+  .project-meta .back-btn { position: fixed; top: calc(18px + env(safe-area-inset-top)); left: 16px; }
 }
 
 .back-btn {
