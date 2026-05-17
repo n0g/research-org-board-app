@@ -160,6 +160,9 @@ html[data-theme="dark"] .board-loading { background: var(--bg-surface); }
 }
 .col-body { scrollbar-width: none; }
 .col-body::-webkit-scrollbar { display: none; }
+@media (max-width: 767px) {
+  .col-body { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+}
 
 .empty-col {
   font-size: 13px;
