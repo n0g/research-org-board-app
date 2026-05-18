@@ -470,6 +470,10 @@ html[data-theme="dark"] .seg-btn.active { background: rgba(255,255,255,0.15); }
 
 /* Task rows are draggable */
 .schedule-task-row {
+  border-bottom: none;
+  border-left: none;
+  border-radius: 8px;
+  margin: 0 4px;
   cursor: grab;
   user-select: none;
   touch-action: pan-y;
