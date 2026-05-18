@@ -168,7 +168,7 @@
                   v-for="day in weekDays"
                   :key="isoDate(day)"
                   class="cal-day-head"
-                  :class="{ 'cal-today': isToday(day) }"
+                  :class="{ 'cal-today': isToday(day), 'cal-past-due': isDayPastDue(day), 'cal-due-boundary': isDayDueBoundary(day) }"
                 >
                   <div class="cal-day-label">
                     <span class="cal-day-name">{{ dayName(day) }}</span>
@@ -204,7 +204,7 @@
                       v-for="day in weekDays"
                       :key="isoDate(day)"
                       class="cal-day-col"
-                      :class="{ 'cal-today': isToday(day) }"
+                      :class="{ 'cal-today': isToday(day), 'cal-past-due': isDayPastDue(day), 'cal-due-boundary': isDayDueBoundary(day) }"
                     >
                       <!-- Slot cells (drop targets + grid lines) -->
                       <div
@@ -507,6 +507,23 @@ function eventTimeStr(ev) {
   return new Date(ev.start.dateTime).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
 }
 
+
+// ── Due date constraint visualization ──
+const draggingTaskDueDate = computed(() => {
+  const date = draggingTask.value?.due?.date
+  if (!date) return null
+  const d = new Date(date + 'T00:00:00'); d.setHours(0, 0, 0, 0); return d
+})
+function isDayPastDue(day) {
+  if (!draggingTaskDueDate.value) return false
+  const d = new Date(day); d.setHours(0, 0, 0, 0)
+  return d > draggingTaskDueDate.value
+}
+function isDayDueBoundary(day) {
+  if (!isDayPastDue(day)) return false
+  const prev = new Date(day); prev.setDate(prev.getDate() - 1)
+  return !isDayPastDue(prev)
+}
 
 // ── Drag and drop ──
 const draggingTask = ref(null)
