@@ -592,12 +592,12 @@ html[data-theme="light"] .project-tasks { background: var(--bg-pane-right); }
 .task-swipe-zone {
   position: absolute;
   inset: 8px 0 8px auto;
-  width: 146px;
+  width: 134px;
   overflow: hidden;
   display: flex;
   align-items: stretch;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 12px;
 }
 .task-swipe-btn {
   flex: none;
@@ -606,20 +606,22 @@ html[data-theme="light"] .project-tasks { background: var(--bg-pane-right); }
   align-items: center;
   justify-content: center;
   gap: 5px;
-  color: #fff;
   cursor: pointer;
   border: none;
   background: transparent;
-  padding: 0 6px;
+  padding: 0;
   white-space: nowrap;
 }
+.task-swipe-btn:not(.task-swipe-del) { color: var(--accent); }
+.task-swipe-btn.task-swipe-del { color: var(--red); }
 .task-swipe-pill {
-  width: 48px;
+  width: 56px;
   height: 30px;
   border-radius: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #fff;
 }
 .task-swipe-btn:not(.task-swipe-del) .task-swipe-pill { background: var(--accent); }
 .task-swipe-btn.task-swipe-del .task-swipe-pill { background: var(--red); }

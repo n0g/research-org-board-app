@@ -106,9 +106,9 @@ const swipeOpen = ref(false)
 const isSwiping = ref(false)
 let startX = 0, startY = 0, dirLocked = false, isHoriz = false
 
-const GAP = 6
-const BTN_W = 70
-const SNAP = BTN_W * 2 + GAP  // 146px; widths track swipe linearly so no clipping
+const GAP = 12
+const BTN_W = 56
+const SNAP = BTN_W * 2 + GAP  // 124px; widths track swipe linearly so no clipping
 
 function easeOut(t) { return 1 - (1 - t) * (1 - t) }
 
