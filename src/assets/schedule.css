@@ -161,6 +161,9 @@
 .triage-tag-dim { color: var(--text3); }
 .triage-tag-scheduled { color: #34A853; }
 .triage-tag-overdue { color: var(--text3); }
+.schedule-due-tag { color: var(--text3); }
+.schedule-due-urgent { color: var(--amber); }
+html[data-theme="light"] .schedule-due-urgent { color: #b45309; }
 .schedule-task-right { display: flex; align-items: center; gap: 4px; }
 .triage-task-date { font-size: 10px; color: var(--text3); font-weight: 500; }
 

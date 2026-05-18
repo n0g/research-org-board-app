@@ -109,6 +109,9 @@
                         <i class="ph ph-star" aria-hidden="true"></i>{{ getImportance(task) }}
                       </span>
                       <span v-if="getTime(task)" class="triage-tag triage-tag-dim">{{ getTime(task) }}</span>
+                      <span v-if="dueDateLabel(task)" class="triage-tag schedule-due-tag" :class="{ 'schedule-due-urgent': task.due && Math.round((new Date(task.due.date + 'T00:00:00') - new Date().setHours(0,0,0,0)) / 86400000) <= 1 }">
+                        <i class="ph ph-calendar-check" aria-hidden="true"></i>{{ dueDateLabel(task) }}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -388,6 +391,19 @@ function scheduledLabel(task) {
   const period = h >= 12 ? 'pm' : 'am'
   const timePart = m === 0 ? `${h12}${period}` : `${h12}:${String(m).padStart(2, '0')}${period}`
   return `${datePart} ${timePart}`
+}
+
+function dueDateLabel(task) {
+  const date = task.due?.date
+  if (!date) return null
+  const due = new Date(date + 'T00:00:00')
+  const today = new Date(); today.setHours(0, 0, 0, 0)
+  const diffDays = Math.round((due - today) / 86400000)
+  if (diffDays < 0) return 'Overdue'
+  if (diffDays === 0) return 'Due today'
+  if (diffDays === 1) return 'Due tomorrow'
+  if (diffDays < 7) return `Due in ${diffDays}d`
+  return `Due ${due.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`
 }
 
 // ── Calendar / week navigation ──
