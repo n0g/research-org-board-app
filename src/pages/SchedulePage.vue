@@ -168,7 +168,7 @@
                   v-for="day in weekDays"
                   :key="isoDate(day)"
                   class="cal-day-head"
-                  :class="{ 'cal-today': isToday(day), 'cal-past-due': isDayPastDue(day), 'cal-due-boundary': isDayDueBoundary(day) }"
+                  :class="{ 'cal-today': isToday(day) }"
                 >
                   <div class="cal-day-label">
                     <span class="cal-day-name">{{ dayName(day) }}</span>

@@ -732,7 +732,6 @@ html[data-theme="dark"] .seg-btn.active { background: rgba(255,255,255,0.15); }
     transparent 12px
   );
 }
-.cal-day-head.cal-due-boundary { border-left: 3px solid rgba(239, 68, 68, 0.55); }
 
 /* Time slot cells */
 .cal-slot {
