@@ -601,22 +601,29 @@ html[data-theme="light"] .project-tasks { background: var(--bg-pane-right); }
 }
 .task-swipe-btn {
   flex: none;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 5px;
   color: #fff;
   cursor: pointer;
   border: none;
-  border-radius: 16px;
-  padding: 0;
+  background: transparent;
+  padding: 0 6px;
   white-space: nowrap;
 }
-.task-swipe-btn:not(.task-swipe-del) { background: var(--accent); }
-.task-swipe-btn.task-swipe-del { background: var(--red); }
-.task-swipe-btn .ph { font-size: 18px; }
+.task-swipe-pill {
+  width: 48px;
+  height: 30px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.task-swipe-btn:not(.task-swipe-del) .task-swipe-pill { background: var(--accent); }
+.task-swipe-btn.task-swipe-del .task-swipe-pill { background: var(--red); }
+.task-swipe-btn .ph { font-size: 16px; }
 .task-swipe-label { font-size: 10px; font-weight: 600; }
 .task-hover-actions {
   display: flex;

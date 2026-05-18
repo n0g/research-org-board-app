@@ -2,11 +2,11 @@
   <div class="task-item-wrap" role="listitem">
     <div class="task-swipe-zone" aria-hidden="true">
       <button class="task-swipe-btn" :style="dueBtnStyle" @click.stop="startDueEdit">
-        <i class="ph ph-flag" aria-hidden="true"></i>
+        <span class="task-swipe-pill"><i class="ph ph-flag" aria-hidden="true"></i></span>
         <span class="task-swipe-label">Due</span>
       </button>
       <button class="task-swipe-btn task-swipe-del" :style="delBtnStyle" @click.stop="doDelete">
-        <i class="ph ph-trash" aria-hidden="true"></i>
+        <span class="task-swipe-pill"><i class="ph ph-trash" aria-hidden="true"></i></span>
         <span class="task-swipe-label">Remove</span>
       </button>
     </div>
