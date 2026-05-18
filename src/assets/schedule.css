@@ -716,6 +716,21 @@ html[data-theme="dark"] .seg-btn.active { background: rgba(255,255,255,0.15); }
 }
 .cal-day-col.cal-today { background: color-mix(in srgb, var(--accent) 4%, transparent); }
 
+/* Due date constraints (SchedulePlacePage) */
+.cal-day-col.cal-past-due,
+.cal-day-head.cal-past-due {
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(239, 68, 68, 0.08) 0px,
+    rgba(239, 68, 68, 0.08) 4px,
+    transparent 4px,
+    transparent 12px
+  );
+  pointer-events: none;
+}
+.cal-day-col.cal-due-boundary { border-left: 3px solid rgba(239, 68, 68, 0.55); }
+.cal-day-head.cal-due-boundary { border-left: 3px solid rgba(239, 68, 68, 0.55); }
+
 /* Time slot cells */
 .cal-slot {
   height: 40px;

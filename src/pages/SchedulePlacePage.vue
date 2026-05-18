@@ -31,7 +31,7 @@
               v-for="day in weekDays"
               :key="isoDate(day)"
               class="cal-day-head"
-              :class="{ 'cal-today': isToday(day) }"
+              :class="{ 'cal-today': isToday(day), 'cal-past-due': isDayPastDue(day), 'cal-due-boundary': isDayDueBoundary(day) }"
             >
               <div class="cal-day-label">
                 <span class="cal-day-name">{{ dayName(day) }}</span>
@@ -59,7 +59,7 @@
                   v-for="day in weekDays"
                   :key="isoDate(day)"
                   class="cal-day-col"
-                  :class="{ 'cal-today': isToday(day) }"
+                  :class="{ 'cal-today': isToday(day), 'cal-past-due': isDayPastDue(day), 'cal-due-boundary': isDayDueBoundary(day) }"
                 >
                   <div
                     v-for="slot in timeSlots"
@@ -162,6 +162,22 @@ function isoDate(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 }
 function isToday(d) { return isoDate(d) === isoDate(new Date()) }
+
+const taskDueDate = computed(() => {
+  const date = store.pendingScheduleTask?.due?.date
+  if (!date) return null
+  const d = new Date(date + 'T00:00:00'); d.setHours(0, 0, 0, 0); return d
+})
+function isDayPastDue(day) {
+  if (!taskDueDate.value) return false
+  const d = new Date(day); d.setHours(0, 0, 0, 0)
+  return d > taskDueDate.value
+}
+function isDayDueBoundary(day) {
+  if (!isDayPastDue(day)) return false
+  const prev = new Date(day); prev.setDate(prev.getDate() - 1)
+  return !isDayPastDue(prev)
+}
 function dayName(d) { return d.toLocaleDateString(undefined, { weekday: 'short' }) }
 function formatHour(h) {
   if (h === 12) return '12pm'
@@ -224,6 +240,7 @@ function goToday() {
 async function scheduleAt(day, slot) {
   const task = store.pendingScheduleTask
   if (!task) return
+  if (isDayPastDue(day)) return
   // Capture duration before nulling pendingScheduleTask — taskDuration() reads it
   const duration = taskDuration()
   hoveredDay.value = null   // prevent previewStyle() re-evaluating with null task
