@@ -201,10 +201,15 @@
                   <!-- Day columns -->
                   <div ref="calDaysEl" class="cal-days">
                     <div
+                      v-if="pastDueOverlayLeft !== null"
+                      class="cal-past-due-overlay"
+                      :style="{ left: pastDueOverlayLeft }"
+                    ></div>
+                    <div
                       v-for="day in weekDays"
                       :key="isoDate(day)"
                       class="cal-day-col"
-                      :class="{ 'cal-today': isToday(day), 'cal-past-due': isDayPastDue(day), 'cal-due-boundary': isDayDueBoundary(day) }"
+                      :class="{ 'cal-today': isToday(day) }"
                     >
                       <!-- Slot cells (drop targets + grid lines) -->
                       <div
@@ -524,6 +529,12 @@ function isDayDueBoundary(day) {
   const prev = new Date(day); prev.setDate(prev.getDate() - 1)
   return !isDayPastDue(prev)
 }
+const pastDueOverlayLeft = computed(() => {
+  if (!draggingTaskDueDate.value) return null
+  const pastDueCount = weekDays.value.filter(d => isDayPastDue(d)).length
+  if (pastDueCount === 0) return null
+  return `${((7 - pastDueCount) / 7 * 100).toFixed(4)}%`
+})
 
 // ── Drag and drop ──
 const draggingTask = ref(null)
@@ -737,11 +748,12 @@ async function onPointerUp() {
   const task = draggingTask.value
   const calEv = draggingCalEvent.value
   const slot = hoveredSlot.value
+  const isPastDueDrop = slot ? isDayPastDue(new Date(slot.dateStr + 'T00:00:00')) : false
   draggingTask.value = null
   draggingCalEvent.value = null
   hoveredSlot.value = null
 
-  if (!slot || !calStore.isConnected) return
+  if (!slot || !calStore.isConnected || isPastDueDrop) return
 
   const [year, month, day] = slot.dateStr.split('-').map(Number)
 
