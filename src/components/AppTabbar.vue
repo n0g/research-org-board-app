@@ -1,10 +1,10 @@
 <template>
   <f7-toolbar no-hairline position="bottom" class="bottom-tabbar">
-    <button class="tab-btn" :class="{ 'tab-btn-active': currentTab === 'board' }" @click="showTab('board')">
-      <i class="ph ph-kanban" aria-hidden="true"></i>Board
-    </button>
     <button class="tab-btn" :class="{ 'tab-btn-active': currentTab === 'inbox' }" @click="showTab('inbox')">
       <i class="ph ph-tray" aria-hidden="true"></i>Inbox
+    </button>
+    <button class="tab-btn" :class="{ 'tab-btn-active': currentTab === 'board' }" @click="showTab('board')">
+      <i class="ph ph-kanban" aria-hidden="true"></i>Board
     </button>
     <button class="tab-btn" :class="{ 'tab-btn-active': currentTab === 'schedule' }" @click="showTab('schedule')">
       <i class="ph ph-calendar" aria-hidden="true"></i>Schedule

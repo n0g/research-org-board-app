@@ -16,17 +16,6 @@
     <nav class="sidebar-nav">
       <button
         class="sidebar-nav-item"
-        :class="currentPage === 'board' ? 'sidebar-nav-active' : ''"
-        :aria-current="currentPage === 'board' ? 'page' : undefined"
-        title="Board"
-        @click="currentPage !== 'board' && goBoard()"
-      >
-        <i class="ph ph-kanban" aria-hidden="true"></i>
-        <span class="sidebar-label">Board</span>
-      </button>
-
-      <button
-        class="sidebar-nav-item"
         :class="currentPage === 'inbox' ? 'sidebar-nav-active' : ''"
         :aria-current="currentPage === 'inbox' ? 'page' : undefined"
         title="Inbox"
@@ -34,6 +23,17 @@
       >
         <i class="ph ph-tray" aria-hidden="true"></i>
         <span class="sidebar-label">Inbox</span>
+      </button>
+
+      <button
+        class="sidebar-nav-item"
+        :class="currentPage === 'board' ? 'sidebar-nav-active' : ''"
+        :aria-current="currentPage === 'board' ? 'page' : undefined"
+        title="Board"
+        @click="currentPage !== 'board' && goBoard()"
+      >
+        <i class="ph ph-kanban" aria-hidden="true"></i>
+        <span class="sidebar-label">Board</span>
       </button>
 
       <button

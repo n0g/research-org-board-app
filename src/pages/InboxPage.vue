@@ -24,6 +24,9 @@
           </div>
 
           <div role="list" aria-label="Inbox tasks">
+            <div v-if="!inboxTasks.length" class="triage-empty-list">
+              {{ store.inboxProjectId ? 'Inbox is empty' : 'Inbox project not found' }}
+            </div>
             <TaskItem v-for="task in inboxTasks" :key="task.id" :task="task" />
           </div>
 
