@@ -339,7 +339,7 @@ const filteredTasks = computed(() => {
   switch (tab.value) {
     case 'quick': return tasks.filter(t => getLabel(t, 'time::') === '15m')
     case 'social': return tasks.filter(t => (t.labels || []).some(l => l.startsWith('person::')))
-    case 'focus': return tasks.filter(t => store.focusProjectIds.has(t.project_id))
+    case 'focus': return tasks.filter(t => store.projectEnergy(t.project_id) === 2)
     default: return tasks
   }
 })
