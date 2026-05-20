@@ -3,7 +3,7 @@
     <div class="inbox-screen">
       <AppSidebar current-page="inbox" />
 
-      <div class="inbox-main" :class="{ 'inbox-main-collapsed': sidebarCollapsed }">
+      <div class="inbox-main">
         <button
           v-if="sidebarCollapsed"
           class="sidebar-expand-btn"
@@ -14,14 +14,8 @@
           <i class="ph ph-sidebar-simple" aria-hidden="true"></i>
         </button>
 
-        <div class="project-tasks inbox-tasks-pane">
-          <div class="tasks-header">
-            <div class="tasks-title">
-              <i class="ph ph-tray" aria-hidden="true"></i>
-              Inbox
-            </div>
-            <div class="tasks-subtitle">{{ inboxTasks.length }} task{{ inboxTasks.length !== 1 ? 's' : '' }}</div>
-          </div>
+        <div class="inbox-content">
+          <h1 class="settings-page-title">Inbox</h1>
 
           <div role="list" aria-label="Inbox tasks">
             <div v-if="!inboxTasks.length" class="triage-empty-list">
