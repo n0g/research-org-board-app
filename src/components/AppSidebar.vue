@@ -27,12 +27,13 @@
 
       <button
         class="sidebar-nav-item"
-        :class="currentPage === 'tasks' ? 'sidebar-nav-active' : ''"
-        title="Tasks"
-        @click="currentPage !== 'tasks' && goTasks()"
+        :class="currentPage === 'inbox' ? 'sidebar-nav-active' : ''"
+        :aria-current="currentPage === 'inbox' ? 'page' : undefined"
+        title="Inbox"
+        @click="currentPage !== 'inbox' && goInbox()"
       >
-        <i class="ph ph-list-checks" aria-hidden="true"></i>
-        <span class="sidebar-label">Tasks</span>
+        <i class="ph ph-tray" aria-hidden="true"></i>
+        <span class="sidebar-label">Inbox</span>
       </button>
 
       <button
@@ -143,7 +144,7 @@ const venuesOpen = ref(true)
 
 
 function goBoard()    { f7.tab.show('#view-board') }
-function goTasks()    { f7.tab.show('#view-tasks') }
+function goInbox()    { f7.tab.show('#view-inbox') }
 function goSchedule() { f7.tab.show('#view-schedule') }
 function goSettings() { f7.tab.show('#view-settings') }
 </script>

@@ -7,7 +7,7 @@
     <template v-else>
       <f7-views tabs>
         <f7-view id="view-board"    name="board"    tab tab-active url="/board/" />
-        <f7-view id="view-tasks"    name="tasks"    tab url="/tasks/" />
+        <f7-view id="view-inbox"   name="inbox"   tab url="/inbox/" />
         <f7-view id="view-schedule" name="schedule" tab url="/schedule/" />
         <f7-view id="view-settings" name="settings" tab url="/settings/" />
       </f7-views>
