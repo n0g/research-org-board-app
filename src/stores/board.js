@@ -186,24 +186,36 @@ export const useBoardStore = defineStore('board', () => {
   }
 
   const FOCUS_LABEL = 'sprint::focus'
+  const ENERGY_LOW  = 'sprint::energy-1'
+  const ENERGY_HIGH = 'sprint::energy-2'
+
+  function projectEnergy(projectId) {
+    const stage = getProjectStage(tasks.value, stageLabels.value, projectId)
+    if (!stage) return 0
+    const labels = stage.task.labels || []
+    if (labels.includes(ENERGY_HIGH)) return 2
+    if (labels.includes(ENERGY_LOW))  return 1
+    return 0
+  }
 
   const focusProjectIds = computed(() => {
     const ids = new Set()
     for (const p of displayProjects.value) {
-      const stage = getProjectStage(tasks.value, stageLabels.value, p.id)
-      if (stage?.task.labels?.includes(FOCUS_LABEL)) ids.add(p.id)
+      if (projectEnergy(p.id) > 0) ids.add(p.id)
     }
     return ids
   })
 
-  async function toggleFocus(projectId) {
+  async function cycleEnergy(projectId) {
     const stage = getProjectStage(tasks.value, stageLabels.value, projectId)
     if (!stage) return
     const task = stage.task
-    const hasFocus = (task.labels || []).includes(FOCUS_LABEL)
-    const newLabels = hasFocus
-      ? task.labels.filter(l => l !== FOCUS_LABEL)
-      : [...(task.labels || []), FOCUS_LABEL]
+    const labels = task.labels || []
+    const current = labels.includes(ENERGY_HIGH) ? 2 : labels.includes(ENERGY_LOW) ? 1 : 0
+    const next = (current + 1) % 3
+    const newLabels = labels.filter(l => l !== ENERGY_LOW && l !== ENERGY_HIGH && l !== FOCUS_LABEL)
+    if (next === 1) newLabels.push(ENERGY_LOW)
+    if (next === 2) newLabels.push(ENERGY_HIGH)
     task.labels = newLabels
     await api(token.value, `/tasks/${task.id}`, 'POST', { labels: newLabels })
   }
@@ -540,7 +552,7 @@ export const useBoardStore = defineStore('board', () => {
     projectDeadlineTaskBase, projectDeadlineTaskObj,
     projectSummaryTask, updateSummary, projectSubmissionTask, updateSubmissionUrl,
     updateTaskTriage, createProject, deleteProject, setFilter,
-    focusProjectIds, toggleFocus,
+    focusProjectIds, projectEnergy, cycleEnergy,
     addInboxTask, assignTaskToProject,
   }
 })

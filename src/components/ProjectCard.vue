@@ -6,7 +6,8 @@
       dragging: dragging,
       stale: isStale && !isOnIce,
       'on-ice': isOnIce,
-      'card-focus': isFocus,
+      'card-energy-1': energyLevel === 1,
+      'card-energy-2': energyLevel === 2,
     }"
     role="listitem"
     tabindex="0"
@@ -26,7 +27,6 @@
         class="card-submission-unavailable"
         title="Status unavailable"
       >?</span>
-      <div v-if="isStale && !isOnIce" class="card-stale-indicator" role="img" :aria-label="`Stale: ${staleWeeks}w`">!</div>
     </div>
 
     <div v-if="meta.venue" class="card-venue-badge">
@@ -56,14 +56,13 @@
           {{ deadlineFormatted }}
         </div>
         <button
-          class="card-focus-btn"
-          :class="{ active: isFocus }"
-          :aria-pressed="isFocus"
-          :aria-label="isFocus ? 'Remove focus' : 'Set as focus project'"
+          class="card-energy-btn"
+          :class="{ 'energy-low': energyLevel === 1, 'energy-high': energyLevel === 2, 'energy-stale': energyLevel === 0 && isStale && !isOnIce }"
+          :aria-label="energyLevel === 2 ? 'Full focus — click to clear' : energyLevel === 1 ? 'Some attention — click to increase' : 'No focus — click to set'"
           @pointerdown.stop
-          @click.stop="store.toggleFocus(project.id)"
+          @click.stop="store.cycleEnergy(project.id)"
         >
-          <i :class="isFocus ? 'ph-fill ph-lightning' : 'ph ph-lightning'" aria-hidden="true"></i>
+          <i :class="batteryIcon" aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -93,14 +92,20 @@ const stageLabelSet = computed(() => new Set(store.stageLabels))
 const tasks = computed(() => store.projectTasks(props.project.id))
 const meta = computed(() => store.projectMeta(props.project.id))
 const deadline = computed(() => store.projectDeadline(props.project.id))
-const isFocus = computed(() => store.focusProjectIds.has(props.project.id))
+const energyLevel = computed(() => store.projectEnergy(props.project.id))
+const batteryIcon = computed(() => {
+  if (energyLevel.value === 2) return 'ph ph-battery-charging'
+  if (energyLevel.value === 1) return 'ph ph-battery-low'
+  if (isStale.value && !isOnIce.value) return 'ph ph-battery-warning'
+  return 'ph ph-battery-empty'
+})
 
 function _getMonday(d) {
   const day = new Date(d); const dow = day.getDay()
   day.setDate(day.getDate() + (dow === 0 ? -6 : 1 - dow)); day.setHours(0,0,0,0); return day
 }
 const scheduledHoursThisWeek = computed(() => {
-  if (!isFocus.value) return 0
+  if (energyLevel.value === 0) return 0
   const monday = _getMonday(new Date())
   const sunday = new Date(monday); sunday.setDate(monday.getDate() + 7)
   let minutes = 0

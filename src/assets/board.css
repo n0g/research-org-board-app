@@ -205,12 +205,6 @@ html[data-theme="light"] .card { background: var(--bg-surface); }
   align-items: center;
   gap: 4px;
 }
-.card-stale-indicator {
-  color: #f97316;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-}
 .card-submission-icon .ph { font-size: 14px; line-height: 1; display: block; }
 .card-submission-unavailable {
   font-size: 10px;
@@ -285,13 +279,16 @@ html[data-theme="light"] .card { background: var(--bg-surface); }
   margin-bottom: 12px;
 }
 
-/* Focus card */
-.card.card-focus {
+/* Energy cards */
+.card.card-energy-1 {
+  border-top: 3px solid color-mix(in srgb, var(--accent) 50%, transparent);
+}
+.card.card-energy-2 {
   border-top: 3px solid var(--accent);
   background: color-mix(in srgb, var(--accent) 5%, var(--bg-surface));
 }
-html[data-theme="light"] .card.card-focus { background: color-mix(in srgb, var(--accent) 5%, #ffffff); }
-html[data-theme="dark"] .card.card-focus { background: color-mix(in srgb, var(--accent) 14%, #000000); }
+html[data-theme="light"] .card.card-energy-2 { background: color-mix(in srgb, var(--accent) 5%, #ffffff); }
+html[data-theme="dark"] .card.card-energy-2 { background: color-mix(in srgb, var(--accent) 14%, #000000); }
 
 /* Card bottom row */
 .card-bottom {
@@ -342,7 +339,7 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   flex-shrink: 0;
 }
 
-.card-focus-btn {
+.card-energy-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -357,21 +354,19 @@ html[data-theme="dark"] .card-date.due-soon { color: var(--amber); }
   cursor: pointer;
   transition: opacity 0.15s, color 0.15s, background 0.15s;
 }
-.card-focus-btn .ph, .card-focus-btn .ph-fill { font-size: 14px; }
-/* Always show on touch devices; show on hover/focus on pointer devices */
+.card-energy-btn .ph { font-size: 16px; }
 @media (hover: hover) {
-  .card:hover .card-focus-btn,
-  .card:focus-within .card-focus-btn { opacity: 1; }
+  .card:hover .card-energy-btn,
+  .card:focus-within .card-energy-btn { opacity: 1; }
 }
 @media (hover: none) {
-  .card-focus-btn { opacity: 0.4; }
+  .card-energy-btn { opacity: 0.5; }
 }
-.card-focus-btn:hover { background: var(--bg-surface); opacity: 1; }
-.card-focus-btn.active {
-  color: var(--accent);
-  opacity: 1;
-}
-.card-focus-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.card-energy-btn:hover { background: var(--bg-surface); opacity: 1; }
+.card-energy-btn.energy-stale { color: #f97316; opacity: 1; }
+.card-energy-btn.energy-low   { color: var(--accent); opacity: 0.6; }
+.card-energy-btn.energy-high  { color: var(--accent); opacity: 1; }
+.card-energy-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ── NAVBAR for board page ── */
 .board-navbar .navbar-inner {
