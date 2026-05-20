@@ -43,13 +43,12 @@
               @keydown.escape.prevent="cancelTitle"
             ></textarea>
             <button
-              class="card-focus-btn"
-              :class="{ active: isFocus }"
-              :aria-pressed="isFocus"
-              :aria-label="isFocus ? 'Remove focus' : 'Set as focus project'"
-              @click="store.toggleFocus(projectId)"
+              class="card-energy-btn"
+              :class="{ 'energy-low': energyLevel === 1, 'energy-high': energyLevel === 2 }"
+              :aria-label="energyLevel === 2 ? 'Full focus — click to clear' : energyLevel === 1 ? 'Some attention — click to increase' : 'No focus — click to set'"
+              @click="store.cycleEnergy(projectId)"
             >
-              <i :class="isFocus ? 'ph-fill ph-lightning' : 'ph ph-lightning'" aria-hidden="true"></i>
+              <i :class="energyLevel === 2 ? 'ph ph-battery-charging' : energyLevel === 1 ? 'ph ph-battery-low' : 'ph ph-battery-empty'" aria-hidden="true"></i>
             </button>
           </div>
 
@@ -389,7 +388,7 @@ const quickAddInputEl = ref(null)
 
 const projectId = computed(() => props.f7route.params.id)
 const project = computed(() => store.displayProjects.find(p => p.id === projectId.value) ?? null)
-const isFocus = computed(() => store.focusProjectIds.has(projectId.value))
+const energyLevel = computed(() => store.projectEnergy(projectId.value))
 
 function _getMonday(d) {
   const day = new Date(d); const dow = day.getDay()
