@@ -41,7 +41,9 @@ export const useBoardStore = defineStore('board', () => {
     return root ? projects.value.filter(p => p.parent_id === root.id) : projects.value
   })
 
-  const inboxProjectId = computed(() => projects.value.find(p => p.is_inbox_project)?.id ?? null)
+  const inboxProjectId = computed(() =>
+    projects.value.find(p => p.is_inbox_project || p.inbox_project || (!p.parent_id && p.name === 'Inbox'))?.id ?? null
+  )
 
   const allCollaborators = computed(() => {
     const stageSet = new Set(stageLabels.value)
